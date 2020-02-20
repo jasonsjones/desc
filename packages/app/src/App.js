@@ -30,8 +30,8 @@ function App() {
                         <Route exact path="/signup" component={Signup} />
                         <Route exact path="/signin" component={Signin} />
                         <PrivateRoute exact path="/inbox" component={Inbox} />
-                        <PrivateRoute exact path="/create" component={RequestCreationPage} />
-                        <PrivateRoute exact path="/createv2" component={Request} />
+                        <PrivateRoute exact path="/createv1" component={RequestCreationPage} />
+                        <PrivateRoute exact path="/create" component={Request} />
                         <PrivateRoute exact path="/profile" component={UserProfile} />
                     </Switch>
                 </Layout>

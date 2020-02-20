@@ -4,6 +4,21 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions/actions';
 import RequestNotes from './RequestNotes';
 
+const css = {
+    listHeader: {
+        fontWeight: 'bold',
+        display: 'flex',
+        padding: '1rem 2rem',
+        borderBottom: '2px #999 solid'
+    },
+
+    flexItem: {
+        flex: '0 0 25%'
+    },
+    itemHeader: {
+        padding: '1rem 2rem'
+    }
+};
 class RequestRow extends React.Component {
     constructor(props) {
         super(props);
@@ -16,16 +31,14 @@ class RequestRow extends React.Component {
     render() {
         return (
             <li>
-                <div className="collapsible-header">
-                    <div className="col s1 m4">
+                <div className="collapsible-header" style={css.itemHeader}>
+                    <div style={css.flexItem}>
                         {this.state.row.submittedBy.name.first}{' '}
                         {this.state.row.submittedBy.name.last}
                     </div>
-                    <div className="col s1 m4">{this.state.row.name}</div>
-                    <div className="col s1 m4">{this.state.row.numberOfItems}</div>
-                    <div className="col s1 m4 right-align">
-                        {this.getDate(this.state.row.createdAt)}
-                    </div>
+                    <div style={css.flexItem}>{this.state.row.name}</div>
+                    <div style={css.flexItem}>{this.state.row.numberOfItems}</div>
+                    <div style={css.flexItem}>{this.getDate(this.state.row.createdAt)}</div>
                 </div>
                 <div className="collapsible-body">
                     <div className="actions">
@@ -96,7 +109,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RequestRow);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestRow);
