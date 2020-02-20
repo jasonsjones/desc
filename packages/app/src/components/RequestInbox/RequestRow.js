@@ -5,6 +5,21 @@ import * as actions from '../../actions/actions';
 import RequestNotes from './RequestNotes';
 import AuthContext from '../../context/AuthContext';
 
+const css = {
+    listHeader: {
+        fontWeight: 'bold',
+        display: 'flex',
+        padding: '1rem 2rem',
+        borderBottom: '2px #999 solid'
+    },
+
+    flexItem: {
+        flex: '0 0 25%'
+    },
+    itemHeader: {
+        padding: '1rem 2rem'
+    }
+};
 class RequestRow extends React.Component {
     static contextType = AuthContext;
 
@@ -19,8 +34,8 @@ class RequestRow extends React.Component {
     render() {
         return (
             <li>
-                <div className="collapsible-header">
-                    <div className="col s1 m4">
+                <div className="collapsible-header" style={css.itemHeader}>
+                    <div style={css.flexItem}>
                         {this.state.row.submittedBy.name.first}{' '}
                         {this.state.row.submittedBy.name.last}
                     </div>
