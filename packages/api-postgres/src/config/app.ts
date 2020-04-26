@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import 'dotenv/config';
 import passport from 'passport';
+import morgan from 'morgan';
 import { passportConfig } from './passport';
 import IndexRouter from '../index/IndexRouter';
 import AuthRouter from '../auth/AuthRouter';
@@ -11,6 +12,7 @@ import UserRouter from '../user/UserRouter';
 import AuthController from '../auth/AuthController';
 import ItemRouter from '../item/ItemRouter';
 import ClientRequestRouter from '../clientRequest/ClientRequestRouter';
+import config from './config';
 
 const app = express();
 
@@ -21,6 +23,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({ origin: ['http://localhost:4200'], credentials: true }));
 app.use(passport.initialize());
+if (config.env === 'development') {
+    app.use(morgan('dev'));
+} else if (config.env == 'production') {
+    app.use(morgan('combined'));
+}
 
 app.use(AuthController.processToken);
 
