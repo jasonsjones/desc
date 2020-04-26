@@ -24,8 +24,8 @@ describe('Item route acceptance tests', () => {
     });
 
     afterEach(async () => {
-        TestUtils.dropNotes();
-        TestUtils.dropItems();
+        await TestUtils.dropNotes();
+        await TestUtils.dropItems();
     });
 
     afterAll(async () => {
