@@ -1,5 +1,5 @@
 import Item from '../entity/Item';
-import { ItemData, UpdatableItemFields } from './types';
+import { ItemData, UpdatableItemFields } from '../common/types';
 import UserService from '../user/UserService';
 import NoteService from '../note/NoteService';
 

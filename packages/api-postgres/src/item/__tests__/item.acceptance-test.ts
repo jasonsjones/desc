@@ -2,7 +2,7 @@ import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { Program } from '../../entity/User';
 import { createPostgresConnection, closeConnection } from '../../config/database';
-import { ItemPriority, ItemStatus, ItemCategory } from '../types';
+import { ItemPriority, ItemStatus, ItemCategory } from '../../common/types';
 
 describe('Item route acceptance tests', () => {
     let userId: string;

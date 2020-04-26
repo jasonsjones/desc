@@ -1,7 +1,7 @@
 import Note from '../entity/Note';
 import UserService from '../user/UserService';
 import ItemService from '../item/ItemService';
-import { NoteData } from '../item/types';
+import { NoteData } from '../common/types';
 
 export default class NoteService {
     static async createNote(noteData: NoteData): Promise<Note | undefined> {

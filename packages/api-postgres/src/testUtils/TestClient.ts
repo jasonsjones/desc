@@ -3,7 +3,7 @@ import request, { Test } from 'supertest';
 import app from '../config/app';
 import UserService from '../user/UserService';
 import User, { Program } from '../entity/User';
-import { UpdatableItemFields } from '../item/types';
+import { UpdatableItemFields } from '../common/types';
 
 class TestClient {
     private app: Application;

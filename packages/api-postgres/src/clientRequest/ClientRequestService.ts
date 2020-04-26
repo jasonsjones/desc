@@ -1,5 +1,5 @@
 import ClientRequest from '../entity/ClientRequest';
-import { ItemData } from '../item/types';
+import { ItemData } from '../common/types';
 import UserService from '../user/UserService';
 import ItemService from '../item/ItemService';
 import Item from '../entity/Item';

@@ -3,7 +3,7 @@ import UserService from '../../user/UserService';
 import { Program } from '../../entity/User';
 import TestUtils from '../../testUtils/TestUtilities';
 import ItemService from '../../item/ItemService';
-import { ItemCategory, HouseLocation } from '../../item/types';
+import { ItemCategory, HouseLocation } from '../../common/types';
 import NoteService from '../NoteService';
 
 describe('Note service', () => {
