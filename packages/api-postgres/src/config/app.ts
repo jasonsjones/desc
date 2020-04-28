@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -36,5 +36,17 @@ app.use('/api/auth', AuthRouter.getRouter(passport));
 app.use('/api/users', UserRouter.getRouter());
 app.use('/api/items', ItemRouter.getRouter());
 app.use('/api/clientrequests', ClientRequestRouter.getRouter());
+
+app.use(
+    (err: Error, _: Request, res: Response, __: NextFunction): Response => {
+        return res.json({
+            success: false,
+            message: 'Error: unable to complete request',
+            payload: {
+                error: err.message
+            }
+        });
+    }
+);
 
 export default app;

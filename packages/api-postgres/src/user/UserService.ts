@@ -47,6 +47,27 @@ export default class UserService {
         return user.save();
     }
 
+    static async createAdminTestUser(
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string,
+        program?: Program
+    ): Promise<User> {
+        const hashedPassword = await bcrypt.hash(password, 4);
+        let data: UserCreationFields = {
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            program,
+            roles: [UserRole.ADMIN]
+        };
+        const user = User.create(data);
+        user.emailVerificationToken = v4();
+        return user.save();
+    }
+
     static getAllUsers(): Promise<User[]> {
         return User.find();
     }

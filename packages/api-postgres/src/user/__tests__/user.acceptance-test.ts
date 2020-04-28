@@ -12,71 +12,125 @@ describe('User route acceptance tests', () => {
         await closeConnection();
     });
 
-    describe('/api/user route', () => {
-        afterAll(async () => {
+    describe('/api/users route', () => {
+        const adminEmail = 'admin@desc.org';
+        const email = 'oliver@desc.org';
+        const password = '123456';
+
+        afterEach(async () => {
             await TestUtils.dropUsers();
         });
 
-        it('POST request method creates a new user', async () => {
-            const client = new TestClient();
-            const response = await client.creatUserViaAPI({
-                firstName: 'Oliver',
-                lastName: 'Queen',
-                email: 'oliver@desc.org',
-                password: '123456',
-                program: Program.SURVIVAL
-            });
+        describe('POST request method', () => {
+            it('POST request method creates a new user', async () => {
+                const client = new TestClient();
+                const response = await client.creatUserViaAPI({
+                    firstName: 'Oliver',
+                    lastName: 'Queen',
+                    email,
+                    password,
+                    program: Program.SURVIVAL
+                });
 
-            expect(response.status).toBe(201);
-            expect(response.body).toEqual(
-                expect.objectContaining({
-                    success: true,
-                    message: expect.any(String),
-                    payload: expect.objectContaining({
-                        user: expect.objectContaining({
-                            id: expect.any(String),
-                            firstName: 'Oliver',
-                            lastName: 'Queen',
-                            email: 'oliver@desc.org',
-                            program: expect.any(String),
-                            roles: expect.arrayContaining(['requestor'])
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            user: expect.objectContaining({
+                                id: expect.any(String),
+                                firstName: 'Oliver',
+                                lastName: 'Queen',
+                                email: 'oliver@desc.org',
+                                program: expect.any(String),
+                                roles: expect.arrayContaining(['requestor'])
+                            })
                         })
                     })
-                })
-            );
+                );
+            });
         });
 
-        it('GET request method fetches all users', async () => {
-            const client = new TestClient();
-            const response = await client.getAllUsers();
+        describe('GET request method', () => {
+            let client: TestClient;
 
-            expect(response.body).toEqual(
-                expect.objectContaining({
-                    success: true,
-                    message: expect.any(String),
-                    payload: expect.objectContaining({
-                        users: expect.arrayContaining([expect.any(Object)])
+            beforeEach(async () => {
+                client = new TestClient();
+                await client.createAdminTestUser({
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: adminEmail,
+                    password,
+                    program: Program.SURVIVAL
+                });
+
+                await client.createTestUser({
+                    firstName: 'Oliver',
+                    lastName: 'Queen',
+                    email,
+                    password,
+                    program: Program.SURVIVAL
+                });
+            });
+
+            it('GET request method fetches all users', async () => {
+                await client.doLogin(adminEmail, password);
+                const response = await client.getAllUsers();
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            users: expect.arrayContaining([expect.any(Object)])
+                        })
                     })
-                })
-            );
-            expect(response.body.payload.users).toHaveLength(1);
+                );
+                expect(response.body.payload.users).toHaveLength(2);
+            });
+
+            it('GET request method is unsuccessful if user is not authenticated', async () => {
+                const response = await client.getAllUsers();
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
         });
     });
 
-    describe('/api/user/:id route', () => {
+    describe('/api/users/:id route', () => {
         let userId: string;
         let client: TestClient;
         const unknownId = '9ff6515e-814a-4d1c-bc27-9a768c4aa242';
+        const adminEmail = 'admin@desc.org';
+        const email = 'oliver@desc.org';
+        const password = '123456';
 
         beforeEach(async () => {
             client = new TestClient();
+            await client.createAdminTestUser({
+                firstName: 'Admin',
+                lastName: 'User',
+                email: adminEmail,
+                password,
+                program: Program.SURVIVAL
+            });
             const user = await client.createTestUser({
                 firstName: 'Oliver',
                 lastName: 'Queen',
-                email: 'oliver@desc.org',
-                password: '123456',
+                email,
+                password,
                 program: Program.SURVIVAL
             });
+
             userId = user.id;
         });
 
@@ -145,6 +199,13 @@ describe('User route acceptance tests', () => {
         });
 
         describe('DELETE request method', () => {
+            async function verifyNumberOfUsers(num: number): Promise<void> {
+                // log in as admin in order to call the 'getAllUsers' route
+                await client.doLogin(adminEmail, password);
+                const verificatonResponse = await client.getAllUsers();
+                expect(verificatonResponse.body.payload.users).toHaveLength(num);
+            }
+
             it('deletes the user with the given id', async () => {
                 const response = await client.deleteUser(userId);
 
@@ -158,11 +219,10 @@ describe('User route acceptance tests', () => {
                     })
                 );
 
-                const verificatonResponse = await client.getAllUsers();
-                expect(verificatonResponse.body.payload.users).toHaveLength(0);
+                await verifyNumberOfUsers(1);
             });
 
-            it('with invalid user id returns a null user in the payload', async () => {
+            it('with invalid user id returns a null user in the payload (does not delete any user)', async () => {
                 const response = await client.deleteUser(unknownId);
 
                 expect(response.body).toEqual(
@@ -175,8 +235,7 @@ describe('User route acceptance tests', () => {
                     })
                 );
 
-                const verificationResponse = await client.getAllUsers();
-                expect(verificationResponse.body.payload.users).toHaveLength(1);
+                await verifyNumberOfUsers(2);
             });
         });
     });
