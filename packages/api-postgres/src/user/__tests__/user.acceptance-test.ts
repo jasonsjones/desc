@@ -59,8 +59,6 @@ describe('User route acceptance tests', () => {
             });
 
             beforeEach(async () => {
-                client.clearTokens();
-
                 await client.createAdminTestUser({
                     firstName: 'Admin',
                     lastName: 'User',
@@ -123,8 +121,6 @@ describe('User route acceptance tests', () => {
         });
 
         beforeEach(async () => {
-            client.clearTokens();
-
             await client.createAdminTestUser({
                 firstName: 'Admin',
                 lastName: 'User',

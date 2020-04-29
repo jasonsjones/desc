@@ -94,6 +94,7 @@ class TestClient {
     }
 
     public async doLogin(email: string, password: string): Promise<void> {
+        this.clearTokens();
         const response = await request(this.app)
             .post('/api/auth/login')
             .set('Content-Type', 'application/json')
