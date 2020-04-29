@@ -54,9 +54,13 @@ describe('User route acceptance tests', () => {
 
         describe('GET request method', () => {
             let client: TestClient;
+            beforeAll(() => {
+                client = new TestClient();
+            });
 
             beforeEach(async () => {
-                client = new TestClient();
+                client.clearTokens();
+
                 await client.createAdminTestUser({
                     firstName: 'Admin',
                     lastName: 'User',
@@ -114,8 +118,13 @@ describe('User route acceptance tests', () => {
         const email = 'oliver@desc.org';
         const password = '123456';
 
-        beforeEach(async () => {
+        beforeAll(() => {
             client = new TestClient();
+        });
+
+        beforeEach(async () => {
+            client.clearTokens();
+
             await client.createAdminTestUser({
                 firstName: 'Admin',
                 lastName: 'User',

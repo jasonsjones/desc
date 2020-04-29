@@ -171,6 +171,11 @@ class TestClient {
             .set('Content-Type', 'application/json');
     }
 
+    public clearTokens(): void {
+        this.accessToken = '';
+        this.refreshToken = '';
+    }
+
     private getRefreshTokenFromHeaders(headers: string[]): string {
         let refreshToken = '';
 

@@ -1,14 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
 import UserController from './UserController';
 import UserService from './UserService';
-import { UserRole } from '../entity/User';
 
 async function isAdmin(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
         const id: string = (req.user as any).id;
 
         const authUser = await UserService.getUserById(id);
-        if (authUser?.roles.includes(UserRole.ADMIN)) {
+        if (authUser?.isAdmin()) {
             next();
         } else {
             next(new Error('Error: Insufficient access level'));

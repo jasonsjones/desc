@@ -92,6 +92,14 @@ export default class User extends BaseEntity {
         return bcrypt.compareSync(password, this.password);
     }
 
+    isAdmin(): boolean {
+        return this.roles.includes(UserRole.ADMIN);
+    }
+
+    isOwner(otherId: string): boolean {
+        return this.id === otherId;
+    }
+
     toClientJSON(): UserDataForClient {
         return {
             id: this.id,
