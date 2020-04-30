@@ -50,7 +50,7 @@ class UserRouter {
         UserRouter.router
             .route('/:id')
             .get(isAdminOrSelf, UserController.getUser)
-            .patch(UserController.updateUser)
+            .patch(isAdminOrSelf, UserController.updateUser)
             .delete(UserController.deleteUser);
     }
 }

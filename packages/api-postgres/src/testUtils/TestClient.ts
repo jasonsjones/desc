@@ -78,6 +78,8 @@ class TestClient {
         return request(this.app)
             .patch(`/api/users/${id}`)
             .set('Content-Type', 'application/json')
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`)
             .send(updatedData);
     }
 

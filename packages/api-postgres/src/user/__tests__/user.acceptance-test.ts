@@ -112,7 +112,7 @@ describe('User route acceptance tests', () => {
         const unknownId = '9ff6515e-814a-4d1c-bc27-9a768c4aa242';
         const adminEmail = 'admin@desc.org';
         const requestor1Email = 'oliver@desc.org';
-        const reqeustor2Email = 'barry@desc.org';
+        const requestor2Email = 'barry@desc.org';
         const password = '123456';
 
         let requestorId1: string;
@@ -144,7 +144,7 @@ describe('User route acceptance tests', () => {
             const user2 = await client.createTestUser({
                 firstName: 'Barry',
                 lastName: 'Allen',
-                email: reqeustor2Email,
+                email: requestor2Email,
                 password,
                 program: Program.HOUSING
             });
@@ -205,6 +205,7 @@ describe('User route acceptance tests', () => {
 
         describe('PATCH request method', () => {
             it('updates the user with the given id', async () => {
+                await client.doLogin(requestor1Email, password);
                 const response = await client.updateUser(requestorId1, { firstName: 'Ollie' });
 
                 expect(response.body).toEqual(
@@ -218,7 +219,24 @@ describe('User route acceptance tests', () => {
                 );
             });
 
+            it('does not update user info if the requestor is not an admin or self', async () => {
+                await client.doLogin(requestor2Email, password);
+                const response = await client.updateUser(requestorId1, { firstName: 'Ollie' });
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
             it('with invalid user id returns a null user in the payload', async () => {
+                // need to log in as admin to verify
+                await client.doLogin(adminEmail, password);
                 const response = await client.updateUser(unknownId, { firstName: 'Ollie' });
 
                 expect(response.body).toEqual(
