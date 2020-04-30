@@ -86,7 +86,9 @@ class TestClient {
     public deleteUser(id: string): Test {
         return request(this.app)
             .delete(`/api/users/${id}`)
-            .set('Content-Type', 'application/json');
+            .set('Content-Type', 'application/json')
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public loginUser(email: string, password: string): Test {

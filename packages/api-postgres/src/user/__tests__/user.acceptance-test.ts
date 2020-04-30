@@ -260,6 +260,7 @@ describe('User route acceptance tests', () => {
             }
 
             it('deletes the user with the given id', async () => {
+                await client.doLogin(requestor1Email, password);
                 const response = await client.deleteUser(requestorId1);
 
                 expect(response.body).toEqual(
@@ -275,7 +276,26 @@ describe('User route acceptance tests', () => {
                 await verifyNumberOfUsers(2);
             });
 
+            it('does not delete a user if the requestor is not an admin or self', async () => {
+                await client.doLogin(requestor2Email, password);
+                const response = await client.deleteUser(requestorId1);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+
+                await verifyNumberOfUsers(3);
+            });
+
             it('with invalid user id returns a null user in the payload (does not delete any user)', async () => {
+                // need to log in as admin to verify
+                await client.doLogin(adminEmail, password);
                 const response = await client.deleteUser(unknownId);
 
                 expect(response.body).toEqual(
