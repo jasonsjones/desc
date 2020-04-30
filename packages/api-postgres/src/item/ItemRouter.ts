@@ -12,7 +12,7 @@ class ItemRouter {
     private static defineRoutes(): void {
         ItemRouter.router
             .route('/')
-            .post(ItemController.createItem)
+            .post(isAuthenticated, ItemController.createItem)
             .get(ItemController.getAllItems);
 
         ItemRouter.router

@@ -8,6 +8,8 @@ describe('Item route acceptance tests', () => {
     let userId: string;
     let client: TestClient;
     const clientId = '123456789';
+    const email = 'oliver@desc.org';
+    const password = '123456';
 
     beforeAll(async () => {
         client = new TestClient();
@@ -16,8 +18,8 @@ describe('Item route acceptance tests', () => {
         const user = await client.createTestUser({
             firstName: 'Oliver',
             lastName: 'Queen',
-            email: 'oliver@desc.org',
-            password: '123456',
+            email,
+            password,
             program: Program.SURVIVAL
         });
         userId = user.id;
@@ -35,6 +37,10 @@ describe('Item route acceptance tests', () => {
 
     describe('/api/items route', () => {
         describe('POST request method', () => {
+            beforeEach(async () => {
+                await client.doLogin(email, password);
+            });
+
             it('creates a new item', async () => {
                 const response = await client.createItem({
                     clientId,
@@ -121,10 +127,35 @@ describe('Item route acceptance tests', () => {
                     })
                 );
             });
+
+            it('does not create an item if the user is not authenticated', async () => {
+                client.logoutUser();
+                const response = await client.createItem({
+                    clientId,
+                    category: 'engagement',
+                    name: 'games',
+                    status: ItemStatus.WISHLIST,
+                    location: 'aurora house',
+                    requestorId: userId
+                });
+
+                expect(response.status).toBe(200);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
         });
 
         describe('GET request method', () => {
             beforeEach(async () => {
+                await client.doLogin(email, password);
+
                 await client.createItem({
                     clientId,
                     category: 'engagement',
@@ -166,6 +197,8 @@ describe('Item route acceptance tests', () => {
     describe('api/items/:id route', () => {
         let itemId: string;
         beforeEach(async () => {
+            await client.doLogin(email, password);
+
             await client.createItem({
                 clientId,
                 category: 'engagement',
@@ -305,6 +338,8 @@ describe('Item route acceptance tests', () => {
     describe('api/items/:id/notes route', () => {
         let itemId: string;
         beforeEach(async () => {
+            await client.doLogin(email, password);
+
             await client.createItem({
                 clientId,
                 category: 'engagement',
@@ -392,6 +427,8 @@ describe('Item route acceptance tests', () => {
         let noteId: string;
 
         beforeEach(async () => {
+            await client.doLogin(email, password);
+
             await client.createItem({
                 clientId,
                 category: 'engagement',

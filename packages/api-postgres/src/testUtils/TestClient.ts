@@ -98,6 +98,10 @@ class TestClient {
             .send({ email, password });
     }
 
+    public logoutUser(): void {
+        this.clearTokens();
+    }
+
     public async doLogin(email: string, password: string): Promise<void> {
         this.clearTokens();
         const response = await request(this.app)
@@ -113,6 +117,8 @@ class TestClient {
     public createItem(itemData: any): Test {
         return request(this.app)
             .post('/api/items')
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`)
             .set('Content-Type', 'application/json')
             .send(itemData);
     }
@@ -177,7 +183,7 @@ class TestClient {
             .set('Content-Type', 'application/json');
     }
 
-    public clearTokens(): void {
+    private clearTokens(): void {
         this.accessToken = '';
         this.refreshToken = '';
     }

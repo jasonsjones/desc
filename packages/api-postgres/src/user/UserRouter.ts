@@ -1,21 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import UserController from './UserController';
 import UserService from './UserService';
-
-async function isAdmin(req: Request, _: Response, next: NextFunction): Promise<void> {
-    if (req.user) {
-        const id: string = (req.user as any).id;
-
-        const authUser = await UserService.getUserById(id);
-        if (authUser?.isAdmin()) {
-            next();
-        } else {
-            next(new Error('Error: Insufficient access level'));
-        }
-    } else {
-        next(new Error('Error: protected route, user needs to be authenticated.'));
-    }
-}
+import { isAdmin } from '../common/routerMiddleware';
 
 async function isAdminOrSelf(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
