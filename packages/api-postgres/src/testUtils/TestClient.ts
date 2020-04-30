@@ -67,7 +67,8 @@ class TestClient {
     public getUser(id: string): Test {
         return request(this.app)
             .get(`/api/users/${id}`)
-            .set('Content-Type', 'application/json');
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public updateUser(

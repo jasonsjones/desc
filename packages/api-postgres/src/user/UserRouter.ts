@@ -17,6 +17,21 @@ async function isAdmin(req: Request, _: Response, next: NextFunction): Promise<v
     }
 }
 
+async function isAdminOrSelf(req: Request, _: Response, next: NextFunction): Promise<void> {
+    if (req.user) {
+        const id: string = (req.user as any).id;
+
+        const authUser = await UserService.getUserById(id);
+        if (authUser?.isAdmin() || authUser?.isOwner(req.params.id)) {
+            next();
+        } else {
+            next(new Error('Error: Insufficient access level'));
+        }
+    } else {
+        next(new Error('Error: protected route, user needs to be authenticated.'));
+    }
+}
+
 class UserRouter {
     private static router = express.Router();
     static getRouter(): express.Router {
@@ -34,7 +49,7 @@ class UserRouter {
 
         UserRouter.router
             .route('/:id')
-            .get(UserController.getUser)
+            .get(isAdminOrSelf, UserController.getUser)
             .patch(UserController.updateUser)
             .delete(UserController.deleteUser);
     }
