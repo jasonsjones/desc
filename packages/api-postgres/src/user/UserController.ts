@@ -8,7 +8,7 @@ class UserController {
         // only includes the accepted properties
         const { firstName, lastName, email, password, program } = req.body;
 
-        return UserService.createUser(firstName, lastName, email, password, program)
+        return UserService.createUser({ firstName, lastName, email, password, program })
             .then(user => {
                 return res.status(201).json({
                     success: true,

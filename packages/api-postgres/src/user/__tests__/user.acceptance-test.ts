@@ -1,4 +1,4 @@
-import { Program } from '../../entity/User';
+import { Program } from '../../common/types';
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { createPostgresConnection, closeConnection } from '../../config/database';

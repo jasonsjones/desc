@@ -1,7 +1,8 @@
 import UserService from '../UserService';
-import User, { Program } from '../../entity/User';
+import User from '../../entity/User';
 import { createPostgresConnection, closeConnection } from '../../config/database';
 import TestUtils from '../../testUtils/TestUtilities';
+import { Program } from '../../common/types';
 
 const testUser = {
     firstName: 'John',
@@ -27,13 +28,13 @@ describe('User service integration tests', () => {
 
         it('creates a new user', async () => {
             const { firstName, lastName, email, password, program } = testUser;
-            const result = await UserService.createUser(
+            const result = await UserService.createUser({
                 firstName,
                 lastName,
                 email,
                 password,
                 program
-            );
+            });
 
             expect(result).toEqual(expect.any(User));
             expect(result.password).not.toEqual(testUser.password);
@@ -45,13 +46,13 @@ describe('User service integration tests', () => {
 
         beforeEach(async () => {
             const { firstName, lastName, email, password, program } = testUser;
-            const user = await UserService.createUser(
+            const user = await UserService.createUser({
                 firstName,
                 lastName,
                 email,
                 password,
                 program
-            );
+            });
             userId = user.id;
         });
 
@@ -78,13 +79,13 @@ describe('User service integration tests', () => {
 
         beforeEach(async () => {
             const { firstName, lastName, email, password, program } = testUser;
-            const user = await UserService.createUser(
+            const user = await UserService.createUser({
                 firstName,
                 lastName,
                 email,
                 password,
                 program
-            );
+            });
             userId = user.id;
         });
 
@@ -119,15 +120,20 @@ describe('User service integration tests', () => {
         let userIdToDelete: string;
 
         beforeEach(async () => {
-            await UserService.createUser('Barry', 'Allen', 'barry@starlabs.com', 'test1234');
+            await UserService.createUser({
+                firstName: 'Barry',
+                lastName: 'Allen',
+                email: 'barry@starlabs.com',
+                password: 'test1234'
+            });
             const { firstName, lastName, email, password, program } = testUser;
-            const user = await UserService.createUser(
+            const user = await UserService.createUser({
                 firstName,
                 lastName,
                 email,
                 password,
                 program
-            );
+            });
             userIdToDelete = user.id;
         });
 

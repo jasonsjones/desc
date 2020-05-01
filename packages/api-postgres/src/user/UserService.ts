@@ -1,40 +1,17 @@
 import bcrypt from 'bcryptjs';
 import { v4 } from 'uuid';
-import User, { Program, UserRole } from '../entity/User';
+import User from '../entity/User';
 import { getRepository } from 'typeorm';
-
-interface UserCreationFields {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    program?: Program;
-    roles?: [UserRole];
-}
-interface UpdatableUserFields {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-}
+import { UserFields, UpdatableUserFields, UserRole } from '../common/types';
 
 export default class UserService {
-    static async createUser(
-        firstName: string,
-        lastName: string,
-        email: string,
-        password: string,
-        program?: Program
-    ): Promise<User> {
+    static async createUser(userData: UserFields): Promise<User> {
+        const { password } = userData;
+
         // reduce the hash salt length for tests to decrease the test run time
         const saltLength = process.env.NODE_ENV === 'testing' ? 4 : 12;
         const hashedPassword = await bcrypt.hash(password, saltLength);
-        let data: UserCreationFields = {
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            program
-        };
+        let data: UserFields = { ...userData, password: hashedPassword };
 
         // for dev purposes, let's make the first user created an 'admin';
         // all subsequent users will default to a 'requestor'
@@ -47,22 +24,11 @@ export default class UserService {
         return user.save();
     }
 
-    static async createAdminTestUser(
-        firstName: string,
-        lastName: string,
-        email: string,
-        password: string,
-        program?: Program
-    ): Promise<User> {
+    static async createAdminTestUser(userData: UserFields): Promise<User> {
+        const { password } = userData;
         const hashedPassword = await bcrypt.hash(password, 4);
-        let data: UserCreationFields = {
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            program,
-            roles: [UserRole.ADMIN]
-        };
+        let data: UserFields = { ...userData, password: hashedPassword, roles: [UserRole.ADMIN] };
+
         const user = User.create(data);
         user.emailVerificationToken = v4();
         return user.save();

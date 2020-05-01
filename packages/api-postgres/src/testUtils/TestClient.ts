@@ -2,8 +2,8 @@ import { Application } from 'express';
 import request, { Test } from 'supertest';
 import app from '../config/app';
 import UserService from '../user/UserService';
-import User, { Program } from '../entity/User';
-import { UpdatableItemFields } from '../common/types';
+import User from '../entity/User';
+import { UpdatableItemFields, Program } from '../common/types';
 
 class TestClient {
     private app: Application;
@@ -30,7 +30,7 @@ class TestClient {
         program: Program;
     }): Promise<User> {
         const { firstName, lastName, email, password, program } = userData;
-        return UserService.createUser(firstName, lastName, email, password, program);
+        return UserService.createUser({ firstName, lastName, email, password, program });
     }
 
     public createAdminTestUser(userData: {
@@ -41,7 +41,7 @@ class TestClient {
         program: Program;
     }): Promise<User> {
         const { firstName, lastName, email, password, program } = userData;
-        return UserService.createAdminTestUser(firstName, lastName, email, password, program);
+        return UserService.createAdminTestUser({ firstName, lastName, email, password, program });
     }
 
     public creatUserViaAPI(userData: {

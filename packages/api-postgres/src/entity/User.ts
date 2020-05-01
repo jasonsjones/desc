@@ -7,24 +7,7 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 import bcrypt from 'bcryptjs';
-
-export enum UserRole {
-    ADMIN = 'admin',
-    APPROVER = 'approver',
-    REQUESTOR = 'requestor',
-    VOLUNTEER = 'volunteer',
-    UNKNOWN = 'unknown'
-}
-
-export enum Program {
-    HOUSING = 'housing first',
-    INTEGRATED = 'integrated services',
-    SURVIVAL = 'survival services',
-    HEALTH = 'health services',
-    EMPLOYMENT = 'employment services',
-    RESEARCH_INNOVATION = 'research_innovation',
-    UNKNOWN = 'unknown'
-}
+import { Program, UserRole } from '../common/types';
 
 interface UserDataForClient {
     id: string;

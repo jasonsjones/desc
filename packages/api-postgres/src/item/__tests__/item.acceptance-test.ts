@@ -1,6 +1,6 @@
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
-import { Program } from '../../entity/User';
+import { Program } from '../../common/types';
 import { createPostgresConnection, closeConnection } from '../../config/database';
 import { ItemPriority, ItemStatus, ItemCategory } from '../../common/types';
 

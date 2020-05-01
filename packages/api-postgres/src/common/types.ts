@@ -1,3 +1,31 @@
+export enum UserRole {
+    ADMIN = 'admin',
+    APPROVER = 'approver',
+    REQUESTOR = 'requestor',
+    VOLUNTEER = 'volunteer',
+    UNKNOWN = 'unknown'
+}
+
+export enum Program {
+    HOUSING = 'housing first',
+    INTEGRATED = 'integrated services',
+    SURVIVAL = 'survival services',
+    HEALTH = 'health services',
+    EMPLOYMENT = 'employment services',
+    RESEARCH_INNOVATION = 'research_innovation',
+    UNKNOWN = 'unknown'
+}
+export interface UserFields {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    program?: Program;
+    roles?: [UserRole];
+}
+
+export type UpdatableUserFields = Partial<Omit<UserFields, 'password' | 'roles'>>;
+
 export enum ItemCategory {
     ENGAGEMENT = 'engagement',
     HOUSEHOLD = 'household'
@@ -45,7 +73,7 @@ export type HouseholdItems =
     | 'napkins/paper towels'
     | 'shower curtain';
 
-export interface NoteData {
+export interface NoteFields {
     body: string;
     userId?: string;
     itemId?: string;
@@ -62,11 +90,4 @@ export interface ItemFields {
     note?: string;
 }
 
-export interface UpdatableItemFields {
-    category?: ItemCategory;
-    name?: string;
-    priority?: ItemPriority;
-    quantity?: number;
-    status?: ItemStatus;
-    location?: HouseLocation;
-}
+export type UpdatableItemFields = Partial<ItemFields>;

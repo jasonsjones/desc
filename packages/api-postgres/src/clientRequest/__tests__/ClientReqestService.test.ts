@@ -1,6 +1,6 @@
 import { createPostgresConnection, closeConnection } from '../../config/database';
-import User, { Program } from '../../entity/User';
-import { ItemCategory, HouseLocation, ItemFields } from '../../common/types';
+import User from '../../entity/User';
+import { ItemCategory, HouseLocation, ItemFields, Program } from '../../common/types';
 import UserService from '../../user/UserService';
 import ClientRequestService from '../ClientRequestService';
 import TestUtils from '../../testUtils/TestUtilities';
@@ -13,13 +13,13 @@ describe('ClientRequest service', () => {
     beforeAll(async () => {
         await createPostgresConnection();
         userId = (
-            await UserService.createUser(
-                'Test',
-                'User',
-                'test@desc.org',
-                '123456',
-                Program.SURVIVAL
-            )
+            await UserService.createUser({
+                firstName: 'Test',
+                lastName: 'User',
+                email: 'test@desc.org',
+                password: '123456',
+                program: Program.SURVIVAL
+            })
         ).id;
 
         item1 = {

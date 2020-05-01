@@ -1,10 +1,10 @@
 import Note from '../entity/Note';
 import UserService from '../user/UserService';
 import ItemService from '../item/ItemService';
-import { NoteData } from '../common/types';
+import { NoteFields } from '../common/types';
 
 export default class NoteService {
-    static async createNote(noteData: NoteData): Promise<Note | undefined> {
+    static async createNote(noteData: NoteFields): Promise<Note | undefined> {
         const { body, userId, itemId } = noteData;
         const note = Note.create({ body });
 
@@ -26,7 +26,7 @@ export default class NoteService {
         return note.save();
     }
 
-    static createNoteForItem(noteData: NoteData): Note {
+    static createNoteForItem(noteData: NoteFields): Note {
         const { body } = noteData;
         const note = Note.create({ body });
         return note;
