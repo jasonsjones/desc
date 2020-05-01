@@ -5,24 +5,46 @@ import { createPostgresConnection, closeConnection } from '../../config/database
 import { ItemPriority, ItemStatus, ItemCategory } from '../../common/types';
 
 describe('Item route acceptance tests', () => {
-    let userId: string;
+    let requestor1Id: string;
+    let requestor2Id: string;
     let client: TestClient;
     const clientId = '123456789';
-    const email = 'oliver@desc.org';
+
+    const requestor1Email = 'oliver@desc.org';
+    const requestor2Email = 'barry@desc.org';
+    const adminEmail = 'admin@desc.org';
     const password = '123456';
 
     beforeAll(async () => {
         client = new TestClient();
 
         await createPostgresConnection();
-        const user = await client.createTestUser({
-            firstName: 'Oliver',
-            lastName: 'Queen',
-            email,
+
+        await client.createAdminTestUser({
+            firstName: 'Admin',
+            lastName: 'User',
+            email: adminEmail,
             password,
             program: Program.SURVIVAL
         });
-        userId = user.id;
+
+        const user1 = await client.createTestUser({
+            firstName: 'Oliver',
+            lastName: 'Queen',
+            email: requestor1Email,
+            password,
+            program: Program.SURVIVAL
+        });
+        requestor1Id = user1.id;
+
+        const user2 = await client.createTestUser({
+            firstName: 'Barry',
+            lastName: 'Allen',
+            email: requestor2Email,
+            password,
+            program: Program.SURVIVAL
+        });
+        requestor2Id = user2.id;
     });
 
     afterEach(async () => {
@@ -38,7 +60,7 @@ describe('Item route acceptance tests', () => {
     describe('/api/items route', () => {
         describe('POST request method', () => {
             beforeEach(async () => {
-                await client.doLogin(email, password);
+                await client.doLogin(requestor1Email, password);
             });
 
             it('creates a new item', async () => {
@@ -47,7 +69,7 @@ describe('Item route acceptance tests', () => {
                     category: 'engagement',
                     name: 'games',
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(201);
@@ -69,7 +91,7 @@ describe('Item route acceptance tests', () => {
                     name: 'games',
                     quantity: 3,
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(201);
@@ -91,7 +113,7 @@ describe('Item route acceptance tests', () => {
                     name: 'games',
                     location: 'aurora house',
                     priority: ItemPriority.URGENT,
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(201);
@@ -113,7 +135,7 @@ describe('Item route acceptance tests', () => {
                     name: 'games',
                     status: ItemStatus.WISHLIST,
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(201);
@@ -136,7 +158,7 @@ describe('Item route acceptance tests', () => {
                     name: 'games',
                     status: ItemStatus.WISHLIST,
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(200);
@@ -154,21 +176,22 @@ describe('Item route acceptance tests', () => {
 
         describe('GET request method', () => {
             beforeEach(async () => {
-                await client.doLogin(email, password);
+                await client.doLogin(requestor1Email, password);
 
                 await client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
+
                 await client.createItem({
                     clientId,
                     category: 'household',
                     name: 'pillows',
                     location: 'aurora house',
-                    requestorId: userId
+                    requestorId: requestor2Id
                 });
             });
 
@@ -191,27 +214,42 @@ describe('Item route acceptance tests', () => {
                 const response = await client.getAllItems();
                 expect(response.body.payload.items[0].submittedBy.password).not.toBeDefined();
             });
+
+            it('does not fetch items if the user is not authenticated', async () => {
+                client.logoutUser();
+                const response = await client.getAllItems();
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
         });
     });
 
     describe('api/items/:id route', () => {
         let itemId: string;
         beforeEach(async () => {
-            await client.doLogin(email, password);
+            await client.doLogin(requestor1Email, password);
 
             await client.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
                 location: 'aurora house',
-                requestorId: userId
+                requestorId: requestor1Id
             });
             const response = await client.createItem({
                 clientId,
                 category: 'household',
                 name: 'pillows',
                 location: 'aurora house',
-                requestorId: userId
+                requestorId: requestor1Id
             });
             itemId = response.body.payload.item.id;
         });
@@ -338,14 +376,14 @@ describe('Item route acceptance tests', () => {
     describe('api/items/:id/notes route', () => {
         let itemId: string;
         beforeEach(async () => {
-            await client.doLogin(email, password);
+            await client.doLogin(requestor1Email, password);
 
             await client.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
                 location: 'aurora house',
-                requestorId: userId
+                requestorId: requestor1Id
             });
 
             const response = await client.createItem({
@@ -353,7 +391,7 @@ describe('Item route acceptance tests', () => {
                 category: 'household',
                 name: 'pillows',
                 location: 'aurora house',
-                requestorId: userId,
+                requestorId: requestor1Id,
                 note: 'Big, fluffy pillows, please.'
             });
 
@@ -364,7 +402,7 @@ describe('Item route acceptance tests', () => {
             it('adds a note to an itme', async () => {
                 const noteData = {
                     body: 'King size pillows, please.',
-                    authorId: userId
+                    authorId: requestor1Id
                 };
                 const response = await client.addNoteToItem(itemId, noteData);
 
@@ -384,7 +422,7 @@ describe('Item route acceptance tests', () => {
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
                 const noteData = {
                     body: 'King size pillows, please.',
-                    authorId: userId
+                    authorId: requestor1Id
                 };
                 const response = await client.addNoteToItem(badId, noteData);
 
@@ -427,14 +465,14 @@ describe('Item route acceptance tests', () => {
         let noteId: string;
 
         beforeEach(async () => {
-            await client.doLogin(email, password);
+            await client.doLogin(requestor1Email, password);
 
             await client.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
                 location: 'aurora house',
-                requestorId: userId
+                requestorId: requestor1Id
             });
 
             const itemResponse = await client.createItem({
@@ -442,7 +480,7 @@ describe('Item route acceptance tests', () => {
                 category: 'household',
                 name: 'pillows',
                 location: 'aurora house',
-                requestorId: userId,
+                requestorId: requestor1Id,
                 note: {
                     body: 'Big, fluffy pillows, please.'
                 }
@@ -452,12 +490,12 @@ describe('Item route acceptance tests', () => {
 
             const noteData1 = {
                 body: 'King size pillows, please.',
-                authorId: userId
+                authorId: requestor1Id
             };
 
             const noteData2 = {
                 body: 'Queen size pillows, please.',
-                authorId: userId
+                authorId: requestor1Id
             };
 
             const noteResponse = await client.addNoteToItem(itemId, noteData1);

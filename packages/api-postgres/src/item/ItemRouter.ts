@@ -13,7 +13,7 @@ class ItemRouter {
         ItemRouter.router
             .route('/')
             .post(isAuthenticated, ItemController.createItem)
-            .get(ItemController.getAllItems);
+            .get(isAuthenticated, ItemController.getAllItems);
 
         ItemRouter.router
             .route('/:id')

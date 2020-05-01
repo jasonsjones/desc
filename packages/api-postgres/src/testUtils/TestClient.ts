@@ -126,7 +126,8 @@ class TestClient {
     public getAllItems(): Test {
         return request(this.app)
             .get('/api/items')
-            .set('Content-Type', 'application/json');
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public getItem(id: string): Test {
