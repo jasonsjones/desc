@@ -7,11 +7,9 @@ import { ItemData, ItemCategory, HouseLocation } from '../../common/types';
 describe('ClientRequest route acceptance tests', () => {
     const clientId = '123456789';
     const requestor1Email = 'oliver@desc.org';
-    // const requestor2Email = 'barry@desc.org';
     const adminEmail = 'Admin@desc.org';
     const password = '123456';
     let requestor1Id: string;
-    // let requestor2Id: string;
     let client: TestClient;
     let item1: ItemData;
     let item2: ItemData;
@@ -37,16 +35,6 @@ describe('ClientRequest route acceptance tests', () => {
             program: Program.SURVIVAL
         });
         requestor1Id = user1.id;
-
-        // const user2 = await client.createTestUser({
-        //     firstName: 'Barry',
-        //     lastName: 'Allen',
-        //     email: requestor2Email,
-        //     password,
-        //     program: Program.SURVIVAL
-        // });
-        // requestor2Id = user2.id;
-        // console.log(requestor2Id);
 
         item1 = {
             clientId,
@@ -223,6 +211,7 @@ describe('ClientRequest route acceptance tests', () => {
         describe('GET request method', () => {
             beforeAll(async () => {
                 await client.doLogin(requestor1Email, password);
+
                 await client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
@@ -234,9 +223,12 @@ describe('ClientRequest route acceptance tests', () => {
                     requestorId: requestor1Id,
                     items: [item1, item3]
                 });
+                client.logoutUser();
             });
 
             it('fetches all client requests', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const response = await client.getAllClientRequests();
 
                 expect(response.body).toEqual(
@@ -249,6 +241,22 @@ describe('ClientRequest route acceptance tests', () => {
                                 expect.any(Object)
                             ])
                         })
+                    })
+                );
+            });
+
+            it('responds with error if the requestor is not authenticated', async () => {
+                client.logoutUser();
+
+                const response = await client.getAllClientRequests();
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });

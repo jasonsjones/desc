@@ -184,7 +184,8 @@ class TestClient {
     public getAllClientRequests(): Test {
         return request(this.app)
             .get('/api/clientrequests')
-            .set('Content-Type', 'application/json');
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public getClientRequest(id: string): Test {

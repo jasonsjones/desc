@@ -14,7 +14,7 @@ class ClientRequestRouter {
         ClientRequestRouter.router
             .route('/')
             .post(isAuthenticated, ClientRequestController.createClientRequest)
-            .get(ClientRequestController.getAllClientRequests);
+            .get(isAuthenticated, ClientRequestController.getAllClientRequests);
 
         ClientRequestRouter.router.route('/:id').get(ClientRequestController.getClientRequest);
     }
