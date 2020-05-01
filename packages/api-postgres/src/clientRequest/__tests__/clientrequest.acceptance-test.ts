@@ -266,6 +266,7 @@ describe('ClientRequest route acceptance tests', () => {
     describe('/api/clientrequests/:id route', () => {
         describe('GET request method', () => {
             let clientRequestId: string;
+
             beforeAll(async () => {
                 await client.doLogin(requestor1Email, password);
                 await client.createClientRequest({
@@ -281,9 +282,11 @@ describe('ClientRequest route acceptance tests', () => {
                 });
 
                 clientRequestId = response.body.payload.clientRequest.id;
+                client.logoutUser();
             });
 
-            it('fetches all client requests', async () => {
+            it('fetches the client request with the given id', async () => {
+                await client.doLogin(requestor1Email, password);
                 const response = await client.getClientRequest(clientRequestId);
 
                 expect(response.body).toEqual(
@@ -298,6 +301,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('with invalid client reuqest id returns a null client request in the payload', async () => {
+                // login as admin to query an unknown id
+                await client.doLogin(adminEmail, password);
+
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
                 const response = await client.getClientRequest(badId);
 
@@ -308,6 +314,22 @@ describe('ClientRequest route acceptance tests', () => {
                         payload: expect.objectContaining({
                             clientRequest: null
                         })
+                    })
+                );
+            });
+
+            it('responds with error if the requestor is not authenticated', async () => {
+                client.logoutUser();
+
+                const response = await client.getClientRequest(clientRequestId);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });
