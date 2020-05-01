@@ -583,8 +583,8 @@ describe('Item route acceptance tests', () => {
     });
 
     describe('api/items/:id/notes/:noteId route', () => {
-        let itemId: string;
-        let noteId: string;
+        let requestor1ItemId: string;
+        let requestor1NoteId: string;
 
         beforeEach(async () => {
             await client.doLogin(requestor1Email, password);
@@ -603,12 +603,10 @@ describe('Item route acceptance tests', () => {
                 name: 'pillows',
                 location: 'aurora house',
                 requestorId: requestor1Id,
-                note: {
-                    body: 'Big, fluffy pillows, please.'
-                }
+                note: 'Big, fluffy pillows, please.'
             });
 
-            itemId = itemResponse.body.payload.item.id;
+            requestor1ItemId = itemResponse.body.payload.item.id;
 
             const noteData1 = {
                 body: 'King size pillows, please.',
@@ -616,19 +614,22 @@ describe('Item route acceptance tests', () => {
             };
 
             const noteData2 = {
-                body: 'Queen size pillows, please.',
-                authorId: requestor1Id
+                body: 'Correction: Queen size pillows, please.',
+                authorId: requestor2Id
             };
 
-            const noteResponse = await client.addNoteToItem(itemId, noteData1);
-            noteId = noteResponse.body.payload.item.notes[1].id;
+            const noteResponse = await client.addNoteToItem(requestor1ItemId, noteData1);
+            requestor1NoteId = noteResponse.body.payload.item.notes[1].id;
 
-            await client.addNoteToItem(itemId, noteData2);
+            await client.addNoteToItem(requestor1ItemId, noteData2);
         });
 
         describe('DELETE request method', () => {
             it('deletes a note from an item', async () => {
-                const response = await client.deleteNoteFromItem(itemId, noteId);
+                const response = await client.deleteNoteFromItem(
+                    requestor1ItemId,
+                    requestor1NoteId
+                );
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -643,8 +644,10 @@ describe('Item route acceptance tests', () => {
             });
 
             it('handles deleting a note to item with bad item id', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.deleteNoteFromItem(badId, noteId);
+                const response = await client.deleteNoteFromItem(badId, requestor1NoteId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -659,8 +662,10 @@ describe('Item route acceptance tests', () => {
             });
 
             it('handles deleting a note to item with bad note id', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.deleteNoteFromItem(itemId, badId);
+                const response = await client.deleteNoteFromItem(requestor1ItemId, badId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -670,6 +675,44 @@ describe('Item route acceptance tests', () => {
                             error: expect.any(String),
                             item: null
                         })
+                    })
+                );
+            });
+
+            it('does not delete a note made by another user', async () => {
+                await client.doLogin(requestor2Email, password);
+
+                const response = await client.deleteNoteFromItem(
+                    requestor1ItemId,
+                    requestor1NoteId
+                );
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
+            it('does not delete a note if the user is not authentciated', async () => {
+                client.logoutUser();
+
+                const response = await client.deleteNoteFromItem(
+                    requestor1ItemId,
+                    requestor1NoteId
+                );
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });

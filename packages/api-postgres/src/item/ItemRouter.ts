@@ -3,6 +3,7 @@ import ItemController from './ItemController';
 import ItemService from './ItemService';
 import UserService from '../user/UserService';
 import { isAuthenticated } from '../common/routerMiddleware';
+import NoteService from '../note/NoteService';
 
 async function isAdminOrRequestor(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
@@ -12,6 +13,23 @@ async function isAdminOrRequestor(req: Request, _: Response, next: NextFunction)
         const item = await ItemService.getItemById(req.params.id);
 
         if (authUser?.isAdmin() || authUser?.isOwner(item?.submittedBy.id)) {
+            next();
+        } else {
+            next(new Error('Error: Insufficient access level'));
+        }
+    } else {
+        next(new Error('Error: protected route, user needs to be authenticated.'));
+    }
+}
+
+async function isAdminOrAuthor(req: Request, _: Response, next: NextFunction): Promise<void> {
+    if (req.user) {
+        const id: string = (req.user as any).id;
+
+        const authUser = await UserService.getUserById(id);
+        const note = await NoteService.getNoteById(req.params.noteId);
+
+        if (authUser?.isAdmin() || authUser?.isOwner(note?.submittedBy.id)) {
             next();
         } else {
             next(new Error('Error: Insufficient access level'));
@@ -42,7 +60,9 @@ class ItemRouter {
             .delete(isAdminOrRequestor, ItemController.deleteItem);
 
         ItemRouter.router.route('/:id/notes').post(isAuthenticated, ItemController.addNoteToItem);
-        ItemRouter.router.route('/:id/notes/:noteId').delete(ItemController.deleteNoteFromItem);
+        ItemRouter.router
+            .route('/:id/notes/:noteId')
+            .delete(isAdminOrAuthor, ItemController.deleteNoteFromItem);
     }
 }
 

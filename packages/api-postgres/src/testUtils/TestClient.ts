@@ -168,7 +168,8 @@ class TestClient {
     public deleteNoteFromItem(itemId: string, noteId: string): Test {
         return request(this.app)
             .delete(`/api/items/${itemId}/notes/${noteId}`)
-            .set('Content-Type', 'application/json');
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public createClientRequest(requestData: any): Test {
