@@ -6,7 +6,12 @@ import { ItemData, ItemCategory, HouseLocation } from '../../common/types';
 
 describe('ClientRequest route acceptance tests', () => {
     const clientId = '123456789';
-    let userId: string;
+    const requestor1Email = 'oliver@desc.org';
+    // const requestor2Email = 'barry@desc.org';
+    const adminEmail = 'Admin@desc.org';
+    const password = '123456';
+    let requestor1Id: string;
+    // let requestor2Id: string;
     let client: TestClient;
     let item1: ItemData;
     let item2: ItemData;
@@ -16,14 +21,32 @@ describe('ClientRequest route acceptance tests', () => {
         client = new TestClient();
 
         await createPostgresConnection();
-        const user = await client.createTestUser({
+        await client.createAdminTestUser({
+            firstName: 'Admin',
+            lastName: 'User',
+            email: adminEmail,
+            password,
+            program: Program.EMPLOYMENT
+        });
+
+        const user1 = await client.createTestUser({
             firstName: 'Oliver',
             lastName: 'Queen',
-            email: 'oliver@desc.org',
-            password: '123456',
+            email: requestor1Email,
+            password,
             program: Program.SURVIVAL
         });
-        userId = user.id;
+        requestor1Id = user1.id;
+
+        // const user2 = await client.createTestUser({
+        //     firstName: 'Barry',
+        //     lastName: 'Allen',
+        //     email: requestor2Email,
+        //     password,
+        //     program: Program.SURVIVAL
+        // });
+        // requestor2Id = user2.id;
+        // console.log(requestor2Id);
 
         item1 = {
             clientId,
@@ -31,7 +54,7 @@ describe('ClientRequest route acceptance tests', () => {
             name: 'pillows',
             quantity: 2,
             location: HouseLocation.RAINIER_HOUSE,
-            requestorId: userId
+            requestorId: requestor1Id
         };
 
         item2 = {
@@ -39,7 +62,7 @@ describe('ClientRequest route acceptance tests', () => {
             category: ItemCategory.ENGAGEMENT,
             name: 'games',
             location: HouseLocation.AURORA_HOUSE,
-            requestorId: userId,
+            requestorId: requestor1Id,
             note: 'Board games are perfect'
         };
 
@@ -48,7 +71,7 @@ describe('ClientRequest route acceptance tests', () => {
             category: ItemCategory.HOUSEHOLD,
             name: 'bedding',
             location: HouseLocation.AURORA_HOUSE,
-            requestorId: userId,
+            requestorId: requestor1Id,
             note: '400 count sheets'
         };
     });
@@ -66,10 +89,16 @@ describe('ClientRequest route acceptance tests', () => {
 
     describe('/api/clientrequests route', () => {
         describe('POST request method', () => {
+            afterEach(() => {
+                client.logoutUser();
+            });
+
             it('creates a new client reqeust', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const response = await client.createClientRequest({
                     clientId,
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
@@ -86,9 +115,11 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('creates a new client reqeust without items', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const response = await client.createClientRequest({
                     clientId,
-                    requestorId: userId
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(201);
@@ -104,8 +135,10 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if clientId is not provided', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const response = await client.createClientRequest({
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
@@ -123,6 +156,8 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if requestorId is not provided', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const response = await client.createClientRequest({
                     clientId,
                     items: [item1, item2]
@@ -142,7 +177,10 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if requestorId is not found', async () => {
+                // login as admin to query an unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
+
                 const response = await client.createClientRequest({
                     clientId,
                     requestorId: badId,
@@ -161,19 +199,39 @@ describe('ClientRequest route acceptance tests', () => {
                     })
                 );
             });
+
+            it('responds with error if the requestor is not authenticated', async () => {
+                const response = await client.createClientRequest({
+                    clientId,
+                    requestorId: requestor1Id,
+                    items: [item1, item2]
+                });
+
+                expect(response.status).toBe(200);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
         });
 
         describe('GET request method', () => {
             beforeAll(async () => {
+                await client.doLogin(requestor1Email, password);
                 await client.createClientRequest({
                     clientId,
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
                 await client.createClientRequest({
                     clientId,
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item3]
                 });
             });
@@ -201,15 +259,16 @@ describe('ClientRequest route acceptance tests', () => {
         describe('GET request method', () => {
             let clientRequestId: string;
             beforeAll(async () => {
+                await client.doLogin(requestor1Email, password);
                 await client.createClientRequest({
                     clientId,
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
                 const response = await client.createClientRequest({
                     clientId,
-                    requestorId: userId,
+                    requestorId: requestor1Id,
                     items: [item1, item3]
                 });
 

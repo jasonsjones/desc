@@ -175,6 +175,8 @@ class TestClient {
     public createClientRequest(requestData: any): Test {
         return request(this.app)
             .post('/api/clientrequests')
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`)
             .set('Content-Type', 'application/json')
             .send(requestData);
     }
