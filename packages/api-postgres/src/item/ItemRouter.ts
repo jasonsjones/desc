@@ -39,7 +39,7 @@ class ItemRouter {
             .route('/:id')
             .get(isAuthenticated, ItemController.getItem)
             .patch(isAdminOrRequestor, ItemController.updateItem)
-            .delete(ItemController.deleteItem);
+            .delete(isAdminOrRequestor, ItemController.deleteItem);
 
         ItemRouter.router.route('/:id/notes').post(ItemController.addNoteToItem);
         ItemRouter.router.route('/:id/notes/:noteId').delete(ItemController.deleteNoteFromItem);

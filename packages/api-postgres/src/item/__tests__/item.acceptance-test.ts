@@ -233,7 +233,7 @@ describe('Item route acceptance tests', () => {
     });
 
     describe('api/items/:id route', () => {
-        let itemId: string;
+        let requestor2ItemId: string;
         beforeEach(async () => {
             await client.doLogin(requestor2Email, password);
 
@@ -252,12 +252,12 @@ describe('Item route acceptance tests', () => {
                 location: 'aurora house',
                 requestorId: requestor2Id
             });
-            itemId = response.body.payload.item.id;
+            requestor2ItemId = response.body.payload.item.id;
         });
 
         describe('GET request method', () => {
             it('fetches the item with the given id', async () => {
-                const response = await client.getItem(itemId);
+                const response = await client.getItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -271,7 +271,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('fetches the item with requestor data sanitized', async () => {
-                const response = await client.getItem(itemId);
+                const response = await client.getItem(requestor2ItemId);
                 expect(response.body.payload.item.submittedBy.password).not.toBeDefined();
             });
 
@@ -292,7 +292,7 @@ describe('Item route acceptance tests', () => {
 
             it('does not fetch item if the user is not authenticated', async () => {
                 client.logoutUser();
-                const response = await client.getItem(itemId);
+                const response = await client.getItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -308,7 +308,9 @@ describe('Item route acceptance tests', () => {
 
         describe('PATCH request menthod', () => {
             it('updates the status of the item with the given id', async () => {
-                const response = await client.updateItem(itemId, { status: ItemStatus.APPROVED });
+                const response = await client.updateItem(requestor2ItemId, {
+                    status: ItemStatus.APPROVED
+                });
                 expect(response.body).toEqual(
                     expect.objectContaining({
                         success: true,
@@ -321,7 +323,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('updates the name and category of the item with the given id', async () => {
-                const response = await client.updateItem(itemId, {
+                const response = await client.updateItem(requestor2ItemId, {
                     category: ItemCategory.ENGAGEMENT,
                     name: 'artwork'
                 });
@@ -336,11 +338,11 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
-            it('unable to update item requested by another requestor', async () => {
+            it('unable to update item requested by another user', async () => {
                 client.logoutUser();
                 await client.doLogin(requestor1Email, password);
 
-                const response = await client.updateItem(itemId, {
+                const response = await client.updateItem(requestor2ItemId, {
                     category: ItemCategory.ENGAGEMENT,
                     name: 'games'
                 });
@@ -376,7 +378,9 @@ describe('Item route acceptance tests', () => {
 
             it('does not update item if the user is not authenticated', async () => {
                 client.logoutUser();
-                const response = await client.updateItem(itemId, { priority: ItemPriority.URGENT });
+                const response = await client.updateItem(requestor2ItemId, {
+                    priority: ItemPriority.URGENT
+                });
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -392,7 +396,7 @@ describe('Item route acceptance tests', () => {
 
         describe('DELETE request method', () => {
             it('deletes the item with the given id', async () => {
-                const response = await client.deleteItem(itemId);
+                const response = await client.deleteItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -406,12 +410,15 @@ describe('Item route acceptance tests', () => {
             });
 
             it('deletes the item and returns with requestor data sanitized', async () => {
-                const response = await client.deleteItem(itemId);
+                const response = await client.deleteItem(requestor2ItemId);
                 expect(response.body.payload.item.submittedBy.password).not.toBeDefined();
             });
 
             it('with invalid item id returns a null item in the payload', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
+
                 const response = await client.deleteItem(badId);
 
                 expect(response.body).toEqual(
@@ -421,6 +428,38 @@ describe('Item route acceptance tests', () => {
                         payload: expect.objectContaining({
                             item: null
                         })
+                    })
+                );
+            });
+
+            it('unable to delete item that was requested by another user', async () => {
+                client.logoutUser();
+                await client.doLogin(requestor1Email, password);
+
+                const response = await client.deleteItem(requestor2ItemId);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
+            it('does not delete item if the user is not authenticated', async () => {
+                client.logoutUser();
+                const response = await client.deleteItem(requestor2ItemId);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });

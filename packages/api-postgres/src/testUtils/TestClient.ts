@@ -149,7 +149,8 @@ class TestClient {
     public deleteItem(id: string): Test {
         return request(this.app)
             .delete(`/api/items/${id}`)
-            .set('Content-Type', 'application/json');
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
     public addNoteToItem(
