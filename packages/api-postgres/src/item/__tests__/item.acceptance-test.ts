@@ -467,9 +467,10 @@ describe('Item route acceptance tests', () => {
     });
 
     describe('api/items/:id/notes route', () => {
-        let itemId: string;
+        let requestor2ItemId: string;
         beforeEach(async () => {
-            await client.doLogin(requestor1Email, password);
+            // login to create items
+            await client.doLogin(adminEmail, password);
 
             await client.createItem({
                 clientId,
@@ -484,20 +485,23 @@ describe('Item route acceptance tests', () => {
                 category: 'household',
                 name: 'pillows',
                 location: 'aurora house',
-                requestorId: requestor1Id,
+                requestorId: requestor2Id,
                 note: 'Big, fluffy pillows, please.'
             });
 
-            itemId = response.body.payload.item.id;
+            requestor2ItemId = response.body.payload.item.id;
         });
 
         describe('POST request method', () => {
-            it('adds a note to an itme', async () => {
+            it('adds a note to an item', async () => {
+                await client.doLogin(requestor1Email, password);
+
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: requestor1Id
                 };
-                const response = await client.addNoteToItem(itemId, noteData);
+
+                const response = await client.addNoteToItem(requestor2ItemId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -512,7 +516,10 @@ describe('Item route acceptance tests', () => {
             });
 
             it('handles adding note to item with bad item id', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
+
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: requestor1Id
@@ -532,12 +539,15 @@ describe('Item route acceptance tests', () => {
             });
 
             it('handles adding note to item with bad author id', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
+
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: badId
                 };
-                const response = await client.addNoteToItem(itemId, noteData);
+                const response = await client.addNoteToItem(requestor2ItemId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -547,6 +557,25 @@ describe('Item route acceptance tests', () => {
                             error: expect.any(String),
                             item: null
                         })
+                    })
+                );
+            });
+
+            it('does not add a note to an item if the user is not authenticated', async () => {
+                client.logoutUser();
+                const noteData = {
+                    body: 'King size pillows, please.',
+                    authorId: requestor1Id
+                };
+                const response = await client.addNoteToItem(requestor2ItemId, noteData);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });

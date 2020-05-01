@@ -159,6 +159,8 @@ class TestClient {
     ): Test {
         return request(this.app)
             .post(`/api/items/${itemId}/notes`)
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`)
             .set('Content-Type', 'application/json')
             .send({ body, authorId });
     }
