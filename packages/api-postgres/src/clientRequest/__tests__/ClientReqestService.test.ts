@@ -1,6 +1,6 @@
 import { createPostgresConnection, closeConnection } from '../../config/database';
 import User, { Program } from '../../entity/User';
-import { ItemCategory, HouseLocation, ItemData } from '../../common/types';
+import { ItemCategory, HouseLocation, ItemFields } from '../../common/types';
 import UserService from '../../user/UserService';
 import ClientRequestService from '../ClientRequestService';
 import TestUtils from '../../testUtils/TestUtilities';
@@ -8,8 +8,8 @@ import TestUtils from '../../testUtils/TestUtilities';
 describe('ClientRequest service', () => {
     let userId: string;
     const clientId = '123456789';
-    let item1: ItemData;
-    let item2: ItemData;
+    let item1: ItemFields;
+    let item2: ItemFields;
     beforeAll(async () => {
         await createPostgresConnection();
         userId = (

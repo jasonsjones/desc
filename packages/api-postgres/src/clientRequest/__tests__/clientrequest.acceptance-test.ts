@@ -2,7 +2,7 @@ import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { createPostgresConnection, closeConnection } from '../../config/database';
 import { Program } from '../../entity/User';
-import { ItemData, ItemCategory, HouseLocation } from '../../common/types';
+import { ItemFields, ItemCategory, HouseLocation } from '../../common/types';
 
 describe('ClientRequest route acceptance tests', () => {
     const clientId = '123456789';
@@ -11,9 +11,9 @@ describe('ClientRequest route acceptance tests', () => {
     const password = '123456';
     let requestor1Id: string;
     let client: TestClient;
-    let item1: ItemData;
-    let item2: ItemData;
-    let item3: ItemData;
+    let item1: ItemFields;
+    let item2: ItemFields;
+    let item3: ItemFields;
 
     beforeAll(async () => {
         client = new TestClient();

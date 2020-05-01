@@ -50,15 +50,15 @@ export interface NoteData {
     userId?: string;
     itemId?: string;
 }
-export interface ItemData {
+export interface ItemFields {
     clientId: string;
     category: ItemCategory;
     name: EngagementItems | HouseholdItems;
+    requestorId: string;
+    location: HouseLocation;
     quantity?: number;
     priority?: ItemPriority;
     status?: ItemStatus;
-    requestorId: string;
-    location: HouseLocation;
     note?: string;
 }
 

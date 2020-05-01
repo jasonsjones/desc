@@ -1,10 +1,10 @@
 import Item from '../entity/Item';
-import { ItemData, UpdatableItemFields } from '../common/types';
+import { ItemFields, UpdatableItemFields } from '../common/types';
 import UserService from '../user/UserService';
 import NoteService from '../note/NoteService';
 
 export default class ItemService {
-    static async createItem(itemData: ItemData): Promise<Item> {
+    static async createItem(itemData: ItemFields): Promise<Item> {
         const {
             clientId,
             category,

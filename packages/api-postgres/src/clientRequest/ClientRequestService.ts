@@ -1,5 +1,5 @@
 import ClientRequest from '../entity/ClientRequest';
-import { ItemData } from '../common/types';
+import { ItemFields } from '../common/types';
 import UserService from '../user/UserService';
 import ItemService from '../item/ItemService';
 import Item from '../entity/Item';
@@ -7,7 +7,7 @@ import Item from '../entity/Item';
 interface ClientRequestData {
     clientId: string;
     requestorId: string;
-    items?: ItemData | ItemData[];
+    items?: ItemFields | ItemFields[];
 }
 export default class ClientRequestService {
     static async createClientRequest(data: ClientRequestData): Promise<ClientRequest> {
