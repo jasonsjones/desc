@@ -235,7 +235,7 @@ describe('Item route acceptance tests', () => {
     describe('api/items/:id route', () => {
         let itemId: string;
         beforeEach(async () => {
-            await client.doLogin(requestor1Email, password);
+            await client.doLogin(requestor2Email, password);
 
             await client.createItem({
                 clientId,
@@ -244,12 +244,13 @@ describe('Item route acceptance tests', () => {
                 location: 'aurora house',
                 requestorId: requestor1Id
             });
+
             const response = await client.createItem({
                 clientId,
                 category: 'household',
                 name: 'pillows',
                 location: 'aurora house',
-                requestorId: requestor1Id
+                requestorId: requestor2Id
             });
             itemId = response.body.payload.item.id;
         });
@@ -285,6 +286,21 @@ describe('Item route acceptance tests', () => {
                         payload: expect.objectContaining({
                             item: null
                         })
+                    })
+                );
+            });
+
+            it('does not fetch items if the user is not authenticated', async () => {
+                client.logoutUser();
+                const response = await client.getItem(itemId);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });

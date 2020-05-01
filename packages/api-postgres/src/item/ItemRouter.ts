@@ -17,7 +17,7 @@ class ItemRouter {
 
         ItemRouter.router
             .route('/:id')
-            .get(ItemController.getItem)
+            .get(isAuthenticated, ItemController.getItem)
             .patch(ItemController.updateItem)
             .delete(ItemController.deleteItem);
 
