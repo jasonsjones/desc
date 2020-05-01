@@ -1,5 +1,25 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import ItemController from './ItemController';
+import ItemService from './ItemService';
+import UserService from '../user/UserService';
+import { isAuthenticated } from '../common/routerMiddleware';
+
+async function isAdminOrRequestor(req: Request, _: Response, next: NextFunction): Promise<void> {
+    if (req.user) {
+        const id: string = (req.user as any).id;
+
+        const authUser = await UserService.getUserById(id);
+        const item = await ItemService.getItemById(req.params.id);
+
+        if (authUser?.isAdmin() || authUser?.isOwner(item?.submittedBy.id)) {
+            next();
+        } else {
+            next(new Error('Error: Insufficient access level'));
+        }
+    } else {
+        next(new Error('Error: protected route, user needs to be authenticated.'));
+    }
+}
 
 class ItemRouter {
     private static router = express.Router();
@@ -18,7 +38,7 @@ class ItemRouter {
         ItemRouter.router
             .route('/:id')
             .get(isAuthenticated, ItemController.getItem)
-            .patch(ItemController.updateItem)
+            .patch(isAdminOrRequestor, ItemController.updateItem)
             .delete(ItemController.deleteItem);
 
         ItemRouter.router.route('/:id/notes').post(ItemController.addNoteToItem);

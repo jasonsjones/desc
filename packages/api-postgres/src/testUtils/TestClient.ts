@@ -140,6 +140,8 @@ class TestClient {
     public updateItem(id: string, updatedData: UpdatableItemFields): Test {
         return request(this.app)
             .patch(`/api/items/${id}`)
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`)
             .set('Content-Type', 'application/json')
             .send(updatedData);
     }

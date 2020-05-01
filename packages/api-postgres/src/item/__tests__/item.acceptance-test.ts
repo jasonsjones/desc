@@ -290,7 +290,7 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
-            it('does not fetch items if the user is not authenticated', async () => {
+            it('does not fetch item if the user is not authenticated', async () => {
                 client.logoutUser();
                 const response = await client.getItem(itemId);
 
@@ -336,7 +336,30 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
+            it('unable to update item requested by another requestor', async () => {
+                client.logoutUser();
+                await client.doLogin(requestor1Email, password);
+
+                const response = await client.updateItem(itemId, {
+                    category: ItemCategory.ENGAGEMENT,
+                    name: 'games'
+                });
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
             it('with invalid item id returns a null item in the payload', async () => {
+                // need to login as admin user to attempt to query unknown id
+                await client.doLogin(adminEmail, password);
+
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
                 const response = await client.updateItem(badId, { quantity: 4 });
 
@@ -347,6 +370,21 @@ describe('Item route acceptance tests', () => {
                         payload: expect.objectContaining({
                             item: null
                         })
+                    })
+                );
+            });
+
+            it('does not update item if the user is not authenticated', async () => {
+                client.logoutUser();
+                const response = await client.updateItem(itemId, { priority: ItemPriority.URGENT });
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
                     })
                 );
             });
