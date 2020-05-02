@@ -3,7 +3,7 @@ version: '3'
 services:
     mailhog:
         container_name: mailhog
-        image: mailhog/mailhog
+        image: mailhog/mailhog:latest
         restart: unless-stopped
         ports:
             - '1025:1025'
@@ -13,12 +13,13 @@ services:
 
     postgres:
         container_name: pdb
-        image: postgres:11.5
+        image: postgres:latest
+        restart: unless-stopped
         ports:
             - '5432:5432'
-        restart: unless-stopped
         environment:
             POSTGRES_USER: ${POSTGRES_USER:-postgres}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
         networks:
             - sandbox
         volumes:
@@ -26,7 +27,7 @@ services:
 
     pgadmin:
         container_name: pgadmin
-        image: dpage/pgadmin4
+        image: dpage/pgadmin4:latest
         environment:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
