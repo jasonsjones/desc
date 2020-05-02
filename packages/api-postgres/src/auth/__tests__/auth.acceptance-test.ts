@@ -28,7 +28,7 @@ describe('Auth route acceptance tests', () => {
 
         beforeAll(async () => {
             client = new TestClient();
-            await client.createTestUser({
+            await TestUtils.createTestUser({
                 firstName: 'Oliver',
                 lastName: 'Queen',
                 email: 'oliver@qc.com',

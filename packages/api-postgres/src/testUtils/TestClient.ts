@@ -1,8 +1,6 @@
 import { Application } from 'express';
 import request, { Test } from 'supertest';
 import app from '../config/app';
-import UserService from '../user/UserService';
-import User from '../entity/User';
 import { UpdatableItemFields, Program } from '../common/types';
 
 class TestClient {
@@ -20,28 +18,6 @@ class TestClient {
 
     public getAPIRoute(): Test {
         return request(this.app).get('/api');
-    }
-
-    public createTestUser(userData: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        password: string;
-        program: Program;
-    }): Promise<User> {
-        const { firstName, lastName, email, password, program } = userData;
-        return UserService.createUser({ firstName, lastName, email, password, program });
-    }
-
-    public createAdminTestUser(userData: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        password: string;
-        program: Program;
-    }): Promise<User> {
-        const { firstName, lastName, email, password, program } = userData;
-        return UserService.createAdminTestUser({ firstName, lastName, email, password, program });
     }
 
     public creatUserViaAPI(userData: {

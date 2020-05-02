@@ -59,7 +59,7 @@ describe('User route acceptance tests', () => {
             });
 
             beforeEach(async () => {
-                await client.createAdminTestUser({
+                await TestUtils.createAdminTestUser({
                     firstName: 'Admin',
                     lastName: 'User',
                     email: adminEmail,
@@ -67,7 +67,7 @@ describe('User route acceptance tests', () => {
                     program: Program.SURVIVAL
                 });
 
-                await client.createTestUser({
+                await TestUtils.createTestUser({
                     firstName: 'Oliver',
                     lastName: 'Queen',
                     email,
@@ -124,7 +124,7 @@ describe('User route acceptance tests', () => {
         });
 
         beforeEach(async () => {
-            await client.createAdminTestUser({
+            await TestUtils.createAdminTestUser({
                 firstName: 'Admin',
                 lastName: 'User',
                 email: adminEmail,
@@ -132,7 +132,7 @@ describe('User route acceptance tests', () => {
                 program: Program.SURVIVAL
             });
 
-            const user1 = await client.createTestUser({
+            const user1 = await TestUtils.createTestUser({
                 firstName: 'Oliver',
                 lastName: 'Queen',
                 email: requestor1Email,
@@ -141,7 +141,7 @@ describe('User route acceptance tests', () => {
             });
             requestorId1 = user1.id;
 
-            const user2 = await client.createTestUser({
+            const user2 = await TestUtils.createTestUser({
                 firstName: 'Barry',
                 lastName: 'Allen',
                 email: requestor2Email,

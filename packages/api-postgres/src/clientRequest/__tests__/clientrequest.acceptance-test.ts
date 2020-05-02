@@ -19,7 +19,7 @@ describe('ClientRequest route acceptance tests', () => {
         client = new TestClient();
 
         await createPostgresConnection();
-        await client.createAdminTestUser({
+        await TestUtils.createAdminTestUser({
             firstName: 'Admin',
             lastName: 'User',
             email: adminEmail,
@@ -27,7 +27,7 @@ describe('ClientRequest route acceptance tests', () => {
             program: Program.EMPLOYMENT
         });
 
-        const user1 = await client.createTestUser({
+        const user1 = await TestUtils.createTestUser({
             firstName: 'Oliver',
             lastName: 'Queen',
             email: requestor1Email,
