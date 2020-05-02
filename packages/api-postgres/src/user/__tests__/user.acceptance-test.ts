@@ -53,9 +53,11 @@ describe('User route acceptance tests', () => {
         });
 
         describe('GET request method', () => {
-            let client: TestClient;
+            let adminClient: TestClient;
+            let requestorClient: TestClient;
             beforeAll(() => {
-                client = new TestClient();
+                adminClient = new TestClient();
+                requestorClient = new TestClient();
             });
 
             beforeEach(async () => {
@@ -77,8 +79,8 @@ describe('User route acceptance tests', () => {
             });
 
             it('GET request method fetches all users', async () => {
-                await client.doLogin(adminEmail, password);
-                const response = await client.getAllUsers();
+                await adminClient.doLogin(adminEmail, password);
+                const response = await adminClient.getAllUsers();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -93,7 +95,23 @@ describe('User route acceptance tests', () => {
             });
 
             it('GET request method is unsuccessful if user is not authenticated', async () => {
-                const response = await client.getAllUsers();
+                adminClient.logoutUser();
+                const response = await adminClient.getAllUsers();
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
+            it('GET request method is unsuccessful if authenticated user is not an admin', async () => {
+                await requestorClient.doLogin(email, password);
+                const response = await requestorClient.getAllUsers();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({

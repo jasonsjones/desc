@@ -10,13 +10,15 @@ describe('ClientRequest route acceptance tests', () => {
     const adminEmail = 'Admin@desc.org';
     const password = '123456';
     let requestor1Id: string;
-    let client: TestClient;
+    let requestor1Client: TestClient;
+    let adminClient: TestClient;
     let item1: ItemFields;
     let item2: ItemFields;
     let item3: ItemFields;
 
     beforeAll(async () => {
-        client = new TestClient();
+        requestor1Client = new TestClient();
+        adminClient = new TestClient();
 
         await createPostgresConnection();
         await TestUtils.createAdminTestUser({
@@ -78,13 +80,13 @@ describe('ClientRequest route acceptance tests', () => {
     describe('/api/clientrequests route', () => {
         describe('POST request method', () => {
             afterEach(() => {
-                client.logoutUser();
+                requestor1Client.logoutUser();
             });
 
             it('creates a new client reqeust', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item2]
@@ -103,9 +105,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('creates a new client reqeust without items', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id
                 });
@@ -123,9 +125,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if clientId is not provided', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     requestorId: requestor1Id,
                     items: [item1, item2]
                 });
@@ -144,9 +146,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if requestorId is not provided', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     clientId,
                     items: [item1, item2]
                 });
@@ -166,10 +168,10 @@ describe('ClientRequest route acceptance tests', () => {
 
             it('responds with error if requestorId is not found', async () => {
                 // login as admin to query an unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
 
-                const response = await client.createClientRequest({
+                const response = await adminClient.createClientRequest({
                     clientId,
                     requestorId: badId,
                     items: [item1, item2]
@@ -189,7 +191,7 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if the requestor is not authenticated', async () => {
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item2]
@@ -210,26 +212,26 @@ describe('ClientRequest route acceptance tests', () => {
 
         describe('GET request method', () => {
             beforeAll(async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                await client.createClientRequest({
+                await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
-                await client.createClientRequest({
+                await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item3]
                 });
-                client.logoutUser();
+                requestor1Client.logoutUser();
             });
 
             it('fetches all client requests', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.getAllClientRequests();
+                const response = await requestor1Client.getAllClientRequests();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -246,9 +248,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if the requestor is not authenticated', async () => {
-                client.logoutUser();
+                requestor1Client.logoutUser();
 
-                const response = await client.getAllClientRequests();
+                const response = await requestor1Client.getAllClientRequests();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -268,26 +270,26 @@ describe('ClientRequest route acceptance tests', () => {
             let clientRequestId: string;
 
             beforeAll(async () => {
-                await client.doLogin(requestor1Email, password);
-                await client.createClientRequest({
+                await requestor1Client.doLogin(requestor1Email, password);
+                await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item2]
                 });
 
-                const response = await client.createClientRequest({
+                const response = await requestor1Client.createClientRequest({
                     clientId,
                     requestorId: requestor1Id,
                     items: [item1, item3]
                 });
 
                 clientRequestId = response.body.payload.clientRequest.id;
-                client.logoutUser();
+                requestor1Client.logoutUser();
             });
 
             it('fetches the client request with the given id', async () => {
-                await client.doLogin(requestor1Email, password);
-                const response = await client.getClientRequest(clientRequestId);
+                await requestor1Client.doLogin(requestor1Email, password);
+                const response = await requestor1Client.getClientRequest(clientRequestId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -302,10 +304,10 @@ describe('ClientRequest route acceptance tests', () => {
 
             it('with invalid client reuqest id returns a null client request in the payload', async () => {
                 // login as admin to query an unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
 
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.getClientRequest(badId);
+                const response = await adminClient.getClientRequest(badId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -319,9 +321,9 @@ describe('ClientRequest route acceptance tests', () => {
             });
 
             it('responds with error if the requestor is not authenticated', async () => {
-                client.logoutUser();
+                requestor1Client.logoutUser();
 
-                const response = await client.getClientRequest(clientRequestId);
+                const response = await requestor1Client.getClientRequest(clientRequestId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({

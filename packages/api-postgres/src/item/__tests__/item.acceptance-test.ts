@@ -7,7 +7,9 @@ import { ItemPriority, ItemStatus, ItemCategory } from '../../common/types';
 describe('Item route acceptance tests', () => {
     let requestor1Id: string;
     let requestor2Id: string;
-    let client: TestClient;
+    let adminClient: TestClient;
+    let requestor1Client: TestClient;
+    let requestor2Client: TestClient;
     const clientId = '123456789';
 
     const requestor1Email = 'oliver@desc.org';
@@ -16,7 +18,9 @@ describe('Item route acceptance tests', () => {
     const password = '123456';
 
     beforeAll(async () => {
-        client = new TestClient();
+        adminClient = new TestClient();
+        requestor1Client = new TestClient();
+        requestor2Client = new TestClient();
 
         await createPostgresConnection();
 
@@ -60,11 +64,11 @@ describe('Item route acceptance tests', () => {
     describe('/api/items route', () => {
         describe('POST request method', () => {
             beforeEach(async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
             });
 
             it('creates a new item', async () => {
-                const response = await client.createItem({
+                const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -85,7 +89,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('creates a new item (3 quantities)', async () => {
-                const response = await client.createItem({
+                const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -107,7 +111,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('creates a new urgent item', async () => {
-                const response = await client.createItem({
+                const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -129,7 +133,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('creates a new wishlist item', async () => {
-                const response = await client.createItem({
+                const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -151,8 +155,8 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not create an item if the user is not authenticated', async () => {
-                client.logoutUser();
-                const response = await client.createItem({
+                requestor1Client.logoutUser();
+                const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -176,9 +180,9 @@ describe('Item route acceptance tests', () => {
 
         describe('GET request method', () => {
             beforeEach(async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                await client.createItem({
+                await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
                     name: 'games',
@@ -186,7 +190,7 @@ describe('Item route acceptance tests', () => {
                     requestorId: requestor1Id
                 });
 
-                await client.createItem({
+                await requestor1Client.createItem({
                     clientId,
                     category: 'household',
                     name: 'pillows',
@@ -196,7 +200,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('fetches all the items', async () => {
-                const response = await client.getAllItems();
+                const response = await requestor1Client.getAllItems();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -211,13 +215,12 @@ describe('Item route acceptance tests', () => {
             });
 
             it('includes sanitized user info', async () => {
-                const response = await client.getAllItems();
+                const response = await requestor1Client.getAllItems();
                 expect(response.body.payload.items[0].submittedBy.password).not.toBeDefined();
             });
 
             it('does not fetch items if the user is not authenticated', async () => {
-                client.logoutUser();
-                const response = await client.getAllItems();
+                const response = await requestor2Client.getAllItems();
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -235,9 +238,9 @@ describe('Item route acceptance tests', () => {
     describe('api/items/:id route', () => {
         let requestor2ItemId: string;
         beforeEach(async () => {
-            await client.doLogin(requestor2Email, password);
+            await requestor2Client.doLogin(requestor2Email, password);
 
-            await client.createItem({
+            await requestor2Client.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
@@ -245,7 +248,7 @@ describe('Item route acceptance tests', () => {
                 requestorId: requestor1Id
             });
 
-            const response = await client.createItem({
+            const response = await requestor2Client.createItem({
                 clientId,
                 category: 'household',
                 name: 'pillows',
@@ -257,7 +260,7 @@ describe('Item route acceptance tests', () => {
 
         describe('GET request method', () => {
             it('fetches the item with the given id', async () => {
-                const response = await client.getItem(requestor2ItemId);
+                const response = await requestor2Client.getItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -271,13 +274,13 @@ describe('Item route acceptance tests', () => {
             });
 
             it('fetches the item with requestor data sanitized', async () => {
-                const response = await client.getItem(requestor2ItemId);
+                const response = await requestor2Client.getItem(requestor2ItemId);
                 expect(response.body.payload.item.submittedBy.password).not.toBeDefined();
             });
 
             it('with invalid item id returns a null item in the payload', async () => {
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.getItem(badId);
+                const response = await requestor2Client.getItem(badId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -291,8 +294,8 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not fetch item if the user is not authenticated', async () => {
-                client.logoutUser();
-                const response = await client.getItem(requestor2ItemId);
+                requestor2Client.logoutUser();
+                const response = await requestor2Client.getItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -308,7 +311,7 @@ describe('Item route acceptance tests', () => {
 
         describe('PATCH request menthod', () => {
             it('updates the status of the item with the given id', async () => {
-                const response = await client.updateItem(requestor2ItemId, {
+                const response = await requestor2Client.updateItem(requestor2ItemId, {
                     status: ItemStatus.APPROVED
                 });
                 expect(response.body).toEqual(
@@ -323,7 +326,7 @@ describe('Item route acceptance tests', () => {
             });
 
             it('updates the name and category of the item with the given id', async () => {
-                const response = await client.updateItem(requestor2ItemId, {
+                const response = await requestor2Client.updateItem(requestor2ItemId, {
                     category: ItemCategory.ENGAGEMENT,
                     name: 'artwork'
                 });
@@ -339,10 +342,9 @@ describe('Item route acceptance tests', () => {
             });
 
             it('unable to update item requested by another user', async () => {
-                client.logoutUser();
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.updateItem(requestor2ItemId, {
+                const response = await requestor1Client.updateItem(requestor2ItemId, {
                     category: ItemCategory.ENGAGEMENT,
                     name: 'games'
                 });
@@ -360,10 +362,10 @@ describe('Item route acceptance tests', () => {
 
             it('with invalid item id returns a null item in the payload', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
 
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.updateItem(badId, { quantity: 4 });
+                const response = await adminClient.updateItem(badId, { quantity: 4 });
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -377,8 +379,8 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not update item if the user is not authenticated', async () => {
-                client.logoutUser();
-                const response = await client.updateItem(requestor2ItemId, {
+                requestor2Client.logoutUser();
+                const response = await requestor2Client.updateItem(requestor2ItemId, {
                     priority: ItemPriority.URGENT
                 });
 
@@ -396,7 +398,7 @@ describe('Item route acceptance tests', () => {
 
         describe('DELETE request method', () => {
             it('deletes the item with the given id', async () => {
-                const response = await client.deleteItem(requestor2ItemId);
+                const response = await requestor2Client.deleteItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -410,16 +412,16 @@ describe('Item route acceptance tests', () => {
             });
 
             it('deletes the item and returns with requestor data sanitized', async () => {
-                const response = await client.deleteItem(requestor2ItemId);
+                const response = await requestor2Client.deleteItem(requestor2ItemId);
                 expect(response.body.payload.item.submittedBy.password).not.toBeDefined();
             });
 
             it('with invalid item id returns a null item in the payload', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
 
-                const response = await client.deleteItem(badId);
+                const response = await adminClient.deleteItem(badId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -433,10 +435,9 @@ describe('Item route acceptance tests', () => {
             });
 
             it('unable to delete item that was requested by another user', async () => {
-                client.logoutUser();
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
-                const response = await client.deleteItem(requestor2ItemId);
+                const response = await requestor1Client.deleteItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -450,8 +451,8 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not delete item if the user is not authenticated', async () => {
-                client.logoutUser();
-                const response = await client.deleteItem(requestor2ItemId);
+                requestor2Client.logoutUser();
+                const response = await requestor2Client.deleteItem(requestor2ItemId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -470,9 +471,9 @@ describe('Item route acceptance tests', () => {
         let requestor2ItemId: string;
         beforeEach(async () => {
             // login to create items
-            await client.doLogin(adminEmail, password);
+            await adminClient.doLogin(adminEmail, password);
 
-            await client.createItem({
+            await adminClient.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
@@ -480,7 +481,7 @@ describe('Item route acceptance tests', () => {
                 requestorId: requestor1Id
             });
 
-            const response = await client.createItem({
+            const response = await adminClient.createItem({
                 clientId,
                 category: 'household',
                 name: 'pillows',
@@ -494,14 +495,14 @@ describe('Item route acceptance tests', () => {
 
         describe('POST request method', () => {
             it('adds a note to an item', async () => {
-                await client.doLogin(requestor1Email, password);
+                await requestor1Client.doLogin(requestor1Email, password);
 
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: requestor1Id
                 };
 
-                const response = await client.addNoteToItem(requestor2ItemId, noteData);
+                const response = await requestor1Client.addNoteToItem(requestor2ItemId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -517,14 +518,14 @@ describe('Item route acceptance tests', () => {
 
             it('handles adding note to item with bad item id', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
 
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: requestor1Id
                 };
-                const response = await client.addNoteToItem(badId, noteData);
+                const response = await adminClient.addNoteToItem(badId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -540,14 +541,14 @@ describe('Item route acceptance tests', () => {
 
             it('handles adding note to item with bad author id', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
 
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: badId
                 };
-                const response = await client.addNoteToItem(requestor2ItemId, noteData);
+                const response = await adminClient.addNoteToItem(requestor2ItemId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -562,12 +563,12 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not add a note to an item if the user is not authenticated', async () => {
-                client.logoutUser();
+                requestor1Client.logoutUser();
                 const noteData = {
                     body: 'King size pillows, please.',
                     authorId: requestor1Id
                 };
-                const response = await client.addNoteToItem(requestor2ItemId, noteData);
+                const response = await requestor1Client.addNoteToItem(requestor2ItemId, noteData);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -587,9 +588,9 @@ describe('Item route acceptance tests', () => {
         let requestor1NoteId: string;
 
         beforeEach(async () => {
-            await client.doLogin(requestor1Email, password);
+            await requestor1Client.doLogin(requestor1Email, password);
 
-            await client.createItem({
+            await requestor1Client.createItem({
                 clientId,
                 category: 'engagement',
                 name: 'games',
@@ -597,7 +598,7 @@ describe('Item route acceptance tests', () => {
                 requestorId: requestor1Id
             });
 
-            const itemResponse = await client.createItem({
+            const itemResponse = await requestor1Client.createItem({
                 clientId,
                 category: 'household',
                 name: 'pillows',
@@ -618,15 +619,15 @@ describe('Item route acceptance tests', () => {
                 authorId: requestor2Id
             };
 
-            const noteResponse = await client.addNoteToItem(requestor1ItemId, noteData1);
+            const noteResponse = await requestor1Client.addNoteToItem(requestor1ItemId, noteData1);
             requestor1NoteId = noteResponse.body.payload.item.notes[1].id;
 
-            await client.addNoteToItem(requestor1ItemId, noteData2);
+            await requestor1Client.addNoteToItem(requestor1ItemId, noteData2);
         });
 
         describe('DELETE request method', () => {
             it('deletes a note from an item', async () => {
-                const response = await client.deleteNoteFromItem(
+                const response = await requestor1Client.deleteNoteFromItem(
                     requestor1ItemId,
                     requestor1NoteId
                 );
@@ -645,9 +646,9 @@ describe('Item route acceptance tests', () => {
 
             it('handles deleting a note to item with bad item id', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.deleteNoteFromItem(badId, requestor1NoteId);
+                const response = await adminClient.deleteNoteFromItem(badId, requestor1NoteId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -663,9 +664,9 @@ describe('Item route acceptance tests', () => {
 
             it('handles deleting a note to item with bad note id', async () => {
                 // need to login as admin user to attempt to query unknown id
-                await client.doLogin(adminEmail, password);
+                await adminClient.doLogin(adminEmail, password);
                 const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-                const response = await client.deleteNoteFromItem(requestor1ItemId, badId);
+                const response = await adminClient.deleteNoteFromItem(requestor1ItemId, badId);
 
                 expect(response.body).toEqual(
                     expect.objectContaining({
@@ -680,9 +681,9 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not delete a note made by another user', async () => {
-                await client.doLogin(requestor2Email, password);
+                await requestor2Client.doLogin(requestor2Email, password);
 
-                const response = await client.deleteNoteFromItem(
+                const response = await requestor2Client.deleteNoteFromItem(
                     requestor1ItemId,
                     requestor1NoteId
                 );
@@ -699,9 +700,9 @@ describe('Item route acceptance tests', () => {
             });
 
             it('does not delete a note if the user is not authentciated', async () => {
-                client.logoutUser();
+                requestor1Client.logoutUser();
 
-                const response = await client.deleteNoteFromItem(
+                const response = await requestor1Client.deleteNoteFromItem(
                     requestor1ItemId,
                     requestor1NoteId
                 );
