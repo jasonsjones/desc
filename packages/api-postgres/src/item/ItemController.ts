@@ -3,6 +3,8 @@ import ItemService from './ItemService';
 
 class ItemController {
     static createItem(req: Request, res: Response): Promise<Response> {
+        const normalizedData = ItemController.normalizeData(req.body);
+
         const {
             clientId,
             category,
@@ -13,7 +15,8 @@ class ItemController {
             location,
             requestorId,
             note
-        } = req.body;
+        } = normalizedData;
+
         return ItemService.createItem({
             clientId,
             category,
@@ -25,7 +28,7 @@ class ItemController {
             requestorId,
             note
         })
-            .then(item => {
+            .then((item) => {
                 // need to remove the reference to the item in the note since it causes a circular reference
                 // and JSON does not handle it
                 if (item && item.notes && item.notes.length > 0) {
@@ -40,7 +43,7 @@ class ItemController {
                     }
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error creating new item',
@@ -54,10 +57,10 @@ class ItemController {
 
     static getAllItems(_: Request, res: Response): Promise<Response> {
         return ItemService.getAllItems()
-            .then(items => {
+            .then((items) => {
                 let sanitizedItems;
                 if (items) {
-                    sanitizedItems = items.map(item => item.toClientJSON());
+                    sanitizedItems = items.map((item) => item.toClientJSON());
                 }
                 return res.json({
                     success: true,
@@ -67,7 +70,7 @@ class ItemController {
                     }
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error fetching items',
@@ -82,7 +85,7 @@ class ItemController {
     static getItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return ItemService.getItemById(id)
-            .then(item => {
+            .then((item) => {
                 if (item) {
                     return res.json({
                         success: true,
@@ -97,7 +100,7 @@ class ItemController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error fetching item',
@@ -113,7 +116,7 @@ class ItemController {
         const id = req.params.id;
         const updateData = req.body;
         return ItemService.updateItem(id, updateData)
-            .then(item => {
+            .then((item) => {
                 if (item) {
                     return res.json({
                         success: true,
@@ -128,7 +131,7 @@ class ItemController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error updating item',
@@ -143,7 +146,7 @@ class ItemController {
     static deleteItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return ItemService.deleteItem(id)
-            .then(item => {
+            .then((item) => {
                 if (item) {
                     return res.json({
                         success: true,
@@ -158,7 +161,7 @@ class ItemController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error deleting item',
@@ -174,7 +177,7 @@ class ItemController {
         const itemId = req.params.id;
         const { body, authorId } = req.body;
         return ItemService.addNoteToItem({ body, itemId, authorId })
-            .then(item => {
+            .then((item) => {
                 if (item) {
                     return res.json({
                         success: true,
@@ -189,7 +192,7 @@ class ItemController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error adding note to item',
@@ -206,7 +209,7 @@ class ItemController {
         const noteId = req.params.noteId;
 
         return ItemService.deleteNoteFromItem({ noteId, itemId })
-            .then(item => {
+            .then((item) => {
                 if (item) {
                     return res.json({
                         success: true,
@@ -221,7 +224,7 @@ class ItemController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error deleting note from item',
@@ -231,6 +234,19 @@ class ItemController {
                     }
                 });
             });
+    }
+
+    private static normalizeData(payload: any): any {
+        let data: any = {};
+
+        for (let key in payload) {
+            if (typeof payload[key] === 'string' && key !== 'note') {
+                data[key] = payload[key].toLowerCase();
+            } else {
+                data[key] = payload[key];
+            }
+        }
+        return data;
     }
 }
 

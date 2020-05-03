@@ -154,6 +154,48 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
+            it('creates a new item after normalizing the data', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'Household',
+                    name: 'Plates',
+                    quantity: 4,
+                    location: 'Aurora House',
+                    requestorId: requestor1Id,
+                    note: 'This should STAY title case'
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+
+                const item = response.body.payload.item;
+                expect(item.category).toEqual('household');
+                expect(item.name).toEqual('plates');
+                expect(item.location).toEqual('aurora house');
+                expect(item.notes[0].body).toEqual('This should STAY title case');
+            });
+
+            it.skip('responds with error if the item does not belong to the category', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'engagement',
+                    name: 'Plates',
+                    quantity: 4,
+                    location: 'aurora house',
+                    requestorId: requestor1Id,
+                    note: 'This should STAY title case'
+                });
+                console.log(response.body);
+            });
+
             it('does not create an item if the user is not authenticated', async () => {
                 requestor1Client.logoutUser();
                 const response = await requestor1Client.createItem({
