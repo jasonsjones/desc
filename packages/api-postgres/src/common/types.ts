@@ -62,26 +62,28 @@ export enum HouseLocation {
     UNION_HOTEL = 'union hotel'
 }
 
-export type EngagementItems = 'games' | 'artwork' | 'candy/treats';
+export const availableEngagementItems = ['games', 'artwork', 'candy/treats'] as const;
+export type EngagementItems = typeof availableEngagementItems[number];
 
-export type HouseholdItems =
-    | 'bedding'
-    | 'pillows'
-    | 'plates'
-    | 'cutlery'
-    | 'pots and pans'
-    | 'napkins/paper towels'
-    | 'shower curtain';
+export const availableHouseholdItems = [
+    'bedding',
+    'pillows',
+    'plates',
+    'cutlery',
+    'pots and pans',
+    'napkins/paper towels',
+    'shower curtain'
+];
+export type HouseholdItems = typeof availableHouseholdItems[number];
 
 export interface NoteFields {
     body: string;
     userId?: string;
     itemId?: string;
 }
-export interface ItemFields {
+
+interface BaseItemFields {
     clientId: string;
-    category: ItemCategory;
-    name: EngagementItems | HouseholdItems;
     requestorId: string;
     location: HouseLocation;
     quantity?: number;
@@ -89,5 +91,17 @@ export interface ItemFields {
     status?: ItemStatus;
     note?: string;
 }
+
+interface EngagementItemFields extends BaseItemFields {
+    category: ItemCategory.ENGAGEMENT;
+    name: EngagementItems;
+}
+
+interface HouseholdItemFields extends BaseItemFields {
+    category: ItemCategory.HOUSEHOLD;
+    name: HouseholdItems;
+}
+
+export type ItemFields = EngagementItemFields | HouseholdItemFields;
 
 export type UpdatableItemFields = Partial<ItemFields>;
