@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ItemService from './ItemService';
+import { availableHouseholdItems, availableEngagementItems } from '../common/types';
 
 class ItemController {
     static createItem(req: Request, res: Response): Promise<Response> {
@@ -17,42 +18,55 @@ class ItemController {
             note
         } = normalizedData;
 
-        return ItemService.createItem({
-            clientId,
-            category,
-            name,
-            priority,
-            quantity,
-            status,
-            location,
-            requestorId,
-            note
-        })
-            .then((item) => {
-                // need to remove the reference to the item in the note since it causes a circular reference
-                // and JSON does not handle it
-                if (item && item.notes && item.notes.length > 0) {
-                    delete item.notes[0].item;
-                }
-
-                return res.status(201).json({
-                    success: true,
-                    message: 'item created',
-                    payload: {
-                        item: item?.toClientJSON()
-                    }
-                });
+        if (ItemController.isValidItemForCategory(category, name)) {
+            return ItemService.createItem({
+                clientId,
+                category,
+                name,
+                priority,
+                quantity,
+                status,
+                location,
+                requestorId,
+                note
             })
-            .catch((err) => {
+                .then((item) => {
+                    // need to remove the reference to the item in the note since it causes a circular reference
+                    // and JSON does not handle it
+                    if (item && item.notes && item.notes.length > 0) {
+                        delete item.notes[0].item;
+                    }
+
+                    return res.status(201).json({
+                        success: true,
+                        message: 'item created',
+                        payload: {
+                            item: item?.toClientJSON()
+                        }
+                    });
+                })
+                .catch((err) => {
+                    return res.json({
+                        success: false,
+                        message: 'error creating new item',
+                        payload: {
+                            error: err.message,
+                            item: null
+                        }
+                    });
+                });
+        } else {
+            return Promise.resolve().then(() => {
                 return res.json({
                     success: false,
                     message: 'error creating new item',
                     payload: {
-                        error: err.message,
+                        error: `Item ${name} is not in category ${category}`,
                         item: null
                     }
                 });
             });
+        }
     }
 
     static getAllItems(_: Request, res: Response): Promise<Response> {
@@ -247,6 +261,25 @@ class ItemController {
             }
         }
         return data;
+    }
+
+    private static isValidItemForCategory(category: string, item: any): boolean {
+        let result = false;
+        switch (category) {
+            case 'engagement':
+                if (availableEngagementItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            case 'household':
+                if (availableHouseholdItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 }
 

@@ -183,7 +183,7 @@ describe('Item route acceptance tests', () => {
                 expect(item.notes[0].body).toEqual('This should STAY title case');
             });
 
-            it.skip('responds with error if the item does not belong to the category', async () => {
+            it('responds with error if the item does not belong to the category', async () => {
                 const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
@@ -193,7 +193,18 @@ describe('Item route acceptance tests', () => {
                     requestorId: requestor1Id,
                     note: 'This should STAY title case'
                 });
-                console.log(response.body);
+
+                expect(response.status).toBe(200);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'error creating new item',
+                        payload: {
+                            error: expect.any(String),
+                            item: null
+                        }
+                    })
+                );
             });
 
             it('does not create an item if the user is not authenticated', async () => {
