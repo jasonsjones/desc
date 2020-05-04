@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import ItemService from './ItemService';
 import { availableHouseholdItems, availableEngagementItems } from '../common/types';
 
 class ItemController {
-    static createItem(req: Request, res: Response): Promise<Response> {
+    static createItem(req: Request, res: Response, next: NextFunction): Promise<Response> | void {
         const normalizedData = ItemController.normalizeData(req.body);
 
         const {
@@ -56,16 +56,7 @@ class ItemController {
                     });
                 });
         } else {
-            return Promise.resolve().then(() => {
-                return res.json({
-                    success: false,
-                    message: 'error creating new item',
-                    payload: {
-                        error: `Item ${name} is not in category ${category}`,
-                        item: null
-                    }
-                });
-            });
+            return next(new Error(`Item ${name} is not in category ${category}`));
         }
     }
 

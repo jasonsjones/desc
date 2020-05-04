@@ -198,10 +198,9 @@ describe('Item route acceptance tests', () => {
                 expect(response.body).toEqual(
                     expect.objectContaining({
                         success: false,
-                        message: 'error creating new item',
+                        message: 'Error: unable to complete request',
                         payload: {
-                            error: expect.any(String),
-                            item: null
+                            error: expect.any(String)
                         }
                     })
                 );
