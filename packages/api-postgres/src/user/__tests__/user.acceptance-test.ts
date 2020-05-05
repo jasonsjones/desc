@@ -40,12 +40,15 @@ describe('User route acceptance tests', () => {
                         payload: expect.objectContaining({
                             user: expect.objectContaining({
                                 id: expect.any(String),
-                                firstName: 'Oliver',
-                                lastName: 'Queen',
+                                name: expect.objectContaining({
+                                    first: 'Oliver',
+                                    last: 'Queen'
+                                }),
                                 email: 'oliver@desc.org',
                                 program: expect.any(String),
                                 roles: expect.arrayContaining(['requestor'])
-                            })
+                            }),
+                            accessToken: expect.any(String)
                         })
                     })
                 );

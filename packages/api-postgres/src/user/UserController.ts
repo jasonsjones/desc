@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../entity/User';
 import UserService from './UserService';
+import AuthUtils from '../auth/AuthUtils';
 
 class UserController {
     static createUser(req: Request, res: Response): Promise<Response> {
@@ -9,14 +10,19 @@ class UserController {
         const { firstName, lastName, email, password, program } = req.body;
 
         return UserService.createUser({ firstName, lastName, email, password, program })
-            .then(user => {
+            .then((user) => {
+                res.cookie('qid', AuthUtils.createRefreshToken(user), { httpOnly: true });
+                const accessToken = AuthUtils.createAccessToken(user);
                 return res.status(201).json({
                     success: true,
                     message: 'user created',
-                    payload: { user }
+                    payload: {
+                        user: user.toClientJSON(),
+                        accessToken
+                    }
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error creating user',
@@ -30,14 +36,14 @@ class UserController {
 
     static getAllUsers(_: Request, res: Response): Promise<Response> {
         return UserService.getAllUsers()
-            .then(users => {
+            .then((users) => {
                 return res.json({
                     success: true,
                     message: 'all users fetched',
                     payload: { users }
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error fetching users',
@@ -52,7 +58,7 @@ class UserController {
     static getUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return UserService.getUserById(id)
-            .then(user => {
+            .then((user) => {
                 if (user) {
                     return res.json({
                         success: true,
@@ -67,7 +73,7 @@ class UserController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error fetching user',
@@ -87,7 +93,7 @@ class UserController {
         const data = req.body as { firstName: string; lastName: string; email: string };
 
         return UserService.updateUser(id, data)
-            .then(updatedUser => {
+            .then((updatedUser) => {
                 if (updatedUser) {
                     return res.json({
                         success: true,
@@ -102,7 +108,7 @@ class UserController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error updating user',
@@ -117,7 +123,7 @@ class UserController {
     static deleteUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return UserService.deleteUser(id)
-            .then(deletedUser => {
+            .then((deletedUser) => {
                 if (deletedUser) {
                     return res.json({
                         success: true,
@@ -132,7 +138,7 @@ class UserController {
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 return res.json({
                     success: false,
                     message: 'error deleting user',
