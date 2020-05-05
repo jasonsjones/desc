@@ -73,6 +73,12 @@ class TestClient extends BaseTestClient {
         this.clearTokens();
     }
 
+    public logout(): Test {
+        return request(this.app)
+            .get('/api/auth/logout')
+            .set('Content-Type', 'application/json');
+    }
+
     public createItem(itemData: any): Test {
         return request(this.app)
             .post('/api/items')

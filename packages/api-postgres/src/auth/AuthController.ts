@@ -20,6 +20,15 @@ class AuthController {
         });
     }
 
+    static logout(_: Request, res: Response): Response {
+        res.clearCookie('qid');
+        return res.json({
+            success: true,
+            message: 'user logged out',
+            payload: null
+        });
+    }
+
     static async getRefreshToken(req: Request, res: Response): Promise<Response> {
         const currentToken = req.cookies['qid'];
 
