@@ -7,7 +7,7 @@ export const signup = userData => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
     }).then(res => {
-        if (res.ok && res.status === 200) {
+        if (res.ok && res.status === 201) {
             return res.json();
         }
     });

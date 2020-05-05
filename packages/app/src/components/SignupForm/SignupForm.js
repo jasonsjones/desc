@@ -68,10 +68,8 @@ const SignupForm = ({ history }) => {
         if (isFormValid()) {
             setIsFetching(true);
             const payload = {
-                name: {
-                    first: form.firstName,
-                    last: form.lastName
-                },
+                firstName: form.firstName,
+                lastName: form.lastName,
                 email: form.email,
                 password: form.password,
                 program: form.program
@@ -79,7 +77,7 @@ const SignupForm = ({ history }) => {
             signup(payload)
                 .then(data => {
                     if (data.success) {
-                        const { user, token } = data.payload;
+                        const { user, accessToken: token } = data.payload;
                         authCtx.login(user, token);
                         history.push('/');
                     } else {
@@ -139,11 +137,11 @@ const SignupForm = ({ history }) => {
                             <option value="default" disabled>
                                 Select your program
                             </option>
-                            <option value="housing">Housing First</option>
-                            <option value="integrated">Integrated Services</option>
-                            <option value="survival">Survival Services</option>
-                            <option value="health">Health Services</option>
-                            <option value="employment">Employment Services</option>
+                            <option value="housing first">Housing First</option>
+                            <option value="integrated services">Integrated Services</option>
+                            <option value="survival services">Survival Services</option>
+                            <option value="health services">Health Services</option>
+                            <option value="employment services">Employment Services</option>
                             <option value="research_innovation">Research &amp; Innovation</option>
                         </select>
                         <label htmlFor="program">Program</label>
