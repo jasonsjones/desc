@@ -162,7 +162,8 @@ class UserController {
             const user: User = (await UserService.getUserById(reqUser.id)) as User;
             if (user) {
                 payload = {
-                    user: user.toClientJSON()
+                    user: user.toClientJSON(),
+                    accessToken: AuthUtils.createAccessToken(user)
                 };
                 json = {
                     ...baseResponse,

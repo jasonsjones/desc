@@ -50,6 +50,7 @@ class AuthController {
                     success: true,
                     message: 'new access token issued',
                     payload: {
+                        user: user.toClientJSON(),
                         accessToken: AuthUtils.createAccessToken(user)
                     }
                 });
@@ -68,7 +69,7 @@ class AuthController {
     // Middleware methods and utilities
 
     static processToken = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
-        const { token, refreshToken } = AuthController.getTokens(req);
+        const { token, refreshToken } = AuthUtils.getTokens(req);
         if (token && refreshToken) {
             try {
                 const decoded: any = AuthUtils.verifyAccessToken(token);
@@ -89,21 +90,6 @@ class AuthController {
             req.user = undefined;
         }
         next();
-    };
-
-    private static getTokens = (req: Request): { token: string; refreshToken: string } => {
-        let bearerToken = null;
-        if (req.headers.authorization) {
-            bearerToken = req.headers.authorization.split(' ')[1];
-        }
-
-        const token = bearerToken as string;
-        const refreshToken = req.cookies && req.cookies['qid'];
-
-        return {
-            token,
-            refreshToken
-        };
     };
 
     private static sendEmptyAccessToken = (res: Response): Response => {

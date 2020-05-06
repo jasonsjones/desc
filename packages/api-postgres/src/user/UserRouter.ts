@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import UserController from './UserController';
 import UserService from './UserService';
-import { isAdmin } from '../common/routerMiddleware';
+import { isAdmin, checkForRefreshToken } from '../common/routerMiddleware';
 
 async function isAdminOrSelf(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
@@ -26,7 +26,7 @@ class UserRouter {
     }
 
     private static defineRoutes(): void {
-        UserRouter.router.route('/me').get(UserController.me);
+        UserRouter.router.route('/me').get(checkForRefreshToken, UserController.me);
 
         UserRouter.router
             .route('/')

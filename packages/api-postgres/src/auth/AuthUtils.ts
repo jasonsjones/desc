@@ -1,7 +1,23 @@
+import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../entity/User';
 
 class AuthUtils {
+    static getTokens = (req: Request): { token: string; refreshToken: string } => {
+        let bearerToken = null;
+        if (req.headers.authorization) {
+            bearerToken = req.headers.authorization.split(' ')[1];
+        }
+
+        const token = bearerToken as string;
+        const refreshToken = req.cookies && req.cookies['qid'];
+
+        return {
+            token,
+            refreshToken
+        };
+    };
+
     static createAccessToken = (user: User): string => {
         const token = jwt.sign(
             {
