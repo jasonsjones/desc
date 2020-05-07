@@ -12,7 +12,7 @@ const Layout = props => {
         fetchSessionUser().then(data => {
             if (data && data.payload) {
                 setContextUser(data.payload.user);
-                setToken(data.payload.token);
+                setToken(data.payload.accessToken);
             }
 
             setTimeout(() => {

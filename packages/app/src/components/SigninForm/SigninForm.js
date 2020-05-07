@@ -56,7 +56,7 @@ const SigninForm = ({ history }) => {
             login(creds)
                 .then(data => {
                     if (data.success) {
-                        const { user, token } = data.payload;
+                        const { user, accessToken: token } = data.payload;
                         authCtx.login(user, token);
                         history.push('/');
                     } else {
