@@ -21,7 +21,7 @@ export interface UserFields {
     email: string;
     password: string;
     program?: Program;
-    roles?: [UserRole];
+    roles?: UserRole[];
 }
 
 export type UpdatableUserFields = Partial<Omit<UserFields, 'password' | 'roles'>>;

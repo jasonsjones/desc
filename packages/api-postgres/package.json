@@ -9,7 +9,7 @@
         "dev": "ts-node-dev --respawn src/index.ts",
         "lint": "eslint src/**/*.ts",
         "test": "NODE_ENV=testing jest --color --runInBand",
-        "test:e2e": "NODE_ENV=testing yarn dev"
+        "test:e2e": "NODE_ENV=testingE2E yarn dev"
     },
     "husky": {
         "hooks": {

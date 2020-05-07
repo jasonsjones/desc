@@ -13,10 +13,13 @@ export default class UserService {
         const hashedPassword = await bcrypt.hash(password, saltLength);
         let data: UserFields = { ...userData, password: hashedPassword };
 
-        // for dev purposes, let's make the first user created an 'admin';
+        // for dev purposes, let's make the first user created an 'admin' & 'approver';
         // all subsequent users will default to a 'requestor'
-        if (process.env.NODE_ENV === 'development' && (await UserService.getUserCount()) === 0) {
-            data = { ...data, roles: [UserRole.ADMIN] };
+        if (
+            (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testingE2E') &&
+            (await UserService.getUserCount()) === 0
+        ) {
+            data = { ...data, roles: [UserRole.ADMIN, UserRole.APPROVER] };
         }
 
         const user = User.create(data);
@@ -27,7 +30,11 @@ export default class UserService {
     static async createAdminTestUser(userData: UserFields): Promise<User> {
         const { password } = userData;
         const hashedPassword = await bcrypt.hash(password, 4);
-        let data: UserFields = { ...userData, password: hashedPassword, roles: [UserRole.ADMIN] };
+        let data: UserFields = {
+            ...userData,
+            password: hashedPassword,
+            roles: [UserRole.ADMIN, UserRole.APPROVER]
+        };
 
         const user = User.create(data);
         user.emailVerificationToken = v4();
@@ -58,9 +65,7 @@ export default class UserService {
     }
 
     private static async getUserCount(): Promise<number> {
-        const count = await getRepository(User)
-            .createQueryBuilder('user')
-            .getCount();
+        const count = await getRepository(User).createQueryBuilder('user').getCount();
         return count;
     }
 }

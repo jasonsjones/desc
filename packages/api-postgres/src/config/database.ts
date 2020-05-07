@@ -5,6 +5,7 @@ import config from './config';
 const envDbNameMap: Map<string, string> = new Map();
 envDbNameMap.set('development', 'desc-dev');
 envDbNameMap.set('testing', 'desc-test');
+envDbNameMap.set('testingE2E', 'desc-test');
 
 const dbName: string = envDbNameMap.get(config.env) as string;
 
