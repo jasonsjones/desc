@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const debug = require('debug');
 
-const log = debug('db:connection');
+const log = debug('mdb:connection');
 
 module.exports = function(config) {
     const getDbName = () => {

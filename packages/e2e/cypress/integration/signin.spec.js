@@ -1,23 +1,21 @@
 describe('User Signin', () => {
     const user = {
-        name: {
-            first: 'Oliver',
-            last: 'Queen'
-        },
-        email: 'oliver@qc.com',
-        program: 'employment',
-        password: 'thegreenarrow',
-        roles: ['admin', 'approver']
+        firstName: 'Oliver',
+        lastName: 'Queen',
+        email: 'oliver@desc.org',
+        program: 'employment services',
+        password: 'thegreenarrow'
     };
 
     before(() => {
         // Will likely need to be refactored out as a Cypress.Command to reuse in all the other
         // tests.  Most likely consolidate a command to create a user and sign in.
-        return cy.request({
-            url: 'http://localhost:3000/api/users/testonly',
+        cy.request({
+            url: 'http://localhost:3001/api/users/',
             method: 'POST',
             body: user
         });
+        cy.request('http://localhost:3001/api/auth/logout');
     });
 
     beforeEach(() => {
@@ -25,7 +23,7 @@ describe('User Signin', () => {
     });
 
     after(() => {
-        cy.exec('npm run db:reset');
+        cy.exec('npm run pdb:reset');
     });
 
     it('shows error if user is unauthorized', () => {
@@ -61,16 +59,13 @@ describe('User Signin', () => {
 
         cy.url().should('eq', 'http://localhost:4200/');
 
-        cy.get('nav .profile-menu a span').should(
-            'contain',
-            `${user.name.first} ${user.name.last}`
-        );
-        cy.get('h3').should('contain', user.name.first);
+        cy.get('nav .profile-menu a span').should('contain', `${user.firstName} ${user.lastName}`);
+        cy.get('h3').should('contain', user.firstName);
     });
 
     it('maintains user context on page reload', () => {
         cy.reload();
-        cy.get('h3').should('contain', user.name.first);
+        cy.get('h3').should('contain', user.firstName);
     });
 
     it('logs out the user after signup', () => {
@@ -82,6 +77,6 @@ describe('User Signin', () => {
             .click();
         cy.url().should('eq', 'http://localhost:4200/');
         cy.get('h3').should('contain', 'Home Page');
-        cy.get('h3').not('contain', user.name.first);
+        cy.get('h3').not('contain', user.firstName);
     });
 });

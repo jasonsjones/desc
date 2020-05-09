@@ -1,6 +1,6 @@
 require('dotenv/config');
 const config = require('./config');
-const db = require('./db');
+const db = require('./mongo');
 
 const connection = db(config);
 

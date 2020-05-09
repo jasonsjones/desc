@@ -2,7 +2,7 @@ describe('User Signup', () => {
     const userData = {
         firstName: 'Raymond',
         lastName: 'Palmer',
-        email: 'raymond@palmertech.com',
+        email: 'raymond@desc.org',
         program: 'Integrated Services',
         password: '123456'
     };
@@ -12,7 +12,7 @@ describe('User Signup', () => {
     });
 
     after(() => {
-        cy.exec('npm run db:reset');
+        cy.exec('npm run pdb:reset');
     });
 
     it('does not submit form if data is missing', () => {
