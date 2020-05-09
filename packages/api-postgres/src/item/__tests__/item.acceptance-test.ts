@@ -249,6 +249,15 @@ describe('Item route acceptance tests', () => {
                     location: 'aurora house',
                     requestorId: requestor2Id
                 });
+
+                await requestor1Client.createItem({
+                    clientId,
+                    category: 'household',
+                    name: 'plates',
+                    quantity: 4,
+                    location: 'aurora house',
+                    requestorId: requestor2Id
+                });
             });
 
             it('fetches all the items', async () => {
@@ -263,7 +272,7 @@ describe('Item route acceptance tests', () => {
                         })
                     })
                 );
-                expect(response.body.payload.items).toHaveLength(2);
+                expect(response.body.payload.items).toHaveLength(3);
             });
 
             it('includes sanitized user info', async () => {
@@ -283,6 +292,21 @@ describe('Item route acceptance tests', () => {
                         }
                     })
                 );
+            });
+
+            it('fetches only the items from the given requestor', async () => {
+                const response = await requestor1Client.getAllItemsByRequestor(requestor2Id);
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            items: expect.any(Object)
+                        })
+                    })
+                );
+                expect(response.body.payload.items).toHaveLength(2);
             });
         });
     });

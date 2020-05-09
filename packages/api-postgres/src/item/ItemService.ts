@@ -43,8 +43,11 @@ export default class ItemService {
         return item.save();
     }
 
-    static getAllItems(): Promise<Item[]> {
-        return Item.find({ relations: ['submittedBy', 'notes', 'notes.submittedBy'] });
+    static getAllItems(query = {}): Promise<Item[]> {
+        return Item.find({
+            where: query,
+            relations: ['submittedBy', 'notes', 'notes.submittedBy']
+        });
     }
 
     static getItemById(id: string): Promise<Item | undefined> {
@@ -104,7 +107,7 @@ export default class ItemService {
         if (!deletedNote) {
             throw new Error('Invalid note');
         }
-        item.notes = item?.notes.filter(note => note.id !== noteId);
+        item.notes = item?.notes.filter((note) => note.id !== noteId);
 
         return ItemService.getItemById(itemId);
     }

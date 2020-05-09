@@ -60,8 +60,8 @@ class ItemController {
         }
     }
 
-    static getAllItems(_: Request, res: Response): Promise<Response> {
-        return ItemService.getAllItems()
+    static getAllItems(req: Request, res: Response): Promise<Response> {
+        return ItemService.getAllItems(req.query)
             .then((items) => {
                 let sanitizedItems;
                 if (items) {

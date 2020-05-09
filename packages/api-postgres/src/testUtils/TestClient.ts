@@ -74,9 +74,7 @@ class TestClient extends BaseTestClient {
     }
 
     public logout(): Test {
-        return request(this.app)
-            .get('/api/auth/logout')
-            .set('Content-Type', 'application/json');
+        return request(this.app).get('/api/auth/logout').set('Content-Type', 'application/json');
     }
 
     public createItem(itemData: any): Test {
@@ -91,6 +89,13 @@ class TestClient extends BaseTestClient {
     public getAllItems(): Test {
         return request(this.app)
             .get('/api/items')
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
+    }
+
+    public getAllItemsByRequestor(requestorId: string): Test {
+        return request(this.app)
+            .get(`/api/items/?submittedBy=${requestorId}`)
             .set('Cookie', [`qid=${this.refreshToken}`])
             .set('Authorization', `Bearer ${this.accessToken}`);
     }
