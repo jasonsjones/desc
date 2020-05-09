@@ -95,7 +95,14 @@ class TestClient extends BaseTestClient {
 
     public getAllItemsByRequestor(requestorId: string): Test {
         return request(this.app)
-            .get(`/api/items/?submittedBy=${requestorId}`)
+            .get(`/api/items?submittedBy=${requestorId}`)
+            .set('Cookie', [`qid=${this.refreshToken}`])
+            .set('Authorization', `Bearer ${this.accessToken}`);
+    }
+
+    public getAllItemsByQuery(queryString: string): Test {
+        return request(this.app)
+            .get(`/api/items?${queryString}`)
             .set('Cookie', [`qid=${this.refreshToken}`])
             .set('Authorization', `Bearer ${this.accessToken}`);
     }

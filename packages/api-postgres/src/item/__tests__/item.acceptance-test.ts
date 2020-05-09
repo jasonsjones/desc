@@ -308,6 +308,38 @@ describe('Item route acceptance tests', () => {
                 );
                 expect(response.body.payload.items).toHaveLength(2);
             });
+
+            it('fetches all the items from the given category', async () => {
+                const response = await requestor1Client.getAllItemsByQuery('category=household');
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            items: expect.any(Object)
+                        })
+                    })
+                );
+                expect(response.body.payload.items).toHaveLength(2);
+            });
+
+            it('ignores invalid query params and fetches all the items', async () => {
+                const response = await requestor1Client.getAllItemsByQuery(
+                    'unknownParam=bogusvalue'
+                );
+
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            items: expect.any(Object)
+                        })
+                    })
+                );
+                expect(response.body.payload.items).toHaveLength(3);
+            });
         });
     });
 
