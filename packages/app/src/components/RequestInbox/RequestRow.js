@@ -68,7 +68,7 @@ class RequestRow extends React.Component {
     }
 
     updateItemStatus(status) {
-        var id = this.state.row._id;
+        var id = this.state.row.id;
 
         let itemData = {
             itemId: id,
@@ -76,7 +76,7 @@ class RequestRow extends React.Component {
                 status: status
             }
         };
-        this.state.row.updateItemStatus(itemData);
+        this.state.row.updateItemStatus(itemData, this.props.token);
     }
 }
 
@@ -92,7 +92,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateItemStatus: itemStatusData => dispatch(actions.updateItemStatus(itemStatusData))
+        updateItemStatus: (itemStatusData, token) =>
+            dispatch(actions.updateItemStatus(itemStatusData, token))
     };
 };
 

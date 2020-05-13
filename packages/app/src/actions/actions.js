@@ -111,12 +111,12 @@ export const fetchItems = token => {
     };
 };
 
-export const updateItemStatus = itemStatusData => {
+export const updateItemStatus = (itemStatusData, token) => {
     return dispatch => {
         dispatch({ type: 'UPDATE_ITEM_REQUEST_STATUS' });
         fetch(`${baseUrl}/api/items/${itemStatusData.itemId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(itemStatusData.requestBody),
             credentials: 'include'
         })
