@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import M from 'materialize-css';
 
 import RequestedItemsList from './RequestedItemsList';
+import AuthContext from '../../context/AuthContext';
 import * as actions from '../../actions/actions';
 
 class Tabs extends React.Component {
+    static contextType = AuthContext;
+
     componentDidMount() {
         M.Tabs.init(document.querySelectorAll('.tabs'), {});
-        this.props.fetchItems(this.props.token);
+        this.props.fetchItems(this.context.token);
     }
 
     render() {
@@ -34,32 +37,16 @@ class Tabs extends React.Component {
                         </ul>
                     </div>
                     <div id="active" className="col s12">
-                        <RequestedItemsList
-                            title="Active Requests"
-                            type="active"
-                            token={this.props.token}
-                        />
+                        <RequestedItemsList title="Active Requests" type="active" />
                     </div>
                     <div id="approved" className="col s12">
-                        <RequestedItemsList
-                            title="Approved Requests"
-                            type="approved"
-                            token={this.props.token}
-                        />
+                        <RequestedItemsList title="Approved Requests" type="approved" />
                     </div>
                     <div id="wishlist" className="col s12">
-                        <RequestedItemsList
-                            title="Wishlist Requests"
-                            type="wishlist"
-                            token={this.props.token}
-                        />
+                        <RequestedItemsList title="Wishlist Requests" type="wishlist" />
                     </div>
                     <div id="archive" className="col s12">
-                        <RequestedItemsList
-                            title="Archive Requests"
-                            type="archive"
-                            token={this.props.token}
-                        />
+                        <RequestedItemsList title="Archive Requests" type="archive" />
                     </div>
                 </div>
             </div>

@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/actions';
 import RequestNotes from './RequestNotes';
+import AuthContext from '../../context/AuthContext';
 
 class RequestRow extends React.Component {
+    static contextType = AuthContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -76,7 +79,7 @@ class RequestRow extends React.Component {
                 status: status
             }
         };
-        this.state.row.updateItemStatus(itemData, this.props.token);
+        this.state.row.updateItemStatus(itemData, this.context.token);
     }
 }
 
