@@ -37,16 +37,32 @@ class Tabs extends React.Component {
                         </ul>
                     </div>
                     <div id="active" className="col s12">
-                        <RequestedItemsList title="Active Requests" type="active" />
+                        <RequestedItemsList
+                            title="Active Requests"
+                            type="active"
+                            token={this.props.token}
+                        />
                     </div>
                     <div id="approved" className="col s12">
-                        <RequestedItemsList title="Approved Requests" type="approved" />
+                        <RequestedItemsList
+                            title="Approved Requests"
+                            type="approved"
+                            token={this.props.token}
+                        />
                     </div>
                     <div id="wishlist" className="col s12">
-                        <RequestedItemsList title="Wishlist Requests" type="wishlist" />
+                        <RequestedItemsList
+                            title="Wishlist Requests"
+                            type="wishlist"
+                            token={this.props.token}
+                        />
                     </div>
                     <div id="archive" className="col s12">
-                        <RequestedItemsList title="Archive Requests" type="archive" />
+                        <RequestedItemsList
+                            title="Archive Requests"
+                            type="archive"
+                            token={this.props.token}
+                        />
                     </div>
                 </div>
             </div>
