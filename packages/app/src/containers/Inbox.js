@@ -10,7 +10,11 @@ const Inbox = () => {
     return (
         <React.Fragment>
             {isRequestor && <RequestorInbox />}
-            {isApprover && <RequestTabs />}
+            {isApprover && (
+                <AuthContext.Consumer>
+                    {({ token }) => <RequestTabs token={token} />}
+                </AuthContext.Consumer>
+            )}
             {!isApprover && !isRequestor && <h3>Unknown Role</h3>}
         </React.Fragment>
     );

@@ -8,7 +8,7 @@ import * as actions from '../../actions/actions';
 class Tabs extends React.Component {
     componentDidMount() {
         M.Tabs.init(document.querySelectorAll('.tabs'), {});
-        this.props.fetchItems();
+        this.props.fetchItems(this.props.token);
     }
 
     render() {
@@ -53,11 +53,8 @@ class Tabs extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchItems: () => dispatch(actions.fetchItems())
+        fetchItems: token => dispatch(actions.fetchItems(token))
     };
 };
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(Tabs);
+export default connect(null, mapDispatchToProps)(Tabs);

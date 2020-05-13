@@ -22,7 +22,7 @@ class RequestRow extends React.Component {
                         {this.state.row.submittedBy.name.last}
                     </div>
                     <div className="col s1 m4">{this.state.row.name}</div>
-                    <div className="col s1 m4">{this.state.row.numberOfItems}</div>
+                    <div className="col s1 m4">{this.state.row.quantity}</div>
                     <div className="col s1 m4 right-align">
                         {this.getDate(this.state.row.createdAt)}
                     </div>
@@ -96,7 +96,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RequestRow);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestRow);

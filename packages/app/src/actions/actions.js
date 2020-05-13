@@ -1,6 +1,6 @@
 // import M from 'materialize-css';
 
-const baseUrl = 'http://localhost:3000';
+const baseUrl = 'http://localhost:3001';
 
 export const userLogin = creds => {
     return dispatch => {
@@ -86,13 +86,16 @@ export const fetchData = () => {
     };
 };
 
-export const fetchItems = () => {
+export const fetchItems = token => {
     return dispatch => {
         dispatch({ type: 'FETCH_ITEM_REQUEST' });
 
         fetch(`${baseUrl}/api/items`, {
             method: 'GET',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
             .then(response => {
                 if (response.ok) {
