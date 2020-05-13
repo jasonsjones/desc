@@ -48,9 +48,7 @@ class RequestedItemsList extends React.Component {
                     {this.props.items &&
                         this.props.items
                             .filter(item => item.status === this.props.type)
-                            .map(item => (
-                                <RequestRow key={item.id} {...item} token={this.props.token} />
-                            ))}
+                            .map(item => <RequestRow key={item.id} {...item} />)}
                 </ul>
             </div>
         );
