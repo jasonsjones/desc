@@ -1,9 +1,12 @@
 import { BASE_URL } from './util';
 
-export const getItemsForUser = userId => {
+export const getItemsForUser = (userId, token) => {
     return fetch(`${BASE_URL}/api/items?submittedBy=${userId}`, {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
     }).then(response => {
         if (response.ok) {
             return response.json();

@@ -31,8 +31,8 @@ const useItems = () => {
     });
 
     useEffect(() => {
-        if (authContext.contextUser._id) {
-            getItemsForUser(authContext.contextUser._id)
+        if (authContext.contextUser.id) {
+            getItemsForUser(authContext.contextUser.id, authContext.token)
                 .then(data => {
                     if (data.success) {
                         updateState(s => ({
@@ -104,7 +104,7 @@ const AddNoteForm = ({ itemId, onNoteAdd }) => {
         e.preventDefault();
         if (note.length > 0) {
             const noteBody = {
-                submittedBy: authContext.contextUser._id,
+                submittedBy: authContext.contextUser.id,
                 body: note
             };
             addNoteToItem(itemId, noteBody).then(res => {
@@ -165,7 +165,7 @@ const List = ({ items, filter }) => {
     const handleNoteAdd = (itemId, itemData) => {
         setDisplayableItems(
             displayableItems.map(item => {
-                if (item._id === itemId) {
+                if (item.id === itemId) {
                     return {
                         ...item,
                         updatedAt: itemData.updatedAt,
@@ -185,10 +185,10 @@ const List = ({ items, filter }) => {
             {displayableItems &&
                 displayableItems.map(item => {
                     return (
-                        <li key={item._id}>
+                        <li key={item.id}>
                             <div className="collapsible-header" style={css.itemHeader}>
                                 <p style={css.flexItem}>{item.name}</p>
-                                <p style={css.flexItem}>{item.numberOfItems}</p>
+                                <p style={css.flexItem}>{item.quantity}</p>
                                 <p style={css.flexItem}>{item.clientId}</p>
                                 <p style={css.flexItem}>
                                     {new Date(item.createdAt).toDateString()}
@@ -199,9 +199,9 @@ const List = ({ items, filter }) => {
                                     Notes:
                                 </p>
                                 {item.notes.map(note => (
-                                    <NoteDetails key={note._id} note={note} />
+                                    <NoteDetails key={note.id} note={note} />
                                 ))}
-                                <AddNoteForm itemId={item._id} onNoteAdd={handleNoteAdd} />
+                                <AddNoteForm itemId={item.id} onNoteAdd={handleNoteAdd} />
                             </div>
                         </li>
                     );
