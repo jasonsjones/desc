@@ -187,7 +187,7 @@ class ItemController {
                     return res.json({
                         success: true,
                         message: 'note added to item',
-                        payload: { item }
+                        payload: { item: item.toClientJSON }
                     });
                 } else {
                     return res.json({
