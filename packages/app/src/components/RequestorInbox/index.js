@@ -62,7 +62,7 @@ const useItems = () => {
                 isFetching: false
             }));
         }
-    }, [authContext.contextUser]);
+    }, [authContext.contextUser, authContext.token]);
 
     const { items, error, isFetching } = state;
     return {
