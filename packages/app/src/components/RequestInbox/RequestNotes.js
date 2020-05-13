@@ -35,17 +35,17 @@ class RequestNotes extends React.Component {
     }
 
     handleSubmitNote(event) {
-        var id = this.props.item._id;
+        var id = this.props.item.id;
 
         var noteData = {
             itemId: id,
             requestBody: {
-                submittedBy: this.context.contextUser._id,
+                authorId: this.context.contextUser.id,
                 body: this.state.currentNote
             }
         };
 
-        this.props.postNoteToItem(noteData);
+        this.props.postNoteToItem(noteData, this.context.token);
 
         // Once note is posted, reset text input
         this.setState({ currentNote: '' });
@@ -83,7 +83,7 @@ RequestNotes.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        postNoteToItem: noteData => dispatch(actions.postNoteToItem(noteData))
+        postNoteToItem: (noteData, token) => dispatch(actions.postNoteToItem(noteData, token))
     };
 };
 

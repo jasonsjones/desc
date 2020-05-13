@@ -141,12 +141,12 @@ export const updateItemStatus = (itemStatusData, token) => {
     };
 };
 
-export const postNoteToItem = noteData => {
+export const postNoteToItem = (noteData, token) => {
     return dispatch => {
         dispatch({ type: 'POST_NOTE_TO_ITEM' });
         fetch(`${baseUrl}/api/items/${noteData.itemId}/notes`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(noteData.requestBody),
             credentials: 'include'
         })
