@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemService from './ItemService';
-import { availableHouseholdItems, availableEngagementItems } from '../common/types';
+import {
+    availableHouseholdItems,
+    availableEngagementItems,
+    availablePersonalHygieneItems
+} from '../common/types';
 
 class ItemController {
     static createItem(req: Request, res: Response, next: NextFunction): Promise<Response> | void {
@@ -264,6 +268,11 @@ class ItemController {
                 break;
             case 'household':
                 if (availableHouseholdItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            case 'personal hygiene':
+                if (availablePersonalHygieneItems.includes(item)) {
                     result = true;
                 }
                 break;

@@ -28,7 +28,8 @@ export type UpdatableUserFields = Partial<Omit<UserFields, 'password' | 'roles'>
 
 export enum ItemCategory {
     ENGAGEMENT = 'engagement',
-    HOUSEHOLD = 'household'
+    HOUSEHOLD = 'household',
+    PERSONAL_HYGIENE = 'personal hygiene'
 }
 
 export enum ItemPriority {
@@ -62,9 +63,15 @@ export enum HouseLocation {
     UNION_HOTEL = 'union hotel'
 }
 
+// Engagement Items
 export const availableEngagementItems = ['games', 'artwork', 'candy/treats'] as const;
 export type EngagementItems = typeof availableEngagementItems[number];
+interface EngagementItemFields extends BaseItemFields {
+    category: ItemCategory.ENGAGEMENT;
+    name: EngagementItems;
+}
 
+// Household Items
 export const availableHouseholdItems = [
     'bedding',
     'pillows',
@@ -75,6 +82,29 @@ export const availableHouseholdItems = [
     'shower curtain'
 ];
 export type HouseholdItems = typeof availableHouseholdItems[number];
+interface HouseholdItemFields extends BaseItemFields {
+    category: ItemCategory.HOUSEHOLD;
+    name: HouseholdItems;
+}
+
+// Personal Hygiene Items
+export const availablePersonalHygieneItems = [
+    'soap',
+    'shampoo',
+    'conditioner',
+    'brush/comb',
+    'toothbrush',
+    'toothpaste',
+    'floss',
+    'feminine pad',
+    'tampons',
+    'toilet paper'
+] as const;
+export type PersnalHygieneItems = typeof availablePersonalHygieneItems[number];
+interface PersonalHygieneFields extends BaseItemFields {
+    category: ItemCategory.PERSONAL_HYGIENE;
+    name: PersnalHygieneItems;
+}
 
 export interface NoteFields {
     body: string;
@@ -92,16 +122,6 @@ interface BaseItemFields {
     note?: string;
 }
 
-interface EngagementItemFields extends BaseItemFields {
-    category: ItemCategory.ENGAGEMENT;
-    name: EngagementItems;
-}
-
-interface HouseholdItemFields extends BaseItemFields {
-    category: ItemCategory.HOUSEHOLD;
-    name: HouseholdItems;
-}
-
-export type ItemFields = EngagementItemFields | HouseholdItemFields;
+export type ItemFields = EngagementItemFields | HouseholdItemFields | PersonalHygieneFields;
 
 export type UpdatableItemFields = Partial<ItemFields>;

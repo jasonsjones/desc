@@ -82,6 +82,30 @@ describe('Item service', () => {
             );
         });
 
+        it('creates a new personal hygiene item', async () => {
+            const item = await ItemService.createItem({
+                clientId,
+                category: ItemCategory.PERSONAL_HYGIENE,
+                name: 'toothpaste',
+                quantity: 2,
+                location: HouseLocation.RAINIER_HOUSE,
+                requestorId: userId
+            });
+
+            expect(item).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    category: 'personal hygiene',
+                    priority: 'standard',
+                    quantity: 2,
+                    name: 'toothpaste',
+                    submittedBy: expect.any(User),
+                    status: 'active',
+                    location: 'rainier house'
+                })
+            );
+        });
+
         it('creates a new urgent household item', async () => {
             const item = await ItemService.createItem({
                 clientId,

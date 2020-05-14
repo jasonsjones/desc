@@ -88,6 +88,27 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
+            it('creates a new personal hygiene item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'personal hygiene',
+                    name: 'soap',
+                    location: 'aurora house',
+                    requestorId: requestor1Id
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+            });
+
             it('creates a new item (3 quantities)', async () => {
                 const response = await requestor1Client.createItem({
                     clientId,
