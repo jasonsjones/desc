@@ -1,4 +1,5 @@
 export default {
+    /*
     Clothing: {
         Shirt: {
             gender: {
@@ -167,14 +168,19 @@ export default {
         Scarf: {},
         Hat: {}
     },
+    */
 
     Household: {
         Bedding: {},
         Pillow: {},
         Plates: {},
-        Cutlery: {}
+        Cutlery: {},
+        'Pots & Pans': {},
+        'Napkins/Paper Towels': {},
+        'Shower Curtain': {}
     },
 
+    /*
     'Personal Hygiene': {
         Soap: {},
         Shampoo: {},
@@ -183,10 +189,12 @@ export default {
         Toothbrush: {},
         Toothpaste: {}
     },
+    */
 
     Engagement: {
         Artwork: {},
-        Games: {}
+        Games: {},
+        'Candy/Treats': {}
     }
 
     /*

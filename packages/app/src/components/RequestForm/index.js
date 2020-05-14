@@ -12,10 +12,10 @@ const initSelect = () => {
 };
 
 const itemCategoryMap = {
-    Clothing: 'Clothing',
-    Household: 'Household',
-    'Personal Hygiene': 'PersonalHygiene',
-    Engagement: 'Engagement'
+    // Clothing: 'Clothing',
+    Household: 'household',
+    // 'Personal Hygiene': 'PersonalHygiene',
+    Engagement: 'engagement'
 };
 
 const genderMap = {
@@ -37,6 +37,9 @@ const itemMap = {
     Pillow: 'pillow',
     Plates: 'plates',
     Cutlery: 'cutlery',
+    'Pots & Pans': 'pots and pans',
+    'Napkins/Paper Towels': 'napkins/paper towels',
+    'Shower Curtain': 'shower cutain',
     Soap: 'soap',
     Shampoo: 'shampoo',
     Conditioner: 'conditioner',
@@ -44,7 +47,8 @@ const itemMap = {
     Toothbrush: 'toothbrush',
     Toothpaste: 'toothpaste',
     Artwork: 'artwork',
-    Games: 'games'
+    Games: 'games',
+    'Candy/Treats': 'candy/treats'
 };
 
 const initialState = {
@@ -294,7 +298,7 @@ const RequestedItem = ({ item, id, onDelete, showBottomBorder }) => {
         <div style={itemStyles}>
             <p
                 style={{ flex: '0 0 30%' }}
-            >{`${item.numberOfItems} ${item.gender} ${item.size} ${item.name}`}</p>
+            >{`${item.quantity} ${item.gender} ${item.size} ${item.name}`}</p>
             <p style={{ flex: '0 0 60%' }}>
                 {item.note && item.note.length > 0 && <em>Note: </em>}
                 {item.note && item.note.length > 0 ? item.note : ''}
@@ -316,7 +320,7 @@ const NewRequestForm = () => {
         clientId: '',
         location: 'default',
         remember: false,
-        submittedBy: authCtx.contextUser._id,
+        requestorId: authCtx.contextUser.id,
         items: []
     });
 
@@ -343,15 +347,15 @@ const NewRequestForm = () => {
     const handleAddItem = itemState => {
         const transformedItem = {
             clientId: form.clientId,
-            submittedBy: form.submittedBy,
+            requestorId: form.requestorId,
             status: 'active',
             location: form.location,
             note: itemState.note,
-            itemCategory: itemState.category,
+            category: itemState.category,
             name: itemState.item,
             gender: itemState.gender,
             size: itemState.size,
-            numberOfItems: itemState.count
+            quantity: itemState.count
         };
 
         setForm(() => {
@@ -385,13 +389,13 @@ const NewRequestForm = () => {
                 items: form.items.map(item => {
                     return {
                         ...item,
-                        itemCategory: itemCategoryMap[item.itemCategory],
+                        category: itemCategoryMap[item.category],
                         name: itemMap[item.name],
                         gender: genderMap[item.gender]
                     };
                 })
             };
-            makeClientRequest(formData)
+            makeClientRequest(formData, authCtx.token)
                 .then(data => {
                     if (data.success) {
                         if (form.remember) {
@@ -414,6 +418,10 @@ const NewRequestForm = () => {
                         M.toast({
                             html: 'Oops.  Something went wrong submitting your request ',
                             classes: 'red lighten-1'
+                        });
+                        setForm({
+                            ...form,
+                            items: []
                         });
                     }
                 })
