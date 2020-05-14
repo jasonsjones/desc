@@ -104,10 +104,10 @@ const AddNoteForm = ({ itemId, onNoteAdd }) => {
         e.preventDefault();
         if (note.length > 0) {
             const noteBody = {
-                submittedBy: authContext.contextUser.id,
+                authorId: authContext.contextUser.id,
                 body: note
             };
-            addNoteToItem(itemId, noteBody).then(res => {
+            addNoteToItem(itemId, noteBody, authContext.token).then(res => {
                 if (res.success) {
                     onNoteAdd(itemId, res.payload.item);
                     setNote('');

@@ -14,11 +14,11 @@ export const getItemsForUser = (userId, token) => {
     });
 };
 
-export const addNoteToItem = (itemId, postBody) => {
+export const addNoteToItem = (itemId, postBody, token) => {
     return fetch(`${BASE_URL}/api/items/${itemId}/notes`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(postBody)
     }).then(response => {
         if (response.ok) {
