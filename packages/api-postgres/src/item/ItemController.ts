@@ -3,7 +3,10 @@ import ItemService from './ItemService';
 import {
     availableHouseholdItems,
     availableEngagementItems,
-    availablePersonalHygieneItems
+    availablePersonalHygieneItems,
+    availableOtherItems,
+    availablePetItems,
+    availableTicketItems
 } from '../common/types';
 
 class ItemController {
@@ -273,6 +276,21 @@ class ItemController {
                 break;
             case 'personal hygiene':
                 if (availablePersonalHygieneItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            case 'pet':
+                if (availablePetItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            case 'ticket':
+                if (availableTicketItems.includes(item)) {
+                    result = true;
+                }
+                break;
+            case 'other':
+                if (availableOtherItems.includes(item)) {
                     result = true;
                 }
                 break;

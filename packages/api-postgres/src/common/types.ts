@@ -29,7 +29,10 @@ export type UpdatableUserFields = Partial<Omit<UserFields, 'password' | 'roles'>
 export enum ItemCategory {
     ENGAGEMENT = 'engagement',
     HOUSEHOLD = 'household',
-    PERSONAL_HYGIENE = 'personal hygiene'
+    PERSONAL_HYGIENE = 'personal hygiene',
+    PET = 'pet',
+    TICKET = 'ticket',
+    OTHER = 'other'
 }
 
 export enum ItemPriority {
@@ -106,6 +109,30 @@ interface PersonalHygieneFields extends BaseItemFields {
     name: PersnalHygieneItems;
 }
 
+// Pet Items
+export const availablePetItems = ['specify'] as const;
+export type PetItems = typeof availablePetItems[number];
+interface PetFields extends BaseItemFields {
+    category: ItemCategory.PET;
+    name: PetItems;
+}
+
+// Ticket Items
+export const availableTicketItems = ['specify'] as const;
+export type TicketItems = typeof availableTicketItems[number];
+interface TicketFields extends BaseItemFields {
+    category: ItemCategory.TICKET;
+    name: TicketItems;
+}
+
+// Other
+export const availableOtherItems = ['specify'] as const;
+export type OtherItems = typeof availableOtherItems[number];
+interface OtherFields extends BaseItemFields {
+    category: ItemCategory.OTHER;
+    name: OtherItems;
+}
+
 export interface NoteFields {
     body: string;
     userId?: string;
@@ -122,6 +149,12 @@ interface BaseItemFields {
     note?: string;
 }
 
-export type ItemFields = EngagementItemFields | HouseholdItemFields | PersonalHygieneFields;
+export type ItemFields =
+    | EngagementItemFields
+    | HouseholdItemFields
+    | PersonalHygieneFields
+    | PetFields
+    | TicketFields
+    | OtherFields;
 
 export type UpdatableItemFields = Partial<ItemFields>;

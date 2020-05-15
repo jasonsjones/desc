@@ -106,6 +106,99 @@ describe('Item service', () => {
             );
         });
 
+        it('creates a new pet item', async () => {
+            const noteText = 'Dog food';
+            const item = await ItemService.createItem({
+                clientId,
+                category: ItemCategory.PET,
+                name: 'specify',
+                location: HouseLocation.CLEMENT_PLACE,
+                requestorId: userId,
+                note: noteText
+            });
+
+            expect(item).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    category: 'pet',
+                    priority: 'standard',
+                    quantity: 1,
+                    name: 'specify',
+                    submittedBy: expect.any(User),
+                    status: 'active',
+                    location: 'clement place',
+                    notes: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            body: noteText
+                        })
+                    ])
+                })
+            );
+        });
+
+        it('creates a new ticket item', async () => {
+            const noteText = 'Natural History Museum';
+            const item = await ItemService.createItem({
+                clientId,
+                category: ItemCategory.TICKET,
+                name: 'specify',
+                location: HouseLocation.CLEMENT_PLACE,
+                requestorId: userId,
+                note: noteText
+            });
+
+            expect(item).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    category: 'ticket',
+                    priority: 'standard',
+                    quantity: 1,
+                    name: 'specify',
+                    submittedBy: expect.any(User),
+                    status: 'active',
+                    location: 'clement place',
+                    notes: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            body: noteText
+                        })
+                    ])
+                })
+            );
+        });
+
+        it('creates a new other item', async () => {
+            const noteText = 'This is for everything else';
+            const item = await ItemService.createItem({
+                clientId,
+                category: ItemCategory.OTHER,
+                name: 'specify',
+                location: HouseLocation.CLEMENT_PLACE,
+                requestorId: userId,
+                note: noteText
+            });
+
+            expect(item).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    category: 'other',
+                    priority: 'standard',
+                    quantity: 1,
+                    name: 'specify',
+                    submittedBy: expect.any(User),
+                    status: 'active',
+                    location: 'clement place',
+                    notes: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            body: noteText
+                        })
+                    ])
+                })
+            );
+        });
+
         it('creates a new urgent household item', async () => {
             const item = await ItemService.createItem({
                 clientId,

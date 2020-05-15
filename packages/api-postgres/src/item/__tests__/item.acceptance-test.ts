@@ -67,7 +67,7 @@ describe('Item route acceptance tests', () => {
                 await requestor1Client.doLogin(requestor1Email, password);
             });
 
-            it('creates a new item', async () => {
+            it('creates a new engagement item', async () => {
                 const response = await requestor1Client.createItem({
                     clientId,
                     category: 'engagement',
@@ -95,6 +95,73 @@ describe('Item route acceptance tests', () => {
                     name: 'soap',
                     location: 'aurora house',
                     requestorId: requestor1Id
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+            });
+
+            it('creates a new pet item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'pet',
+                    name: 'specify',
+                    location: 'aurora house',
+                    requestorId: requestor1Id,
+                    note: 'Cat box litter, please'
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+            });
+
+            it('creates a new ticket item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'ticket',
+                    name: 'specify',
+                    quantity: 2,
+                    location: 'clement place',
+                    requestorId: requestor1Id,
+                    note: 'Seattle Science Center'
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+            });
+
+            it('creates a new "other" item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'other',
+                    name: 'specify',
+                    location: 'clement place',
+                    requestorId: requestor1Id,
+                    note: 'Amazon Echo'
                 });
 
                 expect(response.status).toBe(201);
