@@ -180,16 +180,18 @@ export default {
         'Shower Curtain': {}
     },
 
-    /*
     'Personal Hygiene': {
         Soap: {},
         Shampoo: {},
         Conditioner: {},
         'Brush/Comb': {},
         Toothbrush: {},
-        Toothpaste: {}
+        Toothpaste: {},
+        Floss: {},
+        'Feminine Pad': {},
+        Tampons: {},
+        'Toilet Paper': {}
     },
-    */
 
     Engagement: {
         Artwork: {},

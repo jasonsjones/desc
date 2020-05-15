@@ -14,7 +14,7 @@ const initSelect = () => {
 const itemCategoryMap = {
     // Clothing: 'Clothing',
     Household: 'household',
-    // 'Personal Hygiene': 'PersonalHygiene',
+    'Personal Hygiene': 'personal hygiene',
     Engagement: 'engagement'
 };
 
@@ -46,6 +46,10 @@ const itemMap = {
     'Brush/Comb': 'brush/comb',
     Toothbrush: 'toothbrush',
     Toothpaste: 'toothpaste',
+    Floss: 'floss',
+    'Feminine Pad': 'feminine pad',
+    Tampons: 'tampons',
+    'Toilet Paper': 'toilet paper',
     Artwork: 'artwork',
     Games: 'games',
     'Candy/Treats': 'candy/treats'
