@@ -31,6 +31,9 @@ export default class Item extends BaseEntity {
     @Column()
     name: string;
 
+    @Column({ nullable: true })
+    size: string;
+
     @Column({ type: 'enum', enum: ItemPriority, default: ItemPriority.STANDARD })
     priority: ItemPriority;
 
@@ -47,11 +50,7 @@ export default class Item extends BaseEntity {
     @Column({ type: 'enum', enum: HouseLocation })
     location: HouseLocation;
 
-    @OneToMany(
-        () => Note,
-        note => note.item,
-        { cascade: true }
-    )
+    @OneToMany(() => Note, (note) => note.item, { cascade: true })
     @JoinColumn()
     notes: Note[];
 
@@ -63,7 +62,7 @@ export default class Item extends BaseEntity {
 
     toClientJSON(): Item {
         const hasNotes = this.notes && this.notes.length > 0;
-        const sanitizedNotes = hasNotes && this.notes.map(note => note.toClientJSON());
+        const sanitizedNotes = hasNotes && this.notes.map((note) => note.toClientJSON());
 
         if (hasNotes) {
             return {

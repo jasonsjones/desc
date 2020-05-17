@@ -34,6 +34,31 @@ describe('Item service', () => {
     });
 
     describe('createItem() method', () => {
+        it('creates a new clothing item', async () => {
+            const item = await ItemService.createItem({
+                clientId,
+                category: ItemCategory.CLOTHING,
+                name: 'shirt',
+                size: 'L (10-12/42-44)',
+                location: HouseLocation.AURORA_HOUSE,
+                requestorId: userId
+            });
+
+            expect(item).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    category: 'clothing',
+                    priority: 'standard',
+                    quantity: 1,
+                    name: 'shirt',
+                    size: 'L (10-12/42-44)',
+                    submittedBy: expect.any(User),
+                    status: 'active',
+                    location: 'aurora house'
+                })
+            );
+        });
+
         it('creates a new engagement item', async () => {
             const itemName = 'games';
             const item = await ItemService.createItem({
