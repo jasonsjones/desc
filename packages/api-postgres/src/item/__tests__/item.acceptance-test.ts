@@ -67,6 +67,29 @@ describe('Item route acceptance tests', () => {
                 await requestor1Client.doLogin(requestor1Email, password);
             });
 
+            it('creates a new clothing item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'clothing',
+                    name: 'pants',
+                    quantity: 2,
+                    size: 'L (33-37/34)',
+                    location: 'aurora house',
+                    requestorId: requestor1Id
+                });
+
+                expect(response.status).toBe(201);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: true,
+                        message: expect.any(String),
+                        payload: expect.objectContaining({
+                            item: expect.any(Object)
+                        })
+                    })
+                );
+            });
+
             it('creates a new engagement item', async () => {
                 const response = await requestor1Client.createItem({
                     clientId,
@@ -280,6 +303,29 @@ describe('Item route acceptance tests', () => {
                     location: 'aurora house',
                     requestorId: requestor1Id,
                     note: 'This should STAY title case'
+                });
+
+                expect(response.status).toBe(200);
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        success: false,
+                        message: 'Error: unable to complete request',
+                        payload: {
+                            error: expect.any(String)
+                        }
+                    })
+                );
+            });
+
+            it('responds with error if the size is invalid for the clothing item', async () => {
+                const response = await requestor1Client.createItem({
+                    clientId,
+                    category: 'clothing',
+                    name: 'shirt',
+                    quantity: 2,
+                    size: 'L (33-37/34)',
+                    location: 'aurora house',
+                    requestorId: requestor1Id
                 });
 
                 expect(response.status).toBe(200);

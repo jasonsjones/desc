@@ -1,22 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemService from './ItemService';
-import {
-    availableHouseholdItems,
-    availableEngagementItems,
-    availablePersonalHygieneItems,
-    availableOtherItems,
-    availablePetItems,
-    availableTicketItems
-} from '../common/types';
+import { normalizeData, isValidItemForCategory, isValidSizeForItem } from './itemUtils';
 
 class ItemController {
     static createItem(req: Request, res: Response, next: NextFunction): Promise<Response> | void {
-        const normalizedData = ItemController.normalizeData(req.body);
+        const normalizedData = normalizeData(req.body);
 
         const {
             clientId,
             category,
             name,
+            size,
             priority,
             quantity,
             status,
@@ -25,46 +19,55 @@ class ItemController {
             note
         } = normalizedData;
 
-        if (ItemController.isValidItemForCategory(category, name)) {
-            return ItemService.createItem({
-                clientId,
-                category,
-                name,
-                priority,
-                quantity,
-                status,
-                location,
-                requestorId,
-                note
-            })
-                .then((item) => {
-                    // need to remove the reference to the item in the note since it causes a circular reference
-                    // and JSON does not handle it
-                    if (item && item.notes && item.notes.length > 0) {
-                        delete item.notes[0].item;
-                    }
-
-                    return res.status(201).json({
-                        success: true,
-                        message: 'item created',
-                        payload: {
-                            item: item?.toClientJSON()
-                        }
-                    });
-                })
-                .catch((err) => {
-                    return res.json({
-                        success: false,
-                        message: 'error creating new item',
-                        payload: {
-                            error: err.message,
-                            item: null
-                        }
-                    });
-                });
-        } else {
+        const isItemValidForCategory = isValidItemForCategory(category, name);
+        if (!isItemValidForCategory) {
             return next(new Error(`Item ${name} is not in category ${category}`));
         }
+
+        if (category === 'clothing') {
+            const isSizeValidForItem = isValidSizeForItem(name, size);
+            if (!isSizeValidForItem) {
+                return next(new Error(`Size ${size} is not valid for ${name}`));
+            }
+        }
+
+        return ItemService.createItem({
+            clientId,
+            category,
+            name,
+            size,
+            priority,
+            quantity,
+            status,
+            location,
+            requestorId,
+            note
+        })
+            .then((item) => {
+                // need to remove the reference to the item in the note since it causes a circular reference
+                // and JSON does not handle it
+                if (item && item.notes && item.notes.length > 0) {
+                    delete item.notes[0].item;
+                }
+
+                return res.status(201).json({
+                    success: true,
+                    message: 'item created',
+                    payload: {
+                        item: item?.toClientJSON()
+                    }
+                });
+            })
+            .catch((err) => {
+                return res.json({
+                    success: false,
+                    message: 'error creating new item',
+                    payload: {
+                        error: err.message,
+                        item: null
+                    }
+                });
+            });
     }
 
     static getAllItems(req: Request, res: Response): Promise<Response> {
@@ -246,58 +249,6 @@ class ItemController {
                     }
                 });
             });
-    }
-
-    private static normalizeData(payload: any): any {
-        let data: any = {};
-
-        for (let key in payload) {
-            if (typeof payload[key] === 'string' && key !== 'note') {
-                data[key] = payload[key].toLowerCase();
-            } else {
-                data[key] = payload[key];
-            }
-        }
-        return data;
-    }
-
-    private static isValidItemForCategory(category: string, item: any): boolean {
-        let result = false;
-        switch (category) {
-            case 'engagement':
-                if (availableEngagementItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            case 'household':
-                if (availableHouseholdItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            case 'personal hygiene':
-                if (availablePersonalHygieneItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            case 'pet':
-                if (availablePetItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            case 'ticket':
-                if (availableTicketItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            case 'other':
-                if (availableOtherItems.includes(item)) {
-                    result = true;
-                }
-                break;
-            default:
-                break;
-        }
-        return result;
     }
 }
 
