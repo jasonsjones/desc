@@ -1,5 +1,45 @@
 import availableItems from './availableItems';
 
+export const itemCategoryMap = {
+    Clothing: 'clothing',
+    Household: 'household',
+    'Personal Hygiene': 'personal hygiene',
+    Engagement: 'engagement'
+};
+
+export const itemMap = {
+    Shirt: 'shirt',
+    Coat: 'coat',
+    Pants: 'pants',
+    Shoes: 'shoes',
+    Socks: 'socks',
+    Underwear: 'underwear',
+    Gloves: 'gloves',
+    Bra: 'bra',
+    Scarf: 'scarf',
+    Hat: 'hat',
+    Bedding: 'bedding',
+    Pillow: 'pillow',
+    Plates: 'plates',
+    Cutlery: 'cutlery',
+    'Pots & Pans': 'pots and pans',
+    'Napkins/Paper Towels': 'napkins/paper towels',
+    'Shower Curtain': 'shower cutain',
+    Soap: 'soap',
+    Shampoo: 'shampoo',
+    Conditioner: 'conditioner',
+    'Brush/Comb': 'brush/comb',
+    Toothbrush: 'toothbrush',
+    Toothpaste: 'toothpaste',
+    Floss: 'floss',
+    'Feminine Pad': 'feminine pad',
+    Tampons: 'tampons',
+    'Toilet Paper': 'toilet paper',
+    Artwork: 'artwork',
+    Games: 'games',
+    'Candy/Treats': 'candy/treats'
+};
+
 /**
  * Get all item categories
  */

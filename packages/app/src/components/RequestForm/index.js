@@ -3,132 +3,13 @@ import M from 'materialize-css';
 import AuthContext from '../../context/AuthContext';
 import TextField from '../Common/TextField';
 import Select from '../Common/Select';
+import { initialState, itemReducer } from './itemReducer';
 import * as ItemUtil from './itemsUtil';
 import { makeClientRequest } from '../../services/clientRequests';
 
 const initSelect = () => {
     const elems = document.querySelectorAll('select');
     M.FormSelect.init(elems);
-};
-
-const itemCategoryMap = {
-    Clothing: 'clothing',
-    Household: 'household',
-    'Personal Hygiene': 'personal hygiene',
-    Engagement: 'engagement'
-};
-
-const itemMap = {
-    Shirt: 'shirt',
-    Coat: 'coat',
-    Pants: 'pants',
-    Shoes: 'shoes',
-    Socks: 'socks',
-    Underwear: 'underwear',
-    Gloves: 'gloves',
-    Bra: 'bra',
-    Scarf: 'scarf',
-    Hat: 'hat',
-    Bedding: 'bedding',
-    Pillow: 'pillow',
-    Plates: 'plates',
-    Cutlery: 'cutlery',
-    'Pots & Pans': 'pots and pans',
-    'Napkins/Paper Towels': 'napkins/paper towels',
-    'Shower Curtain': 'shower cutain',
-    Soap: 'soap',
-    Shampoo: 'shampoo',
-    Conditioner: 'conditioner',
-    'Brush/Comb': 'brush/comb',
-    Toothbrush: 'toothbrush',
-    Toothpaste: 'toothpaste',
-    Floss: 'floss',
-    'Feminine Pad': 'feminine pad',
-    Tampons: 'tampons',
-    'Toilet Paper': 'toilet paper',
-    Artwork: 'artwork',
-    Games: 'games',
-    'Candy/Treats': 'candy/treats'
-};
-
-const initialState = {
-    selectedCategory: '',
-    availableItems: [],
-    selectedItem: '',
-    availableSizes: [],
-    selectedSize: '',
-    count: '',
-    note: ''
-};
-
-const itemReducer = (state, action) => {
-    switch (action.type) {
-        case 'CATEGORY_SELECTED':
-            return {
-                ...state,
-                selectedCategory: action.payload,
-                availableItems: ItemUtil.getItemsInCategory(action.payload),
-                availableSizes: [],
-                selectedItem: '',
-                selectedSize: '',
-                count: '',
-                note: ''
-            };
-        case 'ITEM_SELECTED':
-            if (action.payload === 'Bra') {
-                return {
-                    ...state,
-                    selectedItem: action.payload,
-                    selectedSize: '',
-                    availableSizes: ItemUtil.getBraSizes(),
-                    count: '',
-                    note: ''
-                };
-            }
-
-            if (action.payload === 'Scarf' || action.payload === 'Hat') {
-                return {
-                    ...state,
-                    selectedItem: action.payload,
-                    selectedSize: '',
-                    availableSizes: [],
-                    count: '',
-                    note: ''
-                };
-            }
-
-            const sizes =
-                state.selectedCategory === 'Clothing'
-                    ? ItemUtil.getItemSizes(state.selectedCategory, action.payload)
-                    : [];
-            return {
-                ...state,
-                selectedItem: action.payload,
-                selectedSize: '',
-                availableSizes: sizes,
-                count: ''
-            };
-        case 'SIZE_SELECTED':
-            return {
-                ...state,
-                selectedSize: action.payload,
-                count: ''
-            };
-        case 'COUNT_CHANGED':
-            return {
-                ...state,
-                count: action.payload
-            };
-        case 'NOTE_ADDED':
-            return {
-                ...state,
-                note: action.payload
-            };
-        case 'CLEAR_STATE':
-            return initialState;
-        default:
-            return state;
-    }
 };
 
 const ItemForm = ({ onItemAdd }) => {
@@ -351,8 +232,8 @@ const NewRequestForm = () => {
                 items: form.items.map(item => {
                     return {
                         ...item,
-                        category: itemCategoryMap[item.category],
-                        name: itemMap[item.name]
+                        category: ItemUtil.itemCategoryMap[item.category],
+                        name: ItemUtil.itemMap[item.name]
                     };
                 })
             };
