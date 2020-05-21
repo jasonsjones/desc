@@ -10,10 +10,11 @@ import {
     availablePantSizes,
     availableShoeSizes,
     availableBraSizes,
-    availableClothingItems
+    availableClothingItems,
+    availableGloveSizes
 } from '../common/types';
 
-const fieldsToNormalize = ['category', 'name', 'location', 'priority', 'status' ];
+const fieldsToNormalize = ['category', 'name', 'location', 'priority', 'status'];
 
 export function normalizeData(payload: any): any {
     let data: any = {};
@@ -103,6 +104,12 @@ export function isValidSizeForItem(itemName: string, size: any): boolean {
 
         case 'bra':
             if (availableBraSizes.includes(size)) {
+                result = true;
+            }
+            break;
+
+        case 'gloves':
+            if (availableGloveSizes.includes(size)) {
                 result = true;
             }
             break;

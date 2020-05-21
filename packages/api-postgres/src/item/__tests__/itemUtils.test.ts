@@ -129,6 +129,8 @@ describe('Item utilities', () => {
             ${'underwear'} | ${'XL'}              | ${true}
             ${'bra'}       | ${'L (37-41, C-D)'}  | ${true}
             ${'bra'}       | ${'M (37-41, C-D)'}  | ${false}
+            ${'gloves'}    | ${'M'}               | ${true}
+            ${'gloves'}    | ${'XXL'}             | ${false}
             ${'hat'}       | ${''}                | ${true}
             ${'scarf'}     | ${''}                | ${true}
             ${'hat'}       | ${null}              | ${true}

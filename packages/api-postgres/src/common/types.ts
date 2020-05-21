@@ -144,6 +144,9 @@ export const availableBraSizes = [
 ] as const;
 type BraSizes = typeof availableSockOrUnderwearSizes[number];
 
+export const availableGloveSizes = ['S', 'M', 'L'] as const;
+type GloveSizes = typeof availableGloveSizes[number];
+
 // Clothing Items
 export const availableClothingItems = [
     'shirt',
@@ -185,6 +188,12 @@ interface ClothingBraFields extends BaseItemFields {
     category: ItemCategory.CLOTHING;
     name: 'bra';
     size: BraSizes;
+}
+
+interface ClothingGlovesFields extends BaseItemFields {
+    category: ItemCategory.CLOTHING;
+    name: 'gloves';
+    size: GloveSizes;
 }
 
 // Engagement Items
@@ -277,6 +286,7 @@ export type ItemFields =
     | ClothingShoeFields
     | ClothingSockOrUnderwearFields
     | ClothingBraFields
+    | ClothingGlovesFields
     | EngagementItemFields
     | HouseholdItemFields
     | PersonalHygieneFields
