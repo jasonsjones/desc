@@ -90,7 +90,8 @@ export default {
             sizes: ['S', 'M', 'L']
         },
         Scarf: {},
-        Hat: {}
+        Hat: {},
+        Other: {}
     },
 
     Household: {
@@ -100,7 +101,8 @@ export default {
         Cutlery: {},
         'Pots & Pans': {},
         'Napkins/Paper Towels': {},
-        'Shower Curtain': {}
+        'Shower Curtain': {},
+        Other: {}
     },
 
     'Personal Hygiene': {
@@ -113,13 +115,15 @@ export default {
         Floss: {},
         'Feminine Pad': {},
         Tampons: {},
-        'Toilet Paper': {}
+        'Toilet Paper': {},
+        Other: {}
     },
 
     Engagement: {
         Artwork: {},
         Games: {},
-        'Candy/Treats': {}
+        'Candy/Treats': {},
+        Other: {}
     },
 
     Tickets: {
@@ -127,6 +131,10 @@ export default {
     },
 
     Pets: {
+        Specify: {}
+    },
+
+    Other: {
         Specify: {}
     }
 };
