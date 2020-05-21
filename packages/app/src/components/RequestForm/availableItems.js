@@ -20,7 +20,7 @@ export default {
         },
         Pants: {
             sizes: [
-                'XS (25-26/28',
+                'XS (25-26/28)',
                 'S (27-29/30)',
                 'M (30-32/32)',
                 'L (33-37/34)',
@@ -127,14 +127,14 @@ export default {
     },
 
     Tickets: {
-        Specify: {}
+        Other: {}
     },
 
     Pets: {
-        Specify: {}
+        Other: {}
     },
 
     Other: {
-        Specify: {}
+        Other: {}
     }
 };

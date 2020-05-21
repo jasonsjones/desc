@@ -5,8 +5,8 @@ export const itemCategoryMap = {
     Household: 'household',
     'Personal Hygiene': 'personal hygiene',
     Engagement: 'engagement',
-    Pet: 'pet',
-    Ticket: 'ticket',
+    Pets: 'pet',
+    Tickets: 'ticket',
     Other: 'other'
 };
 
@@ -41,8 +41,7 @@ export const itemMap = {
     Artwork: 'artwork',
     Games: 'games',
     'Candy/Treats': 'candy/treats',
-    Other: 'other',
-    Specify: 'specify'
+    Other: 'other'
 };
 
 /**
