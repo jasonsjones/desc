@@ -19,6 +19,11 @@ const css = {
 
     itemHeader: {
         padding: '0 2rem'
+    },
+
+    flexItemCapitialize: {
+        flex: '0 0 25%',
+        textTransform: 'capitalize'
     }
 };
 
@@ -187,7 +192,7 @@ const List = ({ items, filter }) => {
                     return (
                         <li key={item.id}>
                             <div className="collapsible-header" style={css.itemHeader}>
-                                <p style={css.flexItem}>{item.name}</p>
+                                <p style={css.flexItemCapitialize}>{item.name}</p>
                                 <p style={css.flexItem}>{item.quantity}</p>
                                 <p style={css.flexItem}>{item.clientId}</p>
                                 <p style={css.flexItem}>
