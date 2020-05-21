@@ -243,7 +243,7 @@ interface PersonalHygieneFields extends BaseItemFields {
 }
 
 // Pet Items
-export const availablePetItems = ['specify'] as const;
+export const availablePetItems = ['other'] as const;
 export type PetItems = typeof availablePetItems[number];
 interface PetFields extends BaseItemFields {
     category: ItemCategory.PET;
@@ -251,7 +251,7 @@ interface PetFields extends BaseItemFields {
 }
 
 // Ticket Items
-export const availableTicketItems = ['specify'] as const;
+export const availableTicketItems = ['other'] as const;
 export type TicketItems = typeof availableTicketItems[number];
 interface TicketFields extends BaseItemFields {
     category: ItemCategory.TICKET;
@@ -259,7 +259,7 @@ interface TicketFields extends BaseItemFields {
 }
 
 // Other
-export const availableOtherItems = ['specify'] as const;
+export const availableOtherItems = ['other'] as const;
 export type OtherItems = typeof availableOtherItems[number];
 interface OtherFields extends BaseItemFields {
     category: ItemCategory.OTHER;
