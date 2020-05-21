@@ -157,7 +157,8 @@ export const availableClothingItems = [
     'underwear',
     'bra',
     'scarf',
-    'hats'
+    'hats',
+    'other'
 ] as const;
 
 interface ClothingShirtOrCoatFields extends BaseItemFields {
@@ -197,7 +198,7 @@ interface ClothingGlovesFields extends BaseItemFields {
 }
 
 // Engagement Items
-export const availableEngagementItems = ['games', 'artwork', 'candy/treats'] as const;
+export const availableEngagementItems = ['games', 'artwork', 'candy/treats', 'other'] as const;
 export type EngagementItems = typeof availableEngagementItems[number];
 interface EngagementItemFields extends BaseItemFields {
     category: ItemCategory.ENGAGEMENT;
@@ -212,8 +213,9 @@ export const availableHouseholdItems = [
     'cutlery',
     'pots and pans',
     'napkins/paper towels',
-    'shower curtain'
-];
+    'shower curtain',
+    'other'
+] as const;
 export type HouseholdItems = typeof availableHouseholdItems[number];
 interface HouseholdItemFields extends BaseItemFields {
     category: ItemCategory.HOUSEHOLD;
@@ -231,7 +233,8 @@ export const availablePersonalHygieneItems = [
     'floss',
     'feminine pad',
     'tampons',
-    'toilet paper'
+    'toilet paper',
+    'other'
 ] as const;
 export type PersnalHygieneItems = typeof availablePersonalHygieneItems[number];
 interface PersonalHygieneFields extends BaseItemFields {
