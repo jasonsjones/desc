@@ -17,31 +17,7 @@ export const getItemsInCategory = category => {
     }
 };
 
-/**
- * Returns true if itemType in category has gender options
- */
-export const isItemGendered = (category, itemType) => {
-    const result = Object.keys(availableItems)
-        .filter(cat => cat === category)
-        .filter(cat => !!availableItems[cat][itemType].gender)
-        .some(isGendered => isGendered);
-
-    return result;
-};
-
-// If item with is sized by given gender, return sizes for gender
-export const getItemGenderSizes = (category, itemType, itemGender) => {
-    const result = Object.keys(availableItems)
-        .filter(cat => cat === category)
-        .filter(cat => !!availableItems[cat][itemType])
-        .filter(cat => !!availableItems[cat][itemType].gender)
-        .filter(cat => !!availableItems[cat][itemType].gender[itemGender])
-        .map(cat => availableItems[cat][itemType].gender[itemGender].sizes);
-
-    return result.length > 0 ? result[0] : [];
-};
-
-export const getItemNonGenderSizes = (category, itemType) => {
+export const getItemSizes = (category, itemType) => {
     const result = Object.keys(availableItems)
         .filter(cat => cat === category)
         .filter(cat => !!availableItems[cat][itemType])
@@ -50,22 +26,6 @@ export const getItemNonGenderSizes = (category, itemType) => {
     return result.length > 0 ? result[0] : [];
 };
 
-export const isItemFemaleOnly = (category, itemType) => {
-    const result = Object.keys(availableItems)
-        .filter(cat => cat === category)
-        .filter(cat => !!availableItems[cat][itemType])
-        .filter(cat => !!availableItems[cat][itemType].gender)
-        .map(cat => availableItems[cat][itemType].gender);
-
-    console.log(result);
-    let gender = [];
-    if (result.length > 0) {
-        gender = Object.keys(result[0]);
-    }
-
-    return gender.length === 1 && gender.includes('Female');
-};
-
 export const getBraSizes = () => {
-    return availableItems['Clothing']['Bra'].gender['Female'].sizes;
+    return availableItems['Clothing']['Bra'].sizes;
 };

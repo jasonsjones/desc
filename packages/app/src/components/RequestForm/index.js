@@ -12,15 +12,10 @@ const initSelect = () => {
 };
 
 const itemCategoryMap = {
-    // Clothing: 'Clothing',
+    Clothing: 'clothing',
     Household: 'household',
     'Personal Hygiene': 'personal hygiene',
     Engagement: 'engagement'
-};
-
-const genderMap = {
-    Male: 'M',
-    Female: 'F'
 };
 
 const itemMap = {
@@ -30,6 +25,7 @@ const itemMap = {
     Shoes: 'shoes',
     Socks: 'socks',
     Underwear: 'underwear',
+    Gloves: 'gloves',
     Bra: 'bra',
     Scarf: 'scarf',
     Hat: 'hat',
@@ -59,8 +55,6 @@ const initialState = {
     selectedCategory: '',
     availableItems: [],
     selectedItem: '',
-    gender: [],
-    selectedGender: '',
     availableSizes: [],
     selectedSize: '',
     count: '',
@@ -75,10 +69,8 @@ const itemReducer = (state, action) => {
                 selectedCategory: action.payload,
                 availableItems: ItemUtil.getItemsInCategory(action.payload),
                 availableSizes: [],
-                gender: [],
                 selectedItem: '',
                 selectedSize: '',
-                selectedGender: '',
                 count: '',
                 note: ''
             };
@@ -88,7 +80,6 @@ const itemReducer = (state, action) => {
                     ...state,
                     selectedItem: action.payload,
                     selectedSize: '',
-                    selectedGender: 'Female',
                     availableSizes: ItemUtil.getBraSizes(),
                     count: '',
                     note: ''
@@ -100,36 +91,21 @@ const itemReducer = (state, action) => {
                     ...state,
                     selectedItem: action.payload,
                     selectedSize: '',
-                    selectedGender: '',
                     availableSizes: [],
                     count: '',
                     note: ''
                 };
             }
-            const isItemGendered = ItemUtil.isItemGendered(state.selectedCategory, action.payload);
+
             const sizes =
-                !isItemGendered && state.selectedCategory === 'Clothing'
-                    ? ItemUtil.getItemNonGenderSizes(state.selectedCategory, action.payload)
+                state.selectedCategory === 'Clothing'
+                    ? ItemUtil.getItemSizes(state.selectedCategory, action.payload)
                     : [];
             return {
                 ...state,
                 selectedItem: action.payload,
-                selectedGender: '',
                 selectedSize: '',
-                gender: isItemGendered ? ['Male', 'Female'] : [],
                 availableSizes: sizes,
-                count: ''
-            };
-        case 'GENDER_SELECTED':
-            return {
-                ...state,
-                selectedGender: action.payload,
-                selectedSize: '',
-                availableSizes: ItemUtil.getItemGenderSizes(
-                    state.selectedCategory,
-                    state.selectedItem,
-                    action.payload
-                ),
                 count: ''
             };
         case 'SIZE_SELECTED':
@@ -181,9 +157,6 @@ const ItemForm = ({ onItemAdd }) => {
                 case 'item':
                     dispatch({ type: 'ITEM_SELECTED', payload: e.target.value });
                     break;
-                case 'gender':
-                    dispatch({ type: 'GENDER_SELECTED', payload: e.target.value });
-                    break;
                 case 'size':
                     dispatch({ type: 'SIZE_SELECTED', payload: e.target.value });
                     break;
@@ -205,7 +178,6 @@ const ItemForm = ({ onItemAdd }) => {
             onItemAdd({
                 category: state.selectedCategory,
                 item: state.selectedItem,
-                gender: state.selectedGender,
                 size: state.selectedSize,
                 count: state.count,
                 note: state.note
@@ -234,17 +206,6 @@ const ItemForm = ({ onItemAdd }) => {
                 handleChange={handleSelection('item')}
                 disabled={state.availableItems.length === 0}
             />
-
-            {state.gender.length > 0 && (
-                <Select
-                    title="Item Gender"
-                    name="gender"
-                    options={state.gender}
-                    value={state.selectedGender}
-                    placeholder="Select Gender"
-                    handleChange={handleSelection('gender')}
-                />
-            )}
 
             {state.availableSizes.length > 0 && (
                 <Select
@@ -300,9 +261,7 @@ const RequestedItem = ({ item, id, onDelete, showBottomBorder }) => {
 
     return (
         <div style={itemStyles}>
-            <p
-                style={{ flex: '0 0 30%' }}
-            >{`${item.quantity} ${item.gender} ${item.size} ${item.name}`}</p>
+            <p style={{ flex: '0 0 30%' }}>{`${item.quantity} ${item.size} ${item.name}`}</p>
             <p style={{ flex: '0 0 60%' }}>
                 {item.note && item.note.length > 0 && <em>Note: </em>}
                 {item.note && item.note.length > 0 ? item.note : ''}
@@ -357,7 +316,6 @@ const NewRequestForm = () => {
             note: itemState.note,
             category: itemState.category,
             name: itemState.item,
-            gender: itemState.gender,
             size: itemState.size,
             quantity: itemState.count
         };
@@ -394,8 +352,7 @@ const NewRequestForm = () => {
                     return {
                         ...item,
                         category: itemCategoryMap[item.category],
-                        name: itemMap[item.name],
-                        gender: genderMap[item.gender]
+                        name: itemMap[item.name]
                     };
                 })
             };
