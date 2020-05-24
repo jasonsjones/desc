@@ -3,7 +3,7 @@ import M from 'materialize-css';
 import Spinner from '../Common/Spinner';
 import TextField from '../Common/TextField';
 import AuthContext from '../../context/AuthContext';
-import useFetch from '../../hooks/useFetch';
+import { useFetchData } from '../../hooks';
 import { addNoteToItem } from '../../services/items';
 
 const css = {
@@ -174,9 +174,9 @@ const List = ({ items, filter }) => {
 
 const RequestorInbox = () => {
     const authContext = useContext(AuthContext);
-    const url = `http://localhost:3001/api/items?submittedBy=${authContext.contextUser.id}`;
-    const options = { method: 'GET', credentials: 'include' };
-    const { response, error, isFetching } = useFetch(url, options);
+    const { response, error, isFetching } = useFetchData(
+        `/api/items?submittedBy=${authContext.contextUser.id}`
+    );
     const items = (response && response.payload.items) || [];
 
     console.log({ response, error, isFetching });
