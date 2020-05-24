@@ -3,7 +3,8 @@ import M from 'materialize-css';
 import Spinner from '../Common/Spinner';
 import TextField from '../Common/TextField';
 import AuthContext from '../../context/AuthContext';
-import { getItemsForUser, addNoteToItem } from '../../services/items';
+import useFetch from '../../hooks/useFetch';
+import { addNoteToItem } from '../../services/items';
 
 const css = {
     listHeader: {
@@ -25,56 +26,6 @@ const css = {
         flex: '0 0 25%',
         textTransform: 'capitalize'
     }
-};
-
-const useItems = () => {
-    const authContext = useContext(AuthContext);
-    const [state, updateState] = useState({
-        items: [],
-        error: null,
-        isFetching: true
-    });
-
-    useEffect(() => {
-        if (authContext.contextUser.id) {
-            getItemsForUser(authContext.contextUser.id, authContext.token)
-                .then(data => {
-                    if (data.success) {
-                        updateState(s => ({
-                            items: data.payload.items,
-                            error: null,
-                            isFetching: false
-                        }));
-                    } else {
-                        updateState(s => ({
-                            ...s,
-                            error: data.message,
-                            isFetching: false
-                        }));
-                    }
-                })
-                .catch(error =>
-                    updateState(s => ({
-                        ...s,
-                        error: error.message,
-                        isFetching: false
-                    }))
-                );
-        } else {
-            updateState(s => ({
-                items: [],
-                error: 'User no longer authenticated.  Pleaase sign in again',
-                isFetching: false
-            }));
-        }
-    }, [authContext.contextUser, authContext.token]);
-
-    const { items, error, isFetching } = state;
-    return {
-        items,
-        error,
-        isFetching
-    };
 };
 
 const initCollapsibleElements = () => {
@@ -222,12 +173,18 @@ const List = ({ items, filter }) => {
 };
 
 const RequestorInbox = () => {
-    const { items, error, isFetching } = useItems();
+    const authContext = useContext(AuthContext);
+    const url = `http://localhost:3001/api/items?submittedBy=${authContext.contextUser.id}`;
+    const options = { method: 'GET', credentials: 'include' };
+    const { response, error, isFetching } = useFetch(url, options);
+    const items = (response && response.payload.items) || [];
+
+    console.log({ response, error, isFetching });
 
     useEffect(() => {
         M.Tabs.init(document.querySelectorAll('.tabs'), {});
         initCollapsibleElements();
-    }, [items, isFetching]);
+    }, [isFetching]);
 
     return (
         <div style={{ marginTop: '3rem' }}>

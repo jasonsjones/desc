@@ -36,9 +36,13 @@ const Layout = props => {
         }, 1000);
     };
 
+    const updateToken = token => {
+        setToken(token);
+    };
+
     return (
         <React.Fragment>
-            <AuthProvider value={{ contextUser, token, login, logout }}>
+            <AuthProvider value={{ contextUser, token, login, logout, updateToken }}>
                 {isFetching ? (
                     <div style={{ position: 'absolute', left: '35%', top: '50%', width: '30%' }}>
                         <div className="progress">

@@ -1,6 +1,6 @@
 import { BASE_URL } from './util';
 
-export const getItemsForUser = (userId, token) => {
+export const getItemsForUser = async (userId, token) => {
     return fetch(`${BASE_URL}/api/items?submittedBy=${userId}`, {
         method: 'GET',
         credentials: 'include',
