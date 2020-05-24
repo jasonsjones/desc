@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import useTokenOrUpdate from './useTokenOrUpdate';
+import useTokenOrRefresh from './useTokenOrRefresh';
 
 const useFetch = (url, options) => {
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
-    const token = useTokenOrUpdate();
+    const token = useTokenOrRefresh();
 
     useEffect(() => {
         const fetchData = async () => {
