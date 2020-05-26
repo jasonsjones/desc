@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import jwt from 'jsonwebtoken';
 import AuthContext from '../context/AuthContext';
 import { BASE_URL } from '../services/util';
@@ -30,10 +30,11 @@ const useTokenOrRefresh = () => {
 };
 
 const useFetchData = (endpoint, options = {}) => {
+    const authContext = useContext(AuthContext);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
-    const token = useTokenOrRefresh();
+    const token = authContext.token;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -59,4 +60,25 @@ const useFetchData = (endpoint, options = {}) => {
 
     return { response, error, isFetching };
 };
-export { useFetchData };
+
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            const id = setInterval(tick, delay);
+            return () => {
+                clearInterval(id);
+            };
+        }
+    }, [delay]);
+}
+
+export { useFetchData, useTokenOrRefresh, useInterval };

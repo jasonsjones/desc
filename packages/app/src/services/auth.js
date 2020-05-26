@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { BASE_URL } from './util';
 
 export const login = creds => {
@@ -32,3 +33,14 @@ export const fetchSessionUser = () => {
         credentials: 'include'
     }).then(response => response.json());
 };
+
+export function getRefreshToken(currentToken) {
+    const tokenExpires = jwt.decode(currentToken).exp;
+    const now = Date.now().valueOf() / 1000;
+    if (now > tokenExpires) {
+        return fetch('http://localhost:3001/api/auth/refreshtoken', {
+            credentials: 'include'
+        }).then(res => res.json());
+    }
+    return Promise.resolve('token is still valid');
+}
