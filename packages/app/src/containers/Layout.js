@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Nav from '../components/Nav/Nav';
 import { AuthProvider } from '../context/AuthContext';
-import { fetchSessionUser, getRefreshToken } from '../services/auth';
-import { useInterval } from '../hooks';
+import { fetchSessionUser } from '../services/auth';
 
 const Layout = props => {
     const [contextUser, setContextUser] = useState(null);
@@ -21,16 +20,6 @@ const Layout = props => {
             }, 1000);
         });
     }, []);
-
-    useInterval(() => {
-        if (token) {
-            getRefreshToken(token).then(data => {
-                if (data.payload && data.payload.accessToken) {
-                    setToken(data.payload.accessToken);
-                }
-            });
-        }
-    }, 1000 * 60 * 12); // refresh token every 12 mins.
 
     const login = (user, token) => {
         setContextUser(user);
