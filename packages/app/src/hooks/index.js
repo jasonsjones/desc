@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef } from 'react';
+import { useCallback, useContext, useState, useEffect, useRef } from 'react';
 import jwt from 'jsonwebtoken';
 import AuthContext from '../context/AuthContext';
 import { BASE_URL } from '../services/util';
@@ -6,35 +6,47 @@ import { BASE_URL } from '../services/util';
 const useTokenOrRefresh = () => {
     const authContext = useContext(AuthContext);
     const [token, setToken] = useState(authContext.token);
-    const tokenExpires = jwt.decode(token).exp;
-    const now = Date.now().valueOf() / 1000;
+    const tokenExpiresRef = useRef();
+    const nowRef = useRef();
 
-    useEffect(() => {
-        const getNewToken = async () => {
-            const res = await fetch(`${BASE_URL}/api/auth/refreshtoken`, {
+    const getTokenOrRefresh = useCallback(() => {
+        tokenExpiresRef.current = jwt.decode(token).exp;
+        nowRef.current = Date.now().valueOf() / 1000;
+
+        if (nowRef.current > tokenExpiresRef.current) {
+            return fetch(`${BASE_URL}/api/auth/refreshtoken`, {
                 method: 'GET',
                 credentials: 'include'
-            });
-            const data = await res.json();
-            if (data && data.payload) {
-                setToken(data.payload.accessToken);
-                authContext.updateToken(data.payload.accessToken);
-            }
-        };
-        if (now > tokenExpires) {
-            getNewToken();
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.payload) {
+                        setToken(data.payload.accessToken);
+                        authContext.updateToken(data.payload.accessToken);
+                        console.log('refreshing token...');
+                        console.log('old token: ', token);
+                        console.log('new token: ', data.payload.accessToken);
+                        return { token: data.payload.accessToken };
+                    }
+                });
+        } else {
+            return Promise.resolve({ token });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    return token;
+    }, [authContext, token]);
+
+    useEffect(() => {
+        getTokenOrRefresh();
+    }, [getTokenOrRefresh]);
+
+    return { token, getTokenOrRefresh };
 };
 
 const useFetchData = (endpoint, options = {}) => {
-    const authContext = useContext(AuthContext);
+    //const authContext = useContext(AuthContext);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
-    const token = authContext.token;
+    const { token } = useTokenOrRefresh();
 
     useEffect(() => {
         const fetchData = async () => {
