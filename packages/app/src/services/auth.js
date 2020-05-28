@@ -40,7 +40,15 @@ export function getRefreshToken(currentToken) {
     if (now > tokenExpires) {
         return fetch('http://localhost:3001/api/auth/refreshtoken', {
             credentials: 'include'
-        }).then(res => res.json());
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.payload.accessToken) {
+                    return data.payload.accessToken;
+                } else {
+                    return '';
+                }
+            });
     }
-    return Promise.resolve('token is still valid');
+    return Promise.resolve(currentToken);
 }

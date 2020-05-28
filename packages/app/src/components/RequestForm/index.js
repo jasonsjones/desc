@@ -5,8 +5,8 @@ import TextField from '../Common/TextField';
 import Select from '../Common/Select';
 import { initialState, itemReducer } from './itemReducer';
 import * as ItemUtil from './itemsUtil';
-import { useTokenOrRefresh } from '../../hooks';
 import { makeClientRequest } from '../../services/clientRequests';
+import { getRefreshToken } from '../../services/auth';
 
 const initSelect = () => {
     const elems = document.querySelectorAll('select');
@@ -169,8 +169,6 @@ const NewRequestForm = () => {
         items: []
     });
 
-    const { getTokenOrRefresh } = useTokenOrRefresh();
-
     useEffect(() => {
         Promise.resolve().then(() => {
             initSelect();
@@ -243,8 +241,13 @@ const NewRequestForm = () => {
 
             // TODO: refactor this out to its own custom hook that encapsulates the token check before making
             // the API call to mutate the data
-            getTokenOrRefresh()
-                .then(data => data.token)
+            getRefreshToken(authCtx.token)
+                .then(token => {
+                    if (token !== authCtx.token) {
+                        authCtx.updateToken(token);
+                    }
+                    return token;
+                })
                 .then(token => makeClientRequest(formData, token))
                 .then(data => {
                     if (data.success) {

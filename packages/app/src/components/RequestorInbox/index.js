@@ -3,8 +3,9 @@ import M from 'materialize-css';
 import Spinner from '../Common/Spinner';
 import TextField from '../Common/TextField';
 import AuthContext from '../../context/AuthContext';
-import { useFetchData, useTokenOrRefresh } from '../../hooks';
+import { useFetchData } from '../../hooks';
 import { addNoteToItem } from '../../services/items';
+import { getRefreshToken } from '../../services/auth';
 
 const css = {
     listHeader: {
@@ -55,7 +56,6 @@ const NoteDetails = ({ note }) => {
 
 const AddNoteForm = React.memo(({ itemId, onNoteAdd }) => {
     const authContext = useContext(AuthContext);
-    const { getTokenOrRefresh } = useTokenOrRefresh();
     const [note, setNote] = useState('');
 
     const handleSubmit = e => {
@@ -65,8 +65,16 @@ const AddNoteForm = React.memo(({ itemId, onNoteAdd }) => {
                 authorId: authContext.contextUser.id,
                 body: note
             };
-            getTokenOrRefresh()
-                .then(data => data.token)
+
+            // TODO: refactor this out to its own custom hook that encapsulates the token check before making
+            // the API call to mutate the data
+            getRefreshToken(authContext.token)
+                .then(token => {
+                    if (token !== authContext.token) {
+                        authContext.updateToken(token);
+                    }
+                    return token;
+                })
                 .then(token => addNoteToItem(itemId, noteBody, token))
                 .then(res => {
                     if (res.success) {
