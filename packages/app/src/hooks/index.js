@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import AuthContext from '../context/AuthContext';
 import { BASE_URL } from '../services/util';
 
-const useTokenOrRefresh = () => {
+const useTokenOrRefresh = (runOnLoad = false) => {
     const authContext = useContext(AuthContext);
     const [token, setToken] = useState(authContext.token);
     const tokenExpiresRef = useRef();
@@ -35,18 +35,19 @@ const useTokenOrRefresh = () => {
     }, [authContext, token]);
 
     useEffect(() => {
-        getTokenOrRefresh();
-    }, [getTokenOrRefresh]);
+        if (runOnLoad) {
+            getTokenOrRefresh();
+        }
+    }, [getTokenOrRefresh, runOnLoad]);
 
     return { token, getTokenOrRefresh };
 };
 
 const useFetchData = (endpoint, options = {}) => {
-    //const authContext = useContext(AuthContext);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
-    const { token } = useTokenOrRefresh();
+    const { token } = useTokenOrRefresh(true); // true = refresh on first component load
 
     useEffect(() => {
         const fetchData = async () => {

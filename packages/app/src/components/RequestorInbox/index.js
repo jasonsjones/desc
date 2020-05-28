@@ -3,7 +3,7 @@ import M from 'materialize-css';
 import Spinner from '../Common/Spinner';
 import TextField from '../Common/TextField';
 import AuthContext from '../../context/AuthContext';
-import { useFetchData } from '../../hooks';
+import { useFetchData, useTokenOrRefresh } from '../../hooks';
 import { addNoteToItem } from '../../services/items';
 
 const css = {
@@ -53,9 +53,11 @@ const NoteDetails = ({ note }) => {
     );
 };
 
-const AddNoteForm = ({ itemId, onNoteAdd }) => {
+const AddNoteForm = React.memo(({ itemId, onNoteAdd }) => {
     const authContext = useContext(AuthContext);
+    const { getTokenOrRefresh } = useTokenOrRefresh();
     const [note, setNote] = useState('');
+
     const handleSubmit = e => {
         e.preventDefault();
         if (note.length > 0) {
@@ -63,14 +65,17 @@ const AddNoteForm = ({ itemId, onNoteAdd }) => {
                 authorId: authContext.contextUser.id,
                 body: note
             };
-            addNoteToItem(itemId, noteBody, authContext.token).then(res => {
-                if (res.success) {
-                    onNoteAdd(itemId, res.payload.item);
-                    setNote('');
-                    M.updateTextFields();
-                    M.toast({ html: 'Note added to request', classes: 'teal' });
-                }
-            });
+            getTokenOrRefresh()
+                .then(data => data.token)
+                .then(token => addNoteToItem(itemId, noteBody, token))
+                .then(res => {
+                    if (res.success) {
+                        onNoteAdd(itemId, res.payload.item);
+                        setNote('');
+                        M.updateTextFields();
+                        M.toast({ html: 'Note added to request', classes: 'teal' });
+                    }
+                });
         }
     };
 
@@ -92,7 +97,7 @@ const AddNoteForm = ({ itemId, onNoteAdd }) => {
             </button>
         </form>
     );
-};
+});
 
 const ListHeader = () => {
     return (
@@ -178,8 +183,6 @@ const RequestorInbox = () => {
         `/api/items?submittedBy=${authContext.contextUser.id}`
     );
     const items = (response && response.payload.items) || [];
-
-    console.log({ response, error, isFetching });
 
     useEffect(() => {
         M.Tabs.init(document.querySelectorAll('.tabs'), {});
