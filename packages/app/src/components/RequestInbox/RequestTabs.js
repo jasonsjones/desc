@@ -5,13 +5,22 @@ import M from 'materialize-css';
 import RequestedItemsList from './RequestedItemsList';
 import AuthContext from '../../context/AuthContext';
 import * as actions from '../../actions/actions';
+import { getRefreshToken } from '../../services/auth';
 
 class Tabs extends React.Component {
     static contextType = AuthContext;
 
     componentDidMount() {
         M.Tabs.init(document.querySelectorAll('.tabs'), {});
-        this.props.fetchItems(this.context.token);
+
+        getRefreshToken(this.context.token)
+            .then(token => {
+                if (token !== this.context.token) {
+                    this.context.updateToken(token);
+                }
+                return token;
+            })
+            .then(token => this.props.fetchItems(token));
     }
 
     render() {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/actions';
 import AuthContext from '../../context/AuthContext';
+import { getRefreshToken } from '../../services/auth';
 
 class RequestNotes extends React.Component {
     static contextType = AuthContext;
@@ -45,10 +46,18 @@ class RequestNotes extends React.Component {
             }
         };
 
-        this.props.postNoteToItem(noteData, this.context.token);
-
-        // Once note is posted, reset text input
-        this.setState({ currentNote: '' });
+        getRefreshToken(this.context.token)
+            .then(token => {
+                if (token !== this.context.token) {
+                    this.context.updateToken(token);
+                }
+                return token;
+            })
+            .then(token => this.props.postNoteToItem(noteData, this.context.token))
+            .then(() => {
+                // Once note is posted, reset text input
+                this.setState({ currentNote: '' });
+            });
 
         // TODO: add to list of notes without requiring refresh
     }
