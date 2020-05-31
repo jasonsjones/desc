@@ -5,7 +5,7 @@ import TextField from '../Common/TextField';
 import AuthContext from '../../context/AuthContext';
 import { useFetchData } from '../../hooks';
 import { addNoteToItem } from '../../services/items';
-import { getRefreshToken } from '../../services/auth';
+import { getValidToken } from '../../services/auth';
 
 const css = {
     listHeader: {
@@ -68,7 +68,7 @@ const AddNoteForm = React.memo(({ itemId, onNoteAdd }) => {
 
             // TODO: refactor this out to its own custom hook that encapsulates the token check before making
             // the API call to mutate the data
-            getRefreshToken(authContext.token)
+            getValidToken(authContext.token)
                 .then(token => {
                     if (token !== authContext.token) {
                         authContext.updateToken(token);

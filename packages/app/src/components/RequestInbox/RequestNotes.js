@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/actions';
 import AuthContext from '../../context/AuthContext';
-import { getRefreshToken } from '../../services/auth';
+import { getValidToken } from '../../services/auth';
 
 class RequestNotes extends React.Component {
     static contextType = AuthContext;
@@ -46,7 +46,7 @@ class RequestNotes extends React.Component {
             }
         };
 
-        getRefreshToken(this.context.token)
+        getValidToken(this.context.token)
             .then(token => {
                 if (token !== this.context.token) {
                     this.context.updateToken(token);

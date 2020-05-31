@@ -34,7 +34,7 @@ export const fetchSessionUser = () => {
     }).then(response => response.json());
 };
 
-export function getRefreshToken(currentToken) {
+export function getValidToken(currentToken) {
     const tokenExpires = jwt.decode(currentToken).exp;
     const now = Date.now().valueOf() / 1000;
     if (now > tokenExpires) {

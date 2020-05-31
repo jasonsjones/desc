@@ -6,7 +6,7 @@ import Select from '../Common/Select';
 import { initialState, itemReducer } from './itemReducer';
 import * as ItemUtil from './itemsUtil';
 import { makeClientRequest } from '../../services/clientRequests';
-import { getRefreshToken } from '../../services/auth';
+import { getValidToken } from '../../services/auth';
 
 const initSelect = () => {
     const elems = document.querySelectorAll('select');
@@ -241,7 +241,7 @@ const NewRequestForm = () => {
 
             // TODO: refactor this out to its own custom hook that encapsulates the token check before making
             // the API call to mutate the data
-            getRefreshToken(authCtx.token)
+            getValidToken(authCtx.token)
                 .then(token => {
                     if (token !== authCtx.token) {
                         authCtx.updateToken(token);

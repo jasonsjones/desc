@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions/actions';
 import RequestNotes from './RequestNotes';
 import AuthContext from '../../context/AuthContext';
-import { getRefreshToken } from '../../services/auth';
+import { getValidToken } from '../../services/auth';
 
 const css = {
     listHeader: {
@@ -96,7 +96,7 @@ class RequestRow extends React.Component {
             }
         };
 
-        getRefreshToken(this.context.token)
+        getValidToken(this.context.token)
             .then(token => {
                 if (token !== this.context.token) {
                     this.context.updateToken(token);
