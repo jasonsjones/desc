@@ -236,10 +236,10 @@ export const availablePersonalHygieneItems = [
     'toilet paper',
     'other'
 ] as const;
-export type PersnalHygieneItems = typeof availablePersonalHygieneItems[number];
+export type PersonalHygieneItems = typeof availablePersonalHygieneItems[number];
 interface PersonalHygieneFields extends BaseItemFields {
     category: ItemCategory.PERSONAL_HYGIENE;
-    name: PersnalHygieneItems;
+    name: PersonalHygieneItems;
 }
 
 // Pet Items
