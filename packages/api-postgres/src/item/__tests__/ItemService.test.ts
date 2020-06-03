@@ -136,7 +136,7 @@ describe('Item service', () => {
             const item = await ItemService.createItem({
                 clientId,
                 category: ItemCategory.PET,
-                name: 'specify',
+                name: 'other',
                 location: HouseLocation.CLEMENT_PLACE,
                 requestorId: userId,
                 note: noteText
@@ -148,7 +148,7 @@ describe('Item service', () => {
                     category: 'pet',
                     priority: 'standard',
                     quantity: 1,
-                    name: 'specify',
+                    name: 'other',
                     submittedBy: expect.any(User),
                     status: 'active',
                     location: 'clement place',
@@ -167,7 +167,7 @@ describe('Item service', () => {
             const item = await ItemService.createItem({
                 clientId,
                 category: ItemCategory.TICKET,
-                name: 'specify',
+                name: 'other',
                 location: HouseLocation.CLEMENT_PLACE,
                 requestorId: userId,
                 note: noteText
@@ -179,7 +179,7 @@ describe('Item service', () => {
                     category: 'ticket',
                     priority: 'standard',
                     quantity: 1,
-                    name: 'specify',
+                    name: 'other',
                     submittedBy: expect.any(User),
                     status: 'active',
                     location: 'clement place',
@@ -198,7 +198,7 @@ describe('Item service', () => {
             const item = await ItemService.createItem({
                 clientId,
                 category: ItemCategory.OTHER,
-                name: 'specify',
+                name: 'other',
                 location: HouseLocation.CLEMENT_PLACE,
                 requestorId: userId,
                 note: noteText
@@ -210,7 +210,7 @@ describe('Item service', () => {
                     category: 'other',
                     priority: 'standard',
                     quantity: 1,
-                    name: 'specify',
+                    name: 'other',
                     submittedBy: expect.any(User),
                     status: 'active',
                     location: 'clement place',

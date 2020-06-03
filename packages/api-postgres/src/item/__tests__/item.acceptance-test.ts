@@ -136,7 +136,7 @@ describe('Item route acceptance tests', () => {
                 const response = await requestor1Client.createItem({
                     clientId,
                     category: 'pet',
-                    name: 'specify',
+                    name: 'other',
                     location: 'aurora house',
                     requestorId: requestor1Id,
                     note: 'Cat box litter, please'
@@ -158,7 +158,7 @@ describe('Item route acceptance tests', () => {
                 const response = await requestor1Client.createItem({
                     clientId,
                     category: 'ticket',
-                    name: 'specify',
+                    name: 'other',
                     quantity: 2,
                     location: 'clement place',
                     requestorId: requestor1Id,
@@ -181,7 +181,7 @@ describe('Item route acceptance tests', () => {
                 const response = await requestor1Client.createItem({
                     clientId,
                     category: 'other',
-                    name: 'specify',
+                    name: 'other',
                     location: 'clement place',
                     requestorId: requestor1Id,
                     note: 'Amazon Echo'

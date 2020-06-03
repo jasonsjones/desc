@@ -103,11 +103,11 @@ describe('Item utilities', () => {
             ${'personal hygiene'} | ${'soap'}        | ${true}
             ${'personal hygiene'} | ${'cutlery'}     | ${false}
             ${'personal hygiene'} | ${'plates'}      | ${false}
-            ${'pet'}              | ${'specify'}     | ${true}
+            ${'pet'}              | ${'other'}       | ${true}
             ${'pet'}              | ${'food'}        | ${false}
-            ${'ticket'}           | ${'specify'}     | ${true}
+            ${'ticket'}           | ${'other'}       | ${true}
             ${'ticket'}           | ${'soap'}        | ${false}
-            ${'other'}            | ${'specify'}     | ${true}
+            ${'other'}            | ${'other'}       | ${true}
             ${'other'}            | ${'4k tv'}       | ${false}
         `('returns $expected for $item in $category category', ({ category, item, expected }) => {
             const result = isValidItemForCategory(category, item);
