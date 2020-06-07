@@ -16,8 +16,8 @@
     "scripts": {
         "bootstrap": "lerna bootstrap",
         "clean": "lerna clean",
-        "dev": "lerna run dev --stream --scope @desc/api --scope @desc/app",
-        "dev:v2": "lerna run dev --stream --scope @desc/api-postgres --scope @desc/app",
+        "dev": "lerna run dev --stream --scope @desc/api-postgres --scope @desc/app",
+        "dev:v1": "lerna run dev --stream --scope @desc/api --scope @desc/app",
         "dev:api": "lerna run dev --stream --scope @desc/api",
         "dev:api-p": "lerna run dev --stream --scope @desc/api-postgres",
         "dev:app": "lerna run start --stream --scope @desc/app",
