@@ -19,6 +19,7 @@ import ConfirmEmail from './containers/ConfirmEmail';
 import ForgotPassword from './containers/ForgotPassword';
 import ChangePassword from './containers/ChangePassword';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 import { reducer } from './reducers/reducer';
 
 import './App.css';
@@ -78,9 +79,9 @@ function App() {
                                 <Route
                                     path="usermanagement"
                                     element={
-                                        <PrivateRoute>
+                                        <AdminRoute>
                                             <UserManagement />
-                                        </PrivateRoute>
+                                        </AdminRoute>
                                     }
                                 />
                             </Route>
