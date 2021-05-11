@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import M from 'materialize-css';
 
 const UserDropdwon = ({ user, handleLogout, targetName }) => {
+    const isAdmin = user.roles.includes('admin');
+
     useEffect(() => {
         const elems = document.querySelectorAll('.dropdown-trigger');
         M.Dropdown.init(elems, {
@@ -28,6 +30,11 @@ const UserDropdwon = ({ user, handleLogout, targetName }) => {
                     <li>
                         <Link to="/profile">Profile</Link>
                     </li>
+                    {isAdmin && (
+                        <li>
+                            <Link to="/usermanagement">User Management</Link>
+                        </li>
+                    )}
                     <li>
                         <Link to="/" onClick={handleLogout}>
                             Logout

@@ -14,6 +14,7 @@ import Inbox from './containers/Inbox';
 import RequestCreationPage from './components/RequestCreation/RequestCreationPage';
 import Request from './containers/Request';
 import Home from './components/Home/Home';
+import UserManagment from './containers/UserManagement';
 import ConfirmEmail from './containers/ConfirmEmail';
 import ForgotPassword from './containers/ForgotPassword';
 import ChangePassword from './containers/ChangePassword';
@@ -23,6 +24,7 @@ import { reducer } from './reducers/reducer';
 import './App.css';
 import 'materialize-css/dist/css/materialize.css';
 import { AuthProvider } from './context/AuthContext';
+import UserManagement from './containers/UserManagement';
 
 const store = createStore(reducer, applyMiddleware(thunk, logger));
 const queryClient = new QueryClient();
@@ -70,6 +72,14 @@ function App() {
                                     element={
                                         <PrivateRoute>
                                             <UserProfile />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="usermanagement"
+                                    element={
+                                        <PrivateRoute>
+                                            <UserManagement />
                                         </PrivateRoute>
                                     }
                                 />

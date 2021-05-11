@@ -12,6 +12,7 @@ const Nav = () => {
     const mobileActiveClassName = 'teal white-text';
     const authCtx = useAuthContext();
     const isAuthed = authCtx.contextUser && authCtx.token;
+    const isAdmin = authCtx.contextUser && authCtx.contextUser.roles.includes('admin');
 
     const { mutate: doLogout } = useLogout((response) => {
         if (response.success) {
@@ -122,6 +123,13 @@ const Nav = () => {
                                 Profile
                             </NavLink>
                         </li>
+                        {isAdmin && (
+                            <li>
+                                <NavLink to="/usermanagement" activeClassName="teal white-text">
+                                    User Management
+                                </NavLink>
+                            </li>
+                        )}
                         <li>
                             <Link to="/" onClick={handleLogout}>
                                 Logout
