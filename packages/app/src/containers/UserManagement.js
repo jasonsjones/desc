@@ -13,15 +13,24 @@ const UserCard = ({ user }) => {
             <p className="flow-text" style={{ textTransform: 'capitalize' }}>
                 Program: {program}
             </p>
+            <p className="flow-text">
+                Role(s):{' '}
+                <span style={{ textTransform: 'capitalize' }}> {user.roles.join(', ')} </span>
+            </p>
             <p className="flow-text valign-wrapper">
                 Email Verified:
                 {isEmailVerified ? (
-                    <i className="small material-icons prefix">check</i>
+                    <i className="small material-icons prefix green-text text-darken-1">check</i>
                 ) : (
                     <i className="small material-icons prefix">clear</i>
                 )}
             </p>
-            <p className="flow-text">Last Login: {new Date(lastLoginAt).toDateString()}</p>
+            <p className="flow-text">
+                Last Login:{' '}
+                {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(
+                    new Date(lastLoginAt)
+                )}
+            </p>
             <button
                 data-target="modal"
                 className="waves-effect waves-light btn red darken-2 modal-trigger"
@@ -42,14 +51,21 @@ const UserRecord = ({ user }) => {
                 </td>
                 <td>{email}</td>
                 <td style={{ textTransform: 'capitalize' }}>{program}</td>
+                <td style={{ textTransform: 'capitalize' }}>{user.roles.join(', ')}</td>
                 <td>
                     {isEmailVerified ? (
-                        <i className="small material-icons prefix">check</i>
+                        <i className="small material-icons prefix green-text text-darken-1">
+                            check
+                        </i>
                     ) : (
                         <i className="small material-icons prefix">clear</i>
                     )}
                 </td>
-                <td>{new Date(lastLoginAt).toDateString()}</td>
+                <td>
+                    {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(
+                        new Date(lastLoginAt)
+                    )}
+                </td>
                 <td>
                     <button
                         data-target="modal"
@@ -95,6 +111,7 @@ const UserManagement = () => {
                         <th>Name</th>
                         <th>Email</th>
                         <th>Program</th>
+                        <th>Role(s)</th>
                         <th>Email Verified</th>
                         <th>Last Login</th>
                         <th>Remove</th>
