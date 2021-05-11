@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import M from 'materialize-css';
 import AuthContext from '../context/AuthContext';
 
 const UserCard = ({ user }) => {
@@ -8,8 +9,10 @@ const UserCard = ({ user }) => {
             <h3 className="center">
                 {firstName} {lastName}
             </h3>
-            <p className="flow-text">{email}</p>
-            <p className="flow-text">{program.toUpperCase()}</p>
+            <p className="flow-text">Email: {email}</p>
+            <p className="flow-text" style={{ textTransform: 'capitalize' }}>
+                Program: {program}
+            </p>
             <p className="flow-text valign-wrapper">
                 Email Verified:
                 {isEmailVerified ? (
@@ -19,14 +22,17 @@ const UserCard = ({ user }) => {
                 )}
             </p>
             <p className="flow-text">Last Login: {new Date(lastLoginAt).toDateString()}</p>
-            <button className="waves-effect waves-light btn red darken-2">
+            <button
+                data-target="modal"
+                className="waves-effect waves-light btn red darken-2 modal-trigger"
+            >
                 <i className="material-icons left">delete</i>Remove
             </button>
         </div>
     );
 };
 
-const User = ({ user }) => {
+const UserRecord = ({ user }) => {
     const { firstName, lastName, email, program, isEmailVerified, lastLoginAt } = user;
     return (
         <>
@@ -45,9 +51,12 @@ const User = ({ user }) => {
                 </td>
                 <td>{new Date(lastLoginAt).toDateString()}</td>
                 <td>
-                    <span style={{ cursor: 'pointer' }}>
+                    <button
+                        data-target="modal"
+                        className="waves-effect waves-red btn-flat modal-trigger"
+                    >
                         <i className="small material-icons prefix">delete</i>
-                    </span>
+                    </button>
                 </td>
             </tr>
         </>
@@ -59,6 +68,9 @@ const UserManagement = () => {
     const [users, setUsers] = useState({});
 
     useEffect(() => {
+        const elems = document.querySelectorAll('.modal');
+        M.Modal.init(elems);
+
         fetch('http://localhost:3001/api/users', {
             method: 'GET',
             credentials: 'include',
@@ -67,7 +79,11 @@ const UserManagement = () => {
             }
         })
             .then((res) => res.json())
-            .then((data) => setUsers(data.payload.users));
+            .then((data) => {
+                if (data.success && data.payload.users) {
+                    setUsers(data.payload.users);
+                }
+            });
     }, []);
 
     return (
@@ -85,7 +101,9 @@ const UserManagement = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.length > 0 && users.map((user) => <User key={user.id} user={user} />)}
+                    {users &&
+                        users.length > 0 &&
+                        users.map((user) => <UserRecord key={user.id} user={user} />)}
                 </tbody>
             </table>
 
@@ -102,12 +120,15 @@ const UserManagement = () => {
 
             <div id="modal" className="modal">
                 <div className="modal-content">
-                    <h4>Delete User?</h4>
+                    <h4>Remove User</h4>
+                    <p>
+                        Are you sure you would like to remove this user? This action cannot be
+                        undone.
+                    </p>
                 </div>
                 <div className="modal-footer">
-                    <a href="#!" className="modal-close>">
-                        Confirm
-                    </a>
+                    <button className="modal-close waves-effect waves-teal btn-flat">Cancel</button>
+                    <button className="waves-effect waves-red btn-flat">Remove</button>
                 </div>
             </div>
         </>
