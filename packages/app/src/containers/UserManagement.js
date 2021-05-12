@@ -41,7 +41,8 @@ const UserCard = ({ user }) => {
     );
 };
 
-const UserRecord = ({ user }) => {
+const UserRecord = ({ user, handleUserToDelete }) => {
+    const authCtx = useContext(AuthContext);
     const { firstName, lastName, email, program, isEmailVerified, lastLoginAt } = user;
     return (
         <>
@@ -67,12 +68,21 @@ const UserRecord = ({ user }) => {
                     )}
                 </td>
                 <td>
-                    <button
-                        data-target="modal"
-                        className="waves-effect waves-red btn-flat modal-trigger"
-                    >
-                        <i className="small material-icons prefix">delete</i>
-                    </button>
+                    {authCtx.contextUser.id !== user.id ? (
+                        <button
+                            data-target="modal"
+                            className="waves-effect waves-red btn-flat modal-trigger"
+                            onClick={() => {
+                                handleUserToDelete(user);
+                            }}
+                        >
+                            <i className="small material-icons prefix">delete</i>
+                        </button>
+                    ) : (
+                        <button className="waves-effect waves-red btn-flat disabled">
+                            <i className="small material-icons prefix">clear</i>
+                        </button>
+                    )}
                 </td>
             </tr>
         </>
@@ -82,6 +92,15 @@ const UserRecord = ({ user }) => {
 const UserManagement = () => {
     const authCtx = useContext(AuthContext);
     const [users, setUsers] = useState({});
+    const [userToDelete, setUserToDelete] = useState(null);
+
+    function handleUserToDelete(user) {
+        if (authCtx.contextUser.id !== user.id) {
+            setUserToDelete(user);
+        } else {
+            setUserToDelete(null);
+        }
+    }
 
     useEffect(() => {
         const elems = document.querySelectorAll('.modal');
@@ -120,7 +139,13 @@ const UserManagement = () => {
                 <tbody>
                     {users &&
                         users.length > 0 &&
-                        users.map((user) => <UserRecord key={user.id} user={user} />)}
+                        users.map((user) => (
+                            <UserRecord
+                                key={user.id}
+                                user={user}
+                                handleUserToDelete={handleUserToDelete}
+                            />
+                        ))}
                 </tbody>
             </table>
 
@@ -137,7 +162,11 @@ const UserManagement = () => {
 
             <div id="modal" className="modal">
                 <div className="modal-content">
-                    <h4>Remove User</h4>
+                    <h4>
+                        {`Remove ${userToDelete ? userToDelete.firstName : 'User'} ${
+                            userToDelete ? userToDelete.lastName : ''
+                        }`}
+                    </h4>
                     <p>
                         Are you sure you would like to remove this user? This action cannot be
                         undone.
