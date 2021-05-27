@@ -41,9 +41,14 @@ const UserCard = ({ user }) => {
     );
 };
 
-const UserRecord = ({ user, handleUserToDelete }) => {
+const UserRecord = ({ user, handleChangeUserStatus }) => {
     const authCtx = useContext(AuthContext);
-    const { firstName, lastName, email, program, isEmailVerified, lastLoginAt } = user;
+    const { firstName, lastName, email, program, isEmailVerified, lastLoginAt, isActive } = user;
+
+    function handleChange() {
+        handleChangeUserStatus(user);
+    }
+
     return (
         <>
             <tr>
@@ -68,21 +73,21 @@ const UserRecord = ({ user, handleUserToDelete }) => {
                     )}
                 </td>
                 <td>
-                    {authCtx.contextUser.id !== user.id ? (
-                        <button
-                            data-target="modal"
-                            className="waves-effect waves-red btn-flat modal-trigger"
-                            onClick={() => {
-                                handleUserToDelete(user);
-                            }}
-                        >
-                            <i className="small material-icons prefix">delete</i>
-                        </button>
-                    ) : (
-                        <button className="waves-effect waves-red btn-flat disabled">
-                            <i className="small material-icons prefix">clear</i>
-                        </button>
-                    )}
+                    <div className="switch">
+                        <label className="grey-text text-darken-2">
+                            Inactive
+                            <input
+                                type="checkbox"
+                                data-target="modal"
+                                className="modal-trigger"
+                                checked={isActive}
+                                disabled={authCtx.contextUser.id === user.id}
+                                onChange={handleChange}
+                            />
+                            <span className="lever"></span>
+                            Active
+                        </label>
+                    </div>
                 </td>
             </tr>
         </>
@@ -91,15 +96,28 @@ const UserRecord = ({ user, handleUserToDelete }) => {
 
 const UserManagement = () => {
     const authCtx = useContext(AuthContext);
-    const [users, setUsers] = useState({});
-    const [userToDelete, setUserToDelete] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [userToChangeStatus, setUserToChangeStatus] = useState(null);
 
-    function handleUserToDelete(user) {
+    function handleChangeUserStatus(user) {
         if (authCtx.contextUser.id !== user.id) {
-            setUserToDelete(user);
+            setUserToChangeStatus(user);
         } else {
-            setUserToDelete(null);
+            setUserToChangeStatus(null);
         }
+    }
+
+    function handleChangeStatus() {
+        const updatedUsers = users.map((user) => {
+            if (user.id === userToChangeStatus.id) {
+                user.isActive = !user.isActive;
+            }
+            return user;
+        });
+        setUsers(updatedUsers);
+
+        const instance = M.Modal.getInstance(document.querySelector('.modal'));
+        instance.close();
     }
 
     useEffect(() => {
@@ -133,7 +151,7 @@ const UserManagement = () => {
                         <th>Role(s)</th>
                         <th>Email Verified</th>
                         <th>Last Login</th>
-                        <th>Remove</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -143,7 +161,7 @@ const UserManagement = () => {
                             <UserRecord
                                 key={user.id}
                                 user={user}
-                                handleUserToDelete={handleUserToDelete}
+                                handleChangeUserStatus={handleChangeUserStatus}
                             />
                         ))}
                 </tbody>
@@ -163,18 +181,24 @@ const UserManagement = () => {
             <div id="modal" className="modal">
                 <div className="modal-content">
                     <h4>
-                        {`Remove ${userToDelete ? userToDelete.firstName : 'User'} ${
-                            userToDelete ? userToDelete.lastName : ''
+                        {`${
+                            userToChangeStatus && userToChangeStatus.isActive
+                                ? 'Deactivate'
+                                : 'Activate'
+                        } ${userToChangeStatus ? userToChangeStatus.firstName : 'User'} ${
+                            userToChangeStatus ? userToChangeStatus.lastName : ''
                         }`}
                     </h4>
-                    <p>
-                        Are you sure you would like to remove this user? This action cannot be
-                        undone.
-                    </p>
+                    <p>Are you sure you would like to change the status of this user?</p>
                 </div>
                 <div className="modal-footer">
                     <button className="modal-close waves-effect waves-teal btn-flat">Cancel</button>
-                    <button className="waves-effect waves-red btn-flat">Remove</button>
+                    <button
+                        className="waves-effect waves-red btn-flat"
+                        onClick={handleChangeStatus}
+                    >
+                        Confirm
+                    </button>
                 </div>
             </div>
         </>
