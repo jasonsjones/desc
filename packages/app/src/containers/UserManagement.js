@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import M from 'materialize-css';
 import AuthContext from '../context/AuthContext';
+import useAllUsers from '../hooks/useAllUsers';
 
 const UserCard = ({ user }) => {
     const { firstName, lastName, email, program, isEmailVerified, lastLoginAt } = user;
@@ -99,6 +100,12 @@ const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [userToChangeStatus, setUserToChangeStatus] = useState(null);
 
+    const { isLoading } = useAllUsers((response) => {
+        if (response.success) {
+            setUsers(response.payload.users);
+        }
+    });
+
     function handleChangeUserStatus(user) {
         if (authCtx.contextUser.id !== user.id) {
             setUserToChangeStatus(user);
@@ -123,20 +130,6 @@ const UserManagement = () => {
     useEffect(() => {
         const elems = document.querySelectorAll('.modal');
         M.Modal.init(elems);
-
-        fetch('http://localhost:3001/api/users', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                Authorization: `Bearer ${authCtx.token}`
-            }
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.success && data.payload.users) {
-                    setUsers(data.payload.users);
-                }
-            });
     }, []);
 
     return (
@@ -155,7 +148,7 @@ const UserManagement = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users &&
+                    {!isLoading &&
                         users.length > 0 &&
                         users.map((user) => (
                             <UserRecord
@@ -169,7 +162,8 @@ const UserManagement = () => {
 
             <div className="show-on-medium-and-down hide-on-med-and-up">
                 <div className="row">
-                    {users.length > 0 &&
+                    {!isLoading &&
+                        users.length > 0 &&
                         users.map((user) => (
                             <div key={user.id} className="col s12 l4">
                                 <UserCard user={user} />

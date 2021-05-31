@@ -1,5 +1,20 @@
 import { BASE_URL } from './util';
 
+export function getUsers({ queryKey }) {
+    const [, { token }] = queryKey;
+    return fetch(`${BASE_URL}/api/users`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).then((res) => {
+        if (res.ok && res.status === 200) {
+            return res.json();
+        }
+    });
+}
+
 export function signup(userData) {
     return fetch(`${BASE_URL}/api/users`, {
         method: 'POST',
