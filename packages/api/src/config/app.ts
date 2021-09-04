@@ -21,7 +21,7 @@ passportConfig(passport);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ origin: ['http://localhost:4200'], credentials: true }));
+app.use(cors({ origin: [/localhost:*/, /https:\/\/*\.herokuapp\.com/], credentials: true }));
 app.use(passport.initialize());
 if (config.env === 'development') {
     app.use(morgan('dev'));
