@@ -1,4 +1,3 @@
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import User from '../../entity/User';
 import { ItemFields } from '../../common/types/items';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
@@ -12,7 +11,6 @@ describe('ClientRequest service', () => {
     let item1: ItemFields;
     let item2: ItemFields;
     beforeAll(async () => {
-        await createPostgresConnection();
         userId = (
             await userService.createUser({
                 firstName: 'Test',
@@ -50,7 +48,6 @@ describe('ClientRequest service', () => {
 
     afterAll(async () => {
         await TestUtils.dropUsers();
-        await closeConnection();
     });
 
     describe('createClientRequest() method', () => {

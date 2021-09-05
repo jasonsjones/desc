@@ -1,5 +1,4 @@
 import itemService from '../ItemService';
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import User from '../../entity/User';
 import {
     ItemCategory,
@@ -17,7 +16,6 @@ describe('Item service', () => {
     const clientId = '123456789';
 
     beforeAll(async () => {
-        await createPostgresConnection();
         userId = (
             await userService.createUser({
                 firstName: 'Test',
@@ -36,7 +34,6 @@ describe('Item service', () => {
 
     afterAll(async () => {
         await TestUtils.dropUsers();
-        await closeConnection();
     });
 
     describe('createItem() method', () => {

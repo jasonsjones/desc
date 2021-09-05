@@ -1,18 +1,9 @@
 import { Program } from '../../common/types/enums';
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import userService from '../UserService';
 
 describe('User route acceptance tests', () => {
-    beforeAll(async () => {
-        await createPostgresConnection();
-    });
-
-    afterAll(async () => {
-        await closeConnection();
-    });
-
     describe('/api/users route', () => {
         const adminEmail = 'admin@desc.org';
         const email = 'oliver@desc.org';

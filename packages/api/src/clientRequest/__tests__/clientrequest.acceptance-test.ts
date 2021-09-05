@@ -1,6 +1,5 @@
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
 import { ItemFields } from '../../common/types/items';
 
@@ -20,7 +19,6 @@ describe('ClientRequest route acceptance tests', () => {
         requestor1Client = new TestClient();
         adminClient = new TestClient();
 
-        await createPostgresConnection();
         await TestUtils.createAdminTestUser({
             firstName: 'Admin',
             lastName: 'User',
@@ -74,7 +72,6 @@ describe('ClientRequest route acceptance tests', () => {
 
     afterAll(async () => {
         await TestUtils.dropUsers();
-        await closeConnection();
     });
 
     describe('/api/clientrequests route', () => {

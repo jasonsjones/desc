@@ -1,4 +1,3 @@
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { Program } from '../../common/types/enums';
@@ -18,7 +17,6 @@ describe('Auth route acceptance tests', () => {
     let client: TestClient;
     let requestorId: string;
     beforeAll(async () => {
-        await createPostgresConnection();
         client = new TestClient();
         const user = await TestUtils.createTestUser({
             firstName: 'Oliver',
@@ -32,7 +30,6 @@ describe('Auth route acceptance tests', () => {
 
     afterAll(async () => {
         await TestUtils.dropUsers();
-        await closeConnection();
     });
 
     describe('POST /api/auth/login route', () => {

@@ -1,7 +1,6 @@
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { ItemPriority, ItemStatus, ItemCategory, Program } from '../../common/types/enums';
-import { createPostgresConnection, closeConnection } from '../../config/database';
 
 describe('Item route acceptance tests', () => {
     let requestor1Id: string;
@@ -20,8 +19,6 @@ describe('Item route acceptance tests', () => {
         adminClient = new TestClient();
         requestor1Client = new TestClient();
         requestor2Client = new TestClient();
-
-        await createPostgresConnection();
 
         await TestUtils.createAdminTestUser({
             firstName: 'Admin',
@@ -57,7 +54,6 @@ describe('Item route acceptance tests', () => {
 
     afterAll(async () => {
         await TestUtils.dropUsers();
-        await closeConnection();
     });
 
     describe('/api/items route', () => {

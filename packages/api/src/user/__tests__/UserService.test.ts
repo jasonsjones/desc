@@ -1,6 +1,5 @@
 import userService from '../UserService';
 import User from '../../entity/User';
-import { createPostgresConnection, closeConnection } from '../../config/database';
 import TestUtils from '../../testUtils/TestUtilities';
 import { Program } from '../../common/types/enums';
 import DateUtils from '../../common/DateUtils';
@@ -14,19 +13,11 @@ const testUser = {
 };
 
 describe('User service integration tests', () => {
-    beforeAll(async () => {
-        await createPostgresConnection();
-    });
-
-    afterAll(async () => {
-        await closeConnection();
+    afterEach(async () => {
+        await TestUtils.dropUsers();
     });
 
     describe('createUser method', () => {
-        afterEach(async () => {
-            await TestUtils.dropUsers();
-        });
-
         it('creates a new user', async () => {
             const { firstName, lastName, email, password, program } = testUser;
             const result = await userService.createUser({
@@ -57,10 +48,6 @@ describe('User service integration tests', () => {
             userId = user.id;
         });
 
-        afterEach(async () => {
-            await TestUtils.dropUsers();
-        });
-
         it('getAllUsers() fetches all the users', async () => {
             const result = await userService.getAllUsers();
 
@@ -88,10 +75,6 @@ describe('User service integration tests', () => {
                 program
             });
             userId = user.id;
-        });
-
-        afterEach(async () => {
-            await TestUtils.dropUsers();
         });
 
         it('returns undefined if user cannot be found with given id', async () => {
@@ -138,10 +121,6 @@ describe('User service integration tests', () => {
             userIdToDelete = user.id;
         });
 
-        afterEach(async () => {
-            await TestUtils.dropUsers();
-        });
-
         it('returns undefined if user cannot be found with given id', async () => {
             const result = await userService.deleteUser('4157b081-e365-4984-aeac-c31aa255a474');
             expect(result).toBeUndefined();
@@ -175,10 +154,6 @@ describe('User service integration tests', () => {
                 program
             });
             userIdToTest = user.id;
-        });
-
-        afterEach(async () => {
-            await TestUtils.dropUsers();
         });
 
         it('returns undefined if user cannot be found with given id', async () => {
@@ -220,10 +195,6 @@ describe('User service integration tests', () => {
             emailToken = user.emailVerificationToken;
         });
 
-        afterEach(async () => {
-            await TestUtils.dropUsers();
-        });
-
         it('returns undefined if user cannot be found with given token', async () => {
             const result = await userService.confirmEmail('4157b081-e365-4984-aeac-c31aa255a474');
             expect(result).toBeUndefined();
@@ -252,10 +223,6 @@ describe('User service integration tests', () => {
             userEmail = user.email;
         });
 
-        afterEach(async () => {
-            await TestUtils.dropUsers();
-        });
-
         it('returns undefined if user cannot be found with given email', async () => {
             const result = await userService.generatePasswordResetToken('unknown-user@test.com');
             expect(result).toBeUndefined();
@@ -282,10 +249,6 @@ describe('User service integration tests', () => {
             });
 
             user = (await userService.generatePasswordResetToken(email)) as User;
-        });
-
-        afterEach(async () => {
-            await TestUtils.dropUsers();
         });
 
         it('changes the password when provided a valid reset token', async () => {
