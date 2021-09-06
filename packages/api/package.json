@@ -6,6 +6,8 @@
     "scripts": {
         "build": "tsc",
         "clean": "rm -rf dist coverage",
+        "db:prod:schema-sync": "yarn typeorm -c desc-prod schema:sync",
+        "db:prod:migration-run": "yarn typeorm -c desc-prod migration:run",
         "dev": "ts-node-dev --respawn src/index.ts",
         "lint": "eslint src/**/*.ts",
         "start": "node dist/src/index.js",
