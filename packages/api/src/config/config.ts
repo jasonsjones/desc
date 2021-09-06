@@ -1,8 +1,9 @@
 import pkgJSON from '../../package.json';
+import { Environment } from '../common/types/enums';
 
-const { NODE_ENV: env = 'development', PORT: port = 3001 } = process.env;
+const { NODE_ENV: env = Environment.DEVELOPMENT, PORT: port = 3001 } = process.env;
 
-const baseUrl = env === 'production' ? process.env.API_BASE_URL : 'http://localhost';
+const baseUrl = env === Environment.PRODUCTION ? process.env.API_BASE_URL : 'http://localhost';
 
 const config = {
     name: 'desc-api',

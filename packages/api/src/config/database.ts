@@ -1,21 +1,13 @@
 import 'reflect-metadata';
 import { Connection, createConnection, getConnection } from 'typeorm';
+import { DbName, Environment } from '../common/types/enums';
 import config from './config';
 
-const envDbNameMap: Map<string, string> = new Map();
-envDbNameMap.set('development', 'desc-dev');
-envDbNameMap.set('testing', 'desc-test');
-envDbNameMap.set('testingE2E', 'desc-test');
-
-const connectionName: string = envDbNameMap.get(config.env) as string;
+const connectionName = getDbNameFromEnv(config.env as Environment);
 
 export async function createPostgresConnection(): Promise<void> {
     try {
-        if (config.env != 'production') {
-            await createConnection(connectionName);
-        }
-        // else connect to heroku hosted postres
-        // instance assigned to env var DATABASE_URL
+        await createConnection(connectionName);
     } catch (e) {
         console.error(e);
     }
@@ -27,4 +19,13 @@ export function closeConnection(): Promise<void> {
 
 export function getDbConnection(): Connection {
     return getConnection(connectionName);
+}
+
+function getDbNameFromEnv(env: Environment): DbName {
+    const envDbNameMap: Map<Environment, DbName> = new Map();
+    envDbNameMap.set(Environment.DEVELOPMENT, DbName.DEVELOPMENT);
+    envDbNameMap.set(Environment.TESTING, DbName.TESTING);
+    envDbNameMap.set(Environment.TESTING_E2E, DbName.TESTING);
+    envDbNameMap.set(Environment.PRODUCTION, DbName.PRODUCTION);
+    return envDbNameMap.get(env) || DbName.DEVELOPMENT;
 }

@@ -56,3 +56,16 @@ export enum HouseLocation {
     RAINIER_HOUSE = 'rainier house',
     UNION_HOTEL = 'union hotel'
 }
+
+export enum Environment {
+    DEVELOPMENT = 'devolpment',
+    TESTING = 'testing',
+    TESTING_E2E = 'testingE2E',
+    PRODUCTION = 'production'
+}
+
+export enum DbName {
+    DEVELOPMENT = 'desc-dev',
+    TESTING = 'desc-test',
+    PRODUCTION = 'desc-prod'
+}

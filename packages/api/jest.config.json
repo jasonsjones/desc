@@ -1,4 +1,5 @@
 {
     "preset": "ts-jest",
-    "setupFilesAfterEnv": ["<rootDir>/src/testUtils/jest-setup.ts"]
+    "setupFilesAfterEnv": ["<rootDir>/src/testUtils/jest-setup.ts"],
+    "modulePathIgnorePatterns": ["<rootDir>/node_modules", "<rootDir>/dist"]
 }
