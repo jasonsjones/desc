@@ -5,13 +5,7 @@ import { useQueryClient } from 'react-query';
 import ApproverActions from './ApproverActions';
 import NoteDetails from './NoteDetails';
 import AddNoteForm from './AddNoteForm';
-import {
-    inboxStyles as css,
-    initCollapsibleElements,
-    closedStatuses,
-    updateItemsWithNote
-} from './utils';
-import useFilterItemsByStatus from '../../hooks/useFilterItemsByStatus';
+import { inboxStyles as css, initCollapsibleElements, closedStatuses } from './utils';
 
 const statusMap = {
     denied: 'Rejected',
@@ -19,21 +13,61 @@ const statusMap = {
     fulfilled: 'Fulfilled'
 };
 
-const ListHeader = () => {
+function sortBy(key, order = 'asc') {
+    return function innerSort(a, b) {
+        let valA, valB;
+        let comparison = 0;
+        switch (key) {
+            case 'name':
+                valA = a.submittedBy.name.first;
+                valB = b.submittedBy.name.first;
+                break;
+            case 'clientId':
+                valA = a.clientId;
+                valB = b.clientId;
+                break;
+            case 'date':
+                valA = a.createdAt;
+                valB = b.createdAt;
+                break;
+            default:
+                break;
+        }
+        if (valA > valB) {
+            comparison = 1;
+        } else if (valA < valB) {
+            comparison = -1;
+        }
+        return order === 'desc' ? comparison * -1 : comparison;
+    };
+}
+
+const ListHeader = ({ onHeaderClick }) => {
     return (
         <li>
-            <div className="teal-text text-darken-3" style={css.listHeader}>
+            <div className="teal-text text-darken-3 align-center" style={css.listHeader}>
                 <p style={css.flexItem}>Requestor</p>
                 <p style={css.flexItem}>Item</p>
                 <p style={css.flexItem}>Quantity</p>
-                <p style={css.flexItem}>Request Date</p>
+                <div style={css.flexItem}>
+                    <div
+                        className="flex align-center"
+                        style={{ cursor: 'pointer', gap: '0.5rem' }}
+                        onClick={() => onHeaderClick()}
+                    >
+                        <span>Request Date</span>
+                        <i className={`small material-icons prefix`}>sort</i>
+                    </div>
+                </div>
             </div>
         </li>
     );
 };
 
 const ApproverItemList = ({ filter, items }) => {
-    const [displayableItems, setDisplayableItems] = useFilterItemsByStatus(items, filter);
+    const [displayableItems, setDisplayableItems] = useState([]);
+    const [sortCol] = useState('date');
+    const [sortOrder, setSortOrder] = useState('desc');
     const queryClient = useQueryClient();
 
     const { updateItem } = useUpdateItem((response) => {
@@ -46,8 +80,34 @@ const ApproverItemList = ({ filter, items }) => {
         initCollapsibleElements(M);
     }, []);
 
+    useEffect(() => {
+        setDisplayableItems(
+            items
+                .filter((item) => {
+                    if (Array.isArray(filter)) {
+                        return filter.some((status) => status === item.status);
+                    }
+                    return item.status === filter;
+                })
+                .sort(sortBy(sortCol, sortOrder))
+        );
+    }, [items, filter, sortCol, sortOrder]);
+
     const handleNoteAdd = (itemId, itemData) => {
-        setDisplayableItems(displayableItems.map(updateItemsWithNote(itemId, itemData)));
+        setDisplayableItems(
+            displayableItems.map((item) => {
+                if (item.id === itemId) {
+                    return {
+                        ...item,
+                        updatedAt: itemData.updatedAt,
+                        notes: [...itemData.notes]
+                    };
+                }
+                return {
+                    ...item
+                };
+            })
+        );
     };
 
     const updateItemStatus = (id, status) => {
@@ -58,9 +118,13 @@ const ApproverItemList = ({ filter, items }) => {
         return closedStatuses.some((status) => status === item.status);
     };
 
+    const toggleSortOrder = () => {
+        sortOrder === 'desc' ? setSortOrder('asc') : setSortOrder('desc');
+    };
+
     return (
         <ul className="collapsible expandable">
-            <ListHeader />
+            <ListHeader onHeaderClick={toggleSortOrder} />
             {displayableItems &&
                 displayableItems.map((item) => {
                     return (
