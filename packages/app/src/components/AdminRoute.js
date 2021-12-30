@@ -1,16 +1,10 @@
-import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 
-const AdminRoute = ({ component: Component, ...rest }) => {
+const AdminRoute = ({ children }) => {
     const authCtx = useAuthContext();
     const isAdmin = authCtx.contextUser && authCtx.contextUser.roles.includes('admin');
-    return (
-        <Route
-            {...rest}
-            render={(props) => (isAdmin ? <Component {...props} /> : <Redirect to="/" />)}
-        />
-    );
+    return isAdmin ? children : <Navigate to="/" />;
 };
 
 export default AdminRoute;

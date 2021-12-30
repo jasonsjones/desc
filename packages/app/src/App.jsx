@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { applyMiddleware, createStore } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
+import { AuthProvider } from './context/AuthContext';
+import { reducer } from './reducers/reducer';
 import Layout from './containers/Layout';
 import Signup from './containers/Signup';
 import Signin from './containers/Signin';
@@ -14,18 +16,15 @@ import Inbox from './containers/Inbox';
 import RequestCreationPage from './components/RequestCreation/RequestCreationPage';
 import Request from './containers/Request';
 import Home from './components/Home/Home';
-import UserManagment from './containers/UserManagement';
+import UserManagement from './containers/UserManagement';
 import ConfirmEmail from './containers/ConfirmEmail';
 import ForgotPassword from './containers/ForgotPassword';
 import ChangePassword from './containers/ChangePassword';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import { reducer } from './reducers/reducer';
 
 import './App.css';
 import 'materialize-css/dist/css/materialize.css';
-import { AuthProvider } from './context/AuthContext';
-import UserManagement from './containers/UserManagement';
 
 const store = createStore(reducer, applyMiddleware(thunk, logger));
 const queryClient = new QueryClient();

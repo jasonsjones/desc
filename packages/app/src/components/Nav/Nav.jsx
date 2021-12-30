@@ -125,7 +125,12 @@ const Nav = () => {
                         </li>
                         {isAdmin && (
                             <li>
-                                <NavLink to="/usermanagement" activeClassName="teal white-text">
+                                <NavLink
+                                    to="/usermanagement"
+                                    className={({ isActive }) =>
+                                        isActive ? mobileActiveClassName : undefined
+                                    }
+                                >
                                     User Management
                                 </NavLink>
                             </li>
