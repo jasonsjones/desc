@@ -5,6 +5,7 @@
         "packages": [
             "packages/api",
             "packages/app",
+            "packages/app-mui",
             "packages/e2e"
         ],
         "nohoist": [
@@ -15,7 +16,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap",
         "clean": "lerna clean",
-        "dev": "lerna run dev --stream --scope @desc/api --scope @desc/app",
+        "dev": "lerna run dev --stream --scope @desc/api --scope @desc/app --scope @desc/app-mui",
         "dev:api": "lerna run dev --stream --scope @desc/api",
         "dev:app": "lerna run start --stream --scope @desc/app",
         "lint:all": "lerna run lint --stream --scope @desc/api --scope @desc/app",
