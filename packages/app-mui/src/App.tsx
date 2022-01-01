@@ -1,11 +1,17 @@
-import { Typography } from '@mui/material';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import MainLayout from './layouts/MainLayout';
 
 function App() {
     return (
         <div className="App">
-            <Typography variant="h1" component="h1">
-                Welcome to DESC Portal!
-            </Typography>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<MainLayout />}>
+                        <Route index element={<Home />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
         </div>
     );
 }
