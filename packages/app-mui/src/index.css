@@ -1,6 +1,6 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: "Roboto", source-code-pro, Menlo, Monaco, Consolas,
-        "Courier New", monospace;
+    box-sizing: border-box;
+    font-family: 'Roboto', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
