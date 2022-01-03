@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
 import { Email, Lock } from '@mui/icons-material';
 import { useAuthContext } from '../../contexts/AuthContext';
 import useLogin from '../../hooks/useLogin';
@@ -98,6 +98,11 @@ function SignInForm() {
                     <Button variant="contained" type="submit">
                         {`${!isLoading ? 'Sign In' : 'Signing In...'}`}
                     </Button>
+                </Box>
+                <Box marginLeft={4}>
+                    <Link to="/" component={RouterLink} underline="none">
+                        Forgot Password?
+                    </Link>
                 </Box>
             </form>
         </Paper>
