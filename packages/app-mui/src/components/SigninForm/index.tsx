@@ -54,6 +54,10 @@ function SignInForm() {
         }
     };
 
+    const handleCancel = () => {
+        navigate('/');
+    };
+
     return (
         <Paper elevation={2} sx={{ paddingBlockStart: '2.5rem' }}>
             <Typography variant="h4" component="h2" align="center">
@@ -84,8 +88,13 @@ function SignInForm() {
                         onChange={handleChange}
                     />
                 </Box>
-                <Box mt={4} sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                    <Button variant="outlined">Cancel</Button>
+                <Box
+                    marginTop={4}
+                    sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}
+                >
+                    <Button variant="outlined" onClick={handleCancel}>
+                        Cancel
+                    </Button>
                     <Button variant="contained" type="submit">
                         {`${!isLoading ? 'Sign In' : 'Signing In...'}`}
                     </Button>
