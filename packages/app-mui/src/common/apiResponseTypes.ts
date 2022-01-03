@@ -9,13 +9,18 @@ export type User = {
     roles: string | string[];
 };
 
+export type Credentials = {
+    email: string;
+    password: string;
+};
+
 export interface BaseAPIResponse {
     success: boolean;
     message: string;
 }
 
 export interface AuthTokenResponse extends BaseAPIResponse {
-    payload: {
+    payload?: {
         user: User;
         accessToken: string;
     };
