@@ -1,17 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { AuthTokenResponse, BaseAPIResponse } from '../common/apiResponseTypes';
 import { BASE_URL } from './util';
-
-interface BaseAPIResponse {
-    success: boolean;
-    message: string;
-}
-
-interface AuthTokenResponse extends BaseAPIResponse {
-    payload: {
-        user: any;
-        accessToken: string;
-    };
-}
 
 type Credentials = {
     email: string;
