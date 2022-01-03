@@ -1,13 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { AuthTokenResponse, BaseAPIResponse } from '../common/apiResponseTypes';
+import { AuthTokenResponse, BaseAPIResponse, Credentials } from '../common/apiResponseTypes';
 import { BASE_URL } from './util';
 
-type Credentials = {
-    email: string;
-    password: string;
-};
-
-export function login(creds: Credentials): Promise<AuthTokenResponse | BaseAPIResponse> {
+export function login(creds: Credentials): Promise<AuthTokenResponse> {
     return fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         credentials: 'include',
@@ -33,7 +28,7 @@ export function logout(): Promise<BaseAPIResponse> {
     }).then((response) => response.json());
 }
 
-export function fetchSessionUser(): Promise<AuthTokenResponse | BaseAPIResponse> {
+export function fetchSessionUser(): Promise<AuthTokenResponse> {
     return fetch(`${BASE_URL}/api/users/me`, {
         method: 'GET',
         credentials: 'include'
@@ -46,7 +41,7 @@ export function getValidToken(currentToken: string): Promise<string> {
     const now = Date.now().valueOf() / 1000;
     if (tokenExpires && now > tokenExpires) {
         return refreshToken().then((data) => {
-            if (data.payload.accessToken) {
+            if (data.payload?.accessToken) {
                 return data.payload.accessToken;
             } else {
                 return '';

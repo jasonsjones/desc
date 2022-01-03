@@ -1,12 +1,34 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { Email, Lock } from '@mui/icons-material';
+import { useAuthContext } from '../../contexts/AuthContext';
+import useLogin from '../../hooks/useLogin';
 
 function SignInForm() {
+    const authCtx = useAuthContext();
+    const navigate = useNavigate();
+
     const [form, setValues] = useState({
         email: '',
         password: '',
         errorMsg: ''
+    });
+
+    const { mutate: doLogin, isLoading } = useLogin((data) => {
+        if (data.success && data.payload) {
+            const { user, accessToken: token } = data.payload;
+            authCtx.login(user, token);
+            navigate('/');
+        } else {
+            if (data.message === 'unauthorized') {
+                setValues({
+                    email: '',
+                    password: '',
+                    errorMsg: 'Unathorized user. Please try again'
+                });
+            }
+        }
     });
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -17,10 +39,19 @@ function SignInForm() {
         });
     };
 
+    const isFormValid = (): boolean => {
+        return form.email.length > 0 && form.password.length > 0;
+    };
+
     const handleSubmit: React.FormEventHandler = (event) => {
         event.preventDefault();
-        console.log('Submitting form...');
-        console.log(form);
+        if (isFormValid()) {
+            const creds = {
+                email: form.email,
+                password: form.password
+            };
+            doLogin(creds);
+        }
     };
 
     return (
@@ -56,7 +87,7 @@ function SignInForm() {
                 <Box mt={4} sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
                     <Button variant="outlined">Cancel</Button>
                     <Button variant="contained" type="submit">
-                        Sign In
+                        {`${!isLoading ? 'Sign In' : 'Signing In...'}`}
                     </Button>
                 </Box>
             </form>
