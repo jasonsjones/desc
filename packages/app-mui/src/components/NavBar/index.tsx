@@ -1,5 +1,5 @@
-import { AppBar, Link, Toolbar } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Button, Link, Toolbar } from '@mui/material';
+import { Link as RouterLink, NavLink } from 'react-router-dom';
 
 function NavBar() {
     return (
@@ -22,6 +22,9 @@ function NavBar() {
                 >
                     DESC Portal
                 </Link>
+                <Button to="/signin" component={NavLink} color="inherit">
+                    Sign In
+                </Button>
             </Toolbar>
         </AppBar>
     );
