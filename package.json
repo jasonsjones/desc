@@ -26,8 +26,7 @@
         "container:start": "ts-node scripts/container-start",
         "container:stop": "ts-node scripts/container-stop",
         "test:api": "lerna run test --stream --scope @desc/api",
-        "test:app:all": "lerna run test --stream --scope @desc/app -- --colors --watchAll=false",
-        "test:app:watch": "lerna run test --stream --scope @desc/app -- --colors",
+        "test:app": "lerna run test --stream --scope @desc/app",
         "test:e2e": "lerna run test:e2e --stream",
         "prepare": "husky install"
     },
@@ -37,12 +36,10 @@
         "eslint-config-prettier": "8.3.0",
         "eslint-plugin-prettier": "4.0.0",
         "husky": "7.0.4",
+        "jest": "27.5.1",
         "lerna": "4.0.0",
         "prettier": "2.5.1",
         "pretty-quick": "3.1.2"
-    },
-    "resolutions": {
-        "react-error-overlay": "6.0.9"
     },
     "engines": {
         "node": ">=14.16.0 <17.0.0",

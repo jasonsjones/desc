@@ -35,4 +35,4 @@ jobs:
               run: npm run lint:app
 
             - name: Run unit tests
-              run: npm run test:app:all
+              run: npm run test:app
