@@ -6,7 +6,7 @@
         "dev": "vite",
         "build": "vite build",
         "start": "serve -s dist",
-        "lint": "eslint src/**/**/*.js",
+        "lint": "eslint .",
         "preview": "vite preview",
         "test": "jest --colors --runInBand",
         "test:e2e": "yarn dev"

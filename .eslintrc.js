@@ -3,14 +3,13 @@ module.exports = {
     extends: ['plugin:prettier/recommended'],
     plugins: ['prettier'],
     parserOptions: {
-        ecmaVersion: 6,
         sourceType: 'module',
         ecmaFeatures: {}
     },
     env: {
         browser: true,
         node: true,
-        es6: true,
+        es2020: true,
         jest: true
     },
     rules: {
@@ -19,10 +18,6 @@ module.exports = {
         semi: 'warn'
     },
     overrides: [
-        {
-            files: ['packages/app/**/*.js'],
-            extends: ['react-app']
-        },
         {
             files: ['**/*.ts'],
             extends: [
