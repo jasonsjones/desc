@@ -2,7 +2,7 @@ import { Program } from '../../common/types/enums';
 import TestClient from '../../testUtils/TestClient';
 import TestUtils from '../../testUtils/TestUtilities';
 import { createPostgresConnection, closeConnection } from '../../config/database';
-import UserService from '../UserService';
+import userService from '../UserService';
 
 describe('User route acceptance tests', () => {
     beforeAll(async () => {
@@ -652,7 +652,7 @@ describe('User route acceptance tests', () => {
                 program: Program.SURVIVAL
             });
 
-            const user = await UserService.generatePasswordResetToken('oliver@desc.org');
+            const user = await userService.generatePasswordResetToken('oliver@desc.org');
             resetToken = user?.passwordResetToken as string;
         });
 
@@ -688,7 +688,7 @@ describe('User route acceptance tests', () => {
 
             it('does nothing if the reset token has expired', async () => {
                 const spy = jest
-                    .spyOn(UserService, 'changePassword')
+                    .spyOn(userService, 'changePassword')
                     .mockRejectedValue(new Error('reset token is expired'));
 
                 const response = await client.changePassword(resetToken, 'supersecret');

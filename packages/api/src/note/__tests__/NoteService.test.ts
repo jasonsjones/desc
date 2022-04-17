@@ -1,5 +1,5 @@
 import { createPostgresConnection, closeConnection } from '../../config/database';
-import UserService from '../../user/UserService';
+import userService from '../../user/UserService';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
 import TestUtils from '../../testUtils/TestUtilities';
 import ItemService from '../../item/ItemService';
@@ -12,7 +12,7 @@ describe('Note service', () => {
     beforeAll(async () => {
         await createPostgresConnection();
         userId = (
-            await UserService.createUser({
+            await userService.createUser({
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@desc.org',

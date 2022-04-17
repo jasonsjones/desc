@@ -1,6 +1,6 @@
 import Item from '../entity/Item';
 import { ItemFields, UpdatableItemFields } from '../common/types/items';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import NoteService from '../note/NoteService';
 import { getEntityManager } from '../common/entityUtils';
 
@@ -19,7 +19,7 @@ export default class ItemService {
             location,
             note
         } = itemData;
-        const requestor = await UserService.getUserById(requestorId);
+        const requestor = await userService.getUserById(requestorId);
 
         if (!requestor) {
             throw new Error('Invalid requestor');
@@ -78,7 +78,7 @@ export default class ItemService {
         authorId: string;
     }): Promise<Item | undefined> {
         const { body, itemId, authorId } = noteData;
-        const author = await UserService.getUserById(authorId);
+        const author = await userService.getUserById(authorId);
         const item = await ItemService.getItemById(itemId);
 
         if (!author) {

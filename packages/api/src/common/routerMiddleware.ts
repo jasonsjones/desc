@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import AuthUtils from '../auth/AuthUtils';
 
 export async function isAdmin(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
         const id: string = (req.user as any).id;
 
-        const authUser = await UserService.getUserById(id);
+        const authUser = await userService.getUserById(id);
         if (authUser?.isAdmin()) {
             next();
         } else {

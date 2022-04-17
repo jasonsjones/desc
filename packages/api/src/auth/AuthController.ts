@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import AuthUtils from './AuthUtils';
 import User from '../entity/User';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 
 class AuthController {
     static login(req: Request, res: Response): Response {
@@ -39,7 +39,7 @@ class AuthController {
         let user: User;
         try {
             const tokenPayload: any = AuthUtils.verifyRefreshToken(currentToken);
-            user = (await UserService.getUserById(tokenPayload.sub)) as User;
+            user = (await userService.getUserById(tokenPayload.sub)) as User;
             if (!user) {
                 return AuthController.sendEmptyAccessToken(res);
             }

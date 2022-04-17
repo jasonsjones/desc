@@ -8,7 +8,7 @@ import {
     HouseLocation,
     Program
 } from '../../common/types/enums';
-import UserService from '../../user/UserService';
+import userService from '../../user/UserService';
 import TestUtils from '../../testUtils/TestUtilities';
 import NoteService from '../../note/NoteService';
 
@@ -19,7 +19,7 @@ describe('Item service', () => {
     beforeAll(async () => {
         await createPostgresConnection();
         userId = (
-            await UserService.createUser({
+            await userService.createUser({
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@desc.org',

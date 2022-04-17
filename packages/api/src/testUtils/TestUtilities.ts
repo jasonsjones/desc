@@ -3,7 +3,7 @@ import Item from '../entity/Item';
 import Note from '../entity/Note';
 import ClientRequest from '../entity/ClientRequest';
 import { Program } from '../common/types/enums';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import { getDbConnection } from '../config/database';
 
 class TestUtilities {
@@ -15,7 +15,7 @@ class TestUtilities {
         program: Program;
     }): Promise<User> {
         const { firstName, lastName, email, password, program } = userData;
-        return UserService.createUser({ firstName, lastName, email, password, program });
+        return userService.createUser({ firstName, lastName, email, password, program });
     }
 
     public static createAdminTestUser(userData: {
@@ -26,7 +26,7 @@ class TestUtilities {
         program: Program;
     }): Promise<User> {
         const { firstName, lastName, email, password, program } = userData;
-        return UserService.createAdminTestUser({ firstName, lastName, email, password, program });
+        return userService.createAdminTestUser({ firstName, lastName, email, password, program });
     }
 
     public static async deleteUserByEmail(email: string): Promise<void> {

@@ -1,6 +1,6 @@
 import User from '../entity/User';
 import LocalStrategy from './strategies/local';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import { PassportStatic } from 'passport';
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -19,7 +19,7 @@ export const passportConfig = (passport: PassportStatic): void => {
     });
 
     passport.deserializeUser((id: string, done: (err: any, user?: User) => void) => {
-        return UserService.getUserById(id)
+        return userService.getUserById(id)
             .then((user) => {
                 if (user) {
                     return done(null, user);

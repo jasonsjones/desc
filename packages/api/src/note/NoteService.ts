@@ -1,5 +1,5 @@
 import Note from '../entity/Note';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import ItemService from '../item/ItemService';
 import { NoteFields } from '../common/types/notes';
 import { getEntityManager } from '../common/entityUtils';
@@ -11,7 +11,7 @@ export default class NoteService {
         const note = em.create(Note, { body });
 
         if (userId && itemId) {
-            const user = await UserService.getUserById(userId);
+            const user = await userService.getUserById(userId);
             const item = await ItemService.getItemById(itemId);
             if (!user) {
                 throw new Error('Invalid user');

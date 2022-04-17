@@ -1,6 +1,6 @@
 import ClientRequest from '../entity/ClientRequest';
 import { ItemFields } from '../common/types/items';
-import UserService from '../user/UserService';
+import userService from '../user/UserService';
 import ItemService from '../item/ItemService';
 import Item from '../entity/Item';
 import { getEntityManager } from '../common/entityUtils';
@@ -17,7 +17,7 @@ export default class ClientRequestService {
         const clientRequest = new ClientRequest();
         clientRequest.clientId = clientId;
 
-        const requestor = await UserService.getUserById(requestorId);
+        const requestor = await userService.getUserById(requestorId);
         if (!requestor) {
             throw new Error('Invalid requestor');
         }

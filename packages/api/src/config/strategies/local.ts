@@ -1,6 +1,6 @@
 import PassportLocal, { IVerifyOptions } from 'passport-local';
 import { getEntityManager } from '../../common/entityUtils';
-import UserService from '../../user/UserService';
+import userService from '../../user/UserService';
 
 const LocalStrategy = PassportLocal.Strategy;
 
@@ -14,7 +14,7 @@ const verifyCb: PassportLocal.VerifyFunction = async (
     done: (error: any, user?: any, options?: IVerifyOptions) => void
 ): Promise<void> => {
     const em = getEntityManager();
-    const user = await UserService.getUserByEmail(email);
+    const user = await userService.getUserByEmail(email);
     if (!user) {
         return done(null, false, { message: 'Unable to find user' });
     }
