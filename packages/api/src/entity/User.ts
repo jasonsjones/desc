@@ -1,5 +1,4 @@
 import {
-    BaseEntity,
     PrimaryGeneratedColumn,
     Column,
     Entity,
@@ -21,7 +20,7 @@ interface UserDataForClient {
 }
 
 @Entity()
-export default class User extends BaseEntity {
+export default class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

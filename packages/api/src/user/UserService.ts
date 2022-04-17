@@ -1,21 +1,20 @@
 import bcrypt from 'bcryptjs';
 import { v4 } from 'uuid';
 import DateUtils from '../common/DateUtils';
-import { getEntityManager } from '../common/entityUtils';
+import { getUserRepository } from '../common/entityUtils';
 import { UserRole } from '../common/types/enums';
 import { UpdatableUserFields, UserFields } from '../common/types/user';
 import User from '../entity/User';
 
 class UserService {
-    // reduce the hash salt length for tests to decrease the test run time
     private saltLength: number;
 
     constructor() {
+        // reduce the hash salt length for tests to decrease the test run time
         this.saltLength = process.env.NODE_ENV === 'testing' ? 4 : 12;
     }
 
     async createUser(userData: UserFields): Promise<User> {
-        const em = getEntityManager();
         const { password } = userData;
 
         const hashedPassword = await bcrypt.hash(password, this.saltLength);
@@ -30,13 +29,12 @@ class UserService {
             data = { ...data, roles: [UserRole.ADMIN, UserRole.APPROVER] };
         }
 
-        const user = em.create(User, data);
+        const user = getUserRepository().create(data);
         user.emailVerificationToken = v4();
-        return em.save(user);
+        return getUserRepository().save(user);
     }
 
     async createAdminTestUser(userData: UserFields): Promise<User> {
-        const em = getEntityManager();
         const { password } = userData;
         const hashedPassword = await bcrypt.hash(password, 4);
         const data: UserFields = {
@@ -45,31 +43,31 @@ class UserService {
             roles: [UserRole.ADMIN, UserRole.APPROVER]
         };
 
-        const user = em.create(User, data);
+        const user = getUserRepository().create(data);
         user.emailVerificationToken = v4();
-        return em.save(user);
+        return getUserRepository().save(user);
     }
 
     getAllUsers(): Promise<User[]> {
-        return getEntityManager().find(User);
+        return getUserRepository().find({});
     }
 
     getUserById(id: string): Promise<User | undefined> {
-        return getEntityManager().findOne(User, { where: { id } });
+        return getUserRepository().findOne({ where: { id } });
     }
 
     getUserByEmail(email: string): Promise<User | undefined> {
-        return getEntityManager().findOne(User, { where: { email } });
+        return getUserRepository().findOne({ where: { email } });
     }
 
     async updateUser(id: string, data: UpdatableUserFields): Promise<User | undefined> {
-        await getEntityManager().update(User, { id }, data);
+        await getUserRepository().update({ id }, data);
         return this.getUserById(id);
     }
 
     async deleteUser(id: string): Promise<User | undefined> {
         const user = await this.getUserById(id);
-        await getEntityManager().delete(User, { id });
+        await getUserRepository().delete({ id });
         return user;
     }
 
@@ -78,7 +76,7 @@ class UserService {
     }
 
     async confirmEmail(token: string): Promise<User | undefined> {
-        const user = await getEntityManager().findOne(User, {
+        const user = await getUserRepository().findOne({
             where: { emailVerificationToken: token }
         });
         return this.updateUser(user?.id as string, {
@@ -88,8 +86,7 @@ class UserService {
     }
 
     async changePassword(token: string, newPassword: string): Promise<User | undefined> {
-        const em = getEntityManager();
-        const user = await em.findOne(User, { where: { passwordResetToken: token } });
+        const user = await getUserRepository().findOne({ where: { passwordResetToken: token } });
         if (user) {
             const now = DateUtils.getCurrentDateTime();
             const isTokenExpired = now > user.passwordResetTokenExpiresAt;
@@ -99,7 +96,7 @@ class UserService {
                 user.passwordResetTokenExpiresAt = now;
                 user.passwordLastChangedAt = now;
 
-                return em.save(user);
+                return getUserRepository().save(user);
             } else {
                 throw new Error('password reset token is expired');
             }
@@ -114,13 +111,13 @@ class UserService {
             const in2hrs = DateUtils.getDateMinutesFromNow(120);
             user.passwordResetToken = v4();
             user.passwordResetTokenExpiresAt = in2hrs;
-            await getEntityManager().save(user);
+            await getUserRepository().save(user);
         }
         return user;
     }
 
     private async getUserCount(): Promise<number> {
-        const count = await getEntityManager().count(User);
+        const count = await getUserRepository().count();
         return count;
     }
 }
