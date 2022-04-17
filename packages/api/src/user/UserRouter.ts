@@ -1,13 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
-import UserController from './UserController';
-import UserService from './UserService';
+import userController from './UserController';
+import userService from './UserService';
 import { isAdmin, checkForRefreshToken } from '../common/routerMiddleware';
 
 async function isAdminOrSelf(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
         const id: string = (req.user as any).id;
 
-        const authUser = await UserService.getUserById(id);
+        const authUser = await userService.getUserById(id);
         if (authUser?.isAdmin() || authUser?.isOwner(req.params.id)) {
             next();
         } else {
@@ -28,32 +28,32 @@ class UserRouter {
     private static defineRoutes(): void {
         UserRouter.router
             .route('/')
-            .post(UserController.createUser)
-            .get(isAdmin, UserController.getAllUsers);
+            .post(userController.createUser)
+            .get(isAdmin, userController.getAllUsers);
 
-        UserRouter.router.route('/me').get(checkForRefreshToken, UserController.me);
-        UserRouter.router.route('/forgotpassword').patch(UserController.forgotPassword);
+        UserRouter.router.route('/me').get(checkForRefreshToken, userController.me);
+        UserRouter.router.route('/forgotpassword').patch(userController.forgotPassword);
 
         UserRouter.router
             .route('/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})')
-            .get(isAdminOrSelf, UserController.getUser)
-            .patch(isAdminOrSelf, UserController.updateUser)
-            .delete(isAdminOrSelf, UserController.deleteUser);
+            .get(isAdminOrSelf, userController.getUser)
+            .patch(isAdminOrSelf, userController.updateUser)
+            .delete(isAdminOrSelf, userController.deleteUser);
 
         UserRouter.router
             .route(
                 '/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/deactivate'
             )
-            .post(isAdmin, UserController.deactivateUser);
+            .post(isAdmin, userController.deactivateUser);
 
         UserRouter.router
             .route(
                 '/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/activate'
             )
-            .post(isAdmin, UserController.activateUser);
+            .post(isAdmin, userController.activateUser);
 
-        UserRouter.router.route('/confirmemail/:token').patch(UserController.confirmEmail);
-        UserRouter.router.route('/changepassword/:token').patch(UserController.changePassword);
+        UserRouter.router.route('/confirmemail/:token').patch(userController.confirmEmail);
+        UserRouter.router.route('/changepassword/:token').patch(userController.changePassword);
     }
 }
 

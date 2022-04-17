@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 import User from '../entity/User';
-import UserService from './UserService';
+import userService from './UserService';
 import AuthUtils from '../auth/AuthUtils';
 import Mailer from '../mailer/Mailer';
 import { UpdatableUserFields } from '../common/types/user';
 
 class UserController {
-    static createUser(req: Request, res: Response): Promise<Response> {
+    createUser(req: Request, res: Response): Promise<Response> {
         // TODO: add better input validation to ensure the updated data has the required shape and/or
         // only includes the accepted properties
         const { firstName, lastName, email, password, program } = req.body;
 
-        return UserService.createUser({ firstName, lastName, email, password, program })
+        return userService.createUser({ firstName, lastName, email, password, program })
             .then(async (user) => {
                 const baseUrl = (req.get('origin') as string) || '';
                 await Mailer.sendVerificationEmail(baseUrl, user);
@@ -36,8 +36,8 @@ class UserController {
             });
     }
 
-    static getAllUsers(_: Request, res: Response): Promise<Response> {
-        return UserService.getAllUsers()
+    getAllUsers(_: Request, res: Response): Promise<Response> {
+        return userService.getAllUsers()
             .then((users) => {
                 return res.json({
                     success: true,
@@ -57,9 +57,9 @@ class UserController {
             });
     }
 
-    static getUser(req: Request, res: Response): Promise<Response> {
+    getUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return UserService.getUserById(id)
+        return userService.getUserById(id)
             .then((user) => {
                 if (user) {
                     return res.json({
@@ -87,14 +87,14 @@ class UserController {
             });
     }
 
-    static updateUser(req: Request, res: Response): Promise<Response> {
+    updateUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
 
         // TODO: add better input validation to ensure the updated data has the required shape and/or
         // only includes the accepted properties
         const data = req.body as UpdatableUserFields;
 
-        return UserService.updateUser(id, data)
+        return userService.updateUser(id, data)
             .then((updatedUser) => {
                 if (updatedUser) {
                     return res.json({
@@ -122,9 +122,9 @@ class UserController {
             });
     }
 
-    static deleteUser(req: Request, res: Response): Promise<Response> {
+    deleteUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return UserService.deleteUser(id)
+        return userService.deleteUser(id)
             .then((deletedUser) => {
                 if (deletedUser) {
                     return res.json({
@@ -152,9 +152,9 @@ class UserController {
             });
     }
 
-    static deactivateUser(req: Request, res: Response): Promise<Response> {
+    deactivateUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return UserService.setIsActive(id, false)
+        return userService.setIsActive(id, false)
             .then((deactivatedUser) => {
                 if (deactivatedUser) {
                     return res.json({
@@ -182,9 +182,9 @@ class UserController {
             });
     }
 
-    static activateUser(req: Request, res: Response): Promise<Response> {
+    activateUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return UserService.setIsActive(id, true)
+        return userService.setIsActive(id, true)
             .then((activatedUser) => {
                 if (activatedUser) {
                     return res.json({
@@ -212,9 +212,9 @@ class UserController {
             });
     }
 
-    static confirmEmail(req: Request, res: Response): Promise<Response> {
+    confirmEmail(req: Request, res: Response): Promise<Response> {
         const emailToken = req.params.token;
-        return UserService.confirmEmail(emailToken)
+        return userService.confirmEmail(emailToken)
             .then((user) => {
                 if (user) {
                     return res.json({
@@ -246,9 +246,9 @@ class UserController {
             });
     }
 
-    static forgotPassword(req: Request, res: Response): Promise<Response> {
+    forgotPassword(req: Request, res: Response): Promise<Response> {
         const { email } = req.body;
-        return UserService.generatePasswordResetToken(email).then(async (user) => {
+        return userService.generatePasswordResetToken(email).then(async (user) => {
             if (user) {
                 const baseUrl = (req.get('origin') as string) || '';
                 await Mailer.sendPasswordResetEmail(baseUrl, user);
@@ -272,10 +272,10 @@ class UserController {
         });
     }
 
-    static changePassword(req: Request, res: Response): Promise<Response> {
+    changePassword(req: Request, res: Response): Promise<Response> {
         const resetToken = req.params.token;
         const { newPassword } = req.body;
-        return UserService.changePassword(resetToken, newPassword)
+        return userService.changePassword(resetToken, newPassword)
             .then((user) => {
                 if (user) {
                     return res.json({
@@ -306,7 +306,7 @@ class UserController {
             });
     }
 
-    static async me(req: Request, res: Response): Promise<Response> {
+    async me(req: Request, res: Response): Promise<Response> {
         const baseResponse = {
             success: true,
             message: 'authenticated user'
@@ -315,7 +315,7 @@ class UserController {
         let payload = null;
         const reqUser = req.user as User;
         if (reqUser) {
-            const user: User = (await UserService.getUserById(reqUser.id)) as User;
+            const user: User = (await userService.getUserById(reqUser.id)) as User;
             if (user) {
                 payload = {
                     user: user.toClientJSON(),
@@ -341,4 +341,4 @@ class UserController {
     }
 }
 
-export default UserController;
+export default new UserController();
