@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import ItemController from './ItemController';
+import itemController from './ItemController';
 import itemService from './ItemService';
 import userService from '../user/UserService';
 import { isAuthenticated } from '../common/routerMiddleware';
@@ -50,19 +50,19 @@ class ItemRouter {
     private static defineRoutes(): void {
         ItemRouter.router
             .route('/')
-            .post(isAuthenticated, ItemController.createItem)
-            .get(isAuthenticated, ItemController.getAllItems);
+            .post(isAuthenticated, itemController.createItem)
+            .get(isAuthenticated, itemController.getAllItems);
 
         ItemRouter.router
             .route('/:id')
-            .get(isAuthenticated, ItemController.getItem)
-            .patch(isAdminOrRequestor, ItemController.updateItem)
-            .delete(isAdminOrRequestor, ItemController.deleteItem);
+            .get(isAuthenticated, itemController.getItem)
+            .patch(isAdminOrRequestor, itemController.updateItem)
+            .delete(isAdminOrRequestor, itemController.deleteItem);
 
-        ItemRouter.router.route('/:id/notes').post(isAuthenticated, ItemController.addNoteToItem);
+        ItemRouter.router.route('/:id/notes').post(isAuthenticated, itemController.addNoteToItem);
         ItemRouter.router
             .route('/:id/notes/:noteId')
-            .delete(isAdminOrAuthor, ItemController.deleteNoteFromItem);
+            .delete(isAdminOrAuthor, itemController.deleteNoteFromItem);
     }
 }
 

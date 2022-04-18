@@ -3,7 +3,7 @@ import itemService from './ItemService';
 import { normalizeData, isValidItemForCategory, isValidSizeForItem } from './itemUtils';
 
 class ItemController {
-    static createItem(req: Request, res: Response, next: NextFunction): Promise<Response> | void {
+    createItem(req: Request, res: Response, next: NextFunction): Promise<Response> | void {
         const normalizedData = normalizeData(req.body);
 
         const {
@@ -70,7 +70,7 @@ class ItemController {
             });
     }
 
-    static getAllItems(req: Request, res: Response): Promise<Response> {
+    getAllItems(req: Request, res: Response): Promise<Response> {
         return itemService.getAllItems(req.query)
             .then((items) => {
                 let sanitizedItems;
@@ -97,7 +97,7 @@ class ItemController {
             });
     }
 
-    static getItem(req: Request, res: Response): Promise<Response> {
+    getItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return itemService.getItemById(id)
             .then((item) => {
@@ -127,7 +127,7 @@ class ItemController {
             });
     }
 
-    static updateItem(req: Request, res: Response): Promise<Response> {
+    updateItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         const updateData = req.body;
         return itemService.updateItem(id, updateData)
@@ -158,7 +158,7 @@ class ItemController {
             });
     }
 
-    static deleteItem(req: Request, res: Response): Promise<Response> {
+    deleteItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return itemService.deleteItem(id)
             .then((item) => {
@@ -188,7 +188,7 @@ class ItemController {
             });
     }
 
-    static addNoteToItem(req: Request, res: Response): Promise<Response> {
+    addNoteToItem(req: Request, res: Response): Promise<Response> {
         const itemId = req.params.id;
         const { body, authorId } = req.body;
         return itemService.addNoteToItem({ body, itemId, authorId })
@@ -219,7 +219,7 @@ class ItemController {
             });
     }
 
-    static deleteNoteFromItem(req: Request, res: Response): Promise<Response> {
+    deleteNoteFromItem(req: Request, res: Response): Promise<Response> {
         const itemId = req.params.id;
         const noteId = req.params.noteId;
 
@@ -252,4 +252,4 @@ class ItemController {
     }
 }
 
-export default ItemController;
+export default new ItemController();
