@@ -1,6 +1,6 @@
 import Note from '../entity/Note';
 import userService from '../user/UserService';
-import ItemService from '../item/ItemService';
+import itemService from '../item/ItemService';
 import { NoteFields } from '../common/types/notes';
 import { getEntityManager } from '../common/entityUtils';
 
@@ -12,7 +12,7 @@ export default class NoteService {
 
         if (userId && itemId) {
             const user = await userService.getUserById(userId);
-            const item = await ItemService.getItemById(itemId);
+            const item = await itemService.getItemById(itemId);
             if (!user) {
                 throw new Error('Invalid user');
             }

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import ItemService from './ItemService';
+import itemService from './ItemService';
 import { normalizeData, isValidItemForCategory, isValidSizeForItem } from './itemUtils';
 
 class ItemController {
@@ -31,7 +31,7 @@ class ItemController {
             }
         }
 
-        return ItemService.createItem({
+        return itemService.createItem({
             clientId,
             category,
             name,
@@ -71,7 +71,7 @@ class ItemController {
     }
 
     static getAllItems(req: Request, res: Response): Promise<Response> {
-        return ItemService.getAllItems(req.query)
+        return itemService.getAllItems(req.query)
             .then((items) => {
                 let sanitizedItems;
                 if (items) {
@@ -99,7 +99,7 @@ class ItemController {
 
     static getItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return ItemService.getItemById(id)
+        return itemService.getItemById(id)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -130,7 +130,7 @@ class ItemController {
     static updateItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         const updateData = req.body;
-        return ItemService.updateItem(id, updateData)
+        return itemService.updateItem(id, updateData)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -160,7 +160,7 @@ class ItemController {
 
     static deleteItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return ItemService.deleteItem(id)
+        return itemService.deleteItem(id)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -191,7 +191,7 @@ class ItemController {
     static addNoteToItem(req: Request, res: Response): Promise<Response> {
         const itemId = req.params.id;
         const { body, authorId } = req.body;
-        return ItemService.addNoteToItem({ body, itemId, authorId })
+        return itemService.addNoteToItem({ body, itemId, authorId })
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -223,7 +223,7 @@ class ItemController {
         const itemId = req.params.id;
         const noteId = req.params.noteId;
 
-        return ItemService.deleteNoteFromItem({ noteId, itemId })
+        return itemService.deleteNoteFromItem({ noteId, itemId })
             .then((item) => {
                 if (item) {
                     return res.json({

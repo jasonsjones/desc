@@ -1,4 +1,4 @@
-import ItemService from '../ItemService';
+import itemService from '../ItemService';
 import { createPostgresConnection, closeConnection } from '../../config/database';
 import User from '../../entity/User';
 import {
@@ -41,7 +41,7 @@ describe('Item service', () => {
 
     describe('createItem() method', () => {
         it('creates a new clothing item', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.CLOTHING,
                 name: 'shirt',
@@ -67,7 +67,7 @@ describe('Item service', () => {
 
         it('creates a new engagement item', async () => {
             const itemName = 'games';
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: itemName,
@@ -90,7 +90,7 @@ describe('Item service', () => {
         });
 
         it('creates a new household item', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -114,7 +114,7 @@ describe('Item service', () => {
         });
 
         it('creates a new personal hygiene item', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.PERSONAL_HYGIENE,
                 name: 'toothpaste',
@@ -139,7 +139,7 @@ describe('Item service', () => {
 
         it('creates a new pet item', async () => {
             const noteText = 'Dog food';
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.PET,
                 name: 'other',
@@ -170,7 +170,7 @@ describe('Item service', () => {
 
         it('creates a new ticket item', async () => {
             const noteText = 'Natural History Museum';
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.TICKET,
                 name: 'other',
@@ -201,7 +201,7 @@ describe('Item service', () => {
 
         it('creates a new other item', async () => {
             const noteText = 'This is for everything else';
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.OTHER,
                 name: 'other',
@@ -231,7 +231,7 @@ describe('Item service', () => {
         });
 
         it('creates a new urgent household item', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -256,7 +256,7 @@ describe('Item service', () => {
         });
 
         it('creates a new urgent household item with a note', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -288,7 +288,7 @@ describe('Item service', () => {
         });
 
         it('creates a new household item with wishlist status', async () => {
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -316,7 +316,7 @@ describe('Item service', () => {
             expect.assertions(1);
             const unkownUserId = '4a29f793-ad0f-4388-9a40-0c0423c5b78c';
             try {
-                await ItemService.createItem({
+                await itemService.createItem({
                     clientId,
                     category: ItemCategory.HOUSEHOLD,
                     name: 'bedding',
@@ -331,14 +331,14 @@ describe('Item service', () => {
 
     describe('getAllItems() method', () => {
         beforeEach(async () => {
-            await ItemService.createItem({
+            await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games',
                 location: HouseLocation.EASTLAKE,
                 requestorId: userId
             });
-            await ItemService.createItem({
+            await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'bedding',
@@ -349,7 +349,7 @@ describe('Item service', () => {
         });
 
         it('fetches all the items', async () => {
-            const items = await ItemService.getAllItems();
+            const items = await itemService.getAllItems();
 
             expect(items).toHaveLength(2);
             expect(items).toEqual(
@@ -370,7 +370,7 @@ describe('Item service', () => {
         it('throws an error if  unknown query is passed', async () => {
             expect.assertions(1);
             try {
-                await ItemService.getAllItems({ unknownParam: 'bogusvalue' });
+                await itemService.getAllItems({ unknownParam: 'bogusvalue' });
             } catch (e) {
                 expect(e).toBeTruthy();
             }
@@ -380,7 +380,7 @@ describe('Item service', () => {
     describe('getItemById() method', () => {
         let itemId: string;
         beforeEach(async () => {
-            const games = await ItemService.createItem({
+            const games = await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games',
@@ -392,7 +392,7 @@ describe('Item service', () => {
         });
 
         it('fetches the item with the given id', async () => {
-            const item = await ItemService.getItemById(itemId);
+            const item = await itemService.getItemById(itemId);
 
             expect(item).toEqual(
                 expect.objectContaining({
@@ -408,7 +408,7 @@ describe('Item service', () => {
 
         it('returns undefined if the item with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-            const item = await ItemService.getItemById(badId);
+            const item = await itemService.getItemById(badId);
             expect(item).toBeUndefined();
         });
     });
@@ -418,7 +418,7 @@ describe('Item service', () => {
         const unknownId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
 
         beforeEach(async () => {
-            const games = await ItemService.createItem({
+            const games = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -431,7 +431,7 @@ describe('Item service', () => {
         });
 
         it('updates the status of the item with the given id', async () => {
-            const updatedItem = await ItemService.updateItem(itemId, {
+            const updatedItem = await itemService.updateItem(itemId, {
                 status: ItemStatus.APPROVED
             });
 
@@ -443,7 +443,7 @@ describe('Item service', () => {
         });
 
         it('updates the priority of the item with the given id', async () => {
-            const updatedItem = await ItemService.updateItem(itemId, {
+            const updatedItem = await itemService.updateItem(itemId, {
                 priority: ItemPriority.URGENT
             });
 
@@ -455,7 +455,7 @@ describe('Item service', () => {
         });
 
         it('updates the quantity of the item with the given id', async () => {
-            const updatedItem = await ItemService.updateItem(itemId, {
+            const updatedItem = await itemService.updateItem(itemId, {
                 quantity: 4
             });
 
@@ -467,7 +467,7 @@ describe('Item service', () => {
         });
 
         it('updates the name and category of the item with the given id', async () => {
-            const updatedItem = await ItemService.updateItem(itemId, {
+            const updatedItem = await itemService.updateItem(itemId, {
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games'
             });
@@ -480,7 +480,7 @@ describe('Item service', () => {
         });
 
         it('updates the location of the item with the given id', async () => {
-            const updatedItem = await ItemService.updateItem(itemId, {
+            const updatedItem = await itemService.updateItem(itemId, {
                 location: HouseLocation.EASTLAKE
             });
             expect(updatedItem).toEqual(
@@ -491,7 +491,7 @@ describe('Item service', () => {
         });
 
         it('returns undefined if attemmpts to update item  with unknown id', async () => {
-            const updatedItem = await ItemService.updateItem(unknownId, {
+            const updatedItem = await itemService.updateItem(unknownId, {
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games'
             });
@@ -503,7 +503,7 @@ describe('Item service', () => {
     describe('deleteItem() method', () => {
         let itemId: string;
         beforeEach(async () => {
-            const games = await ItemService.createItem({
+            const games = await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games',
@@ -515,7 +515,7 @@ describe('Item service', () => {
         });
 
         it('deletes the item with the given id', async () => {
-            const item = await ItemService.deleteItem(itemId);
+            const item = await itemService.deleteItem(itemId);
 
             expect(item).toEqual(
                 expect.objectContaining({
@@ -526,14 +526,14 @@ describe('Item service', () => {
                 })
             );
 
-            const items = await ItemService.getAllItems();
+            const items = await itemService.getAllItems();
             expect(items).toHaveLength(0);
         });
 
         it('deletes the item with the given id and cascades the delete for the note', async () => {
             expect.assertions(1);
 
-            const item = await ItemService.createItem({
+            const item = await itemService.createItem({
                 clientId,
                 category: ItemCategory.HOUSEHOLD,
                 name: 'pillows',
@@ -545,7 +545,7 @@ describe('Item service', () => {
             });
 
             if (item) {
-                await ItemService.deleteItem(item.id);
+                await itemService.deleteItem(item.id);
                 const notes = await NoteService.getNoteForItem(item.id);
                 expect(notes).toHaveLength(0);
             }
@@ -555,7 +555,7 @@ describe('Item service', () => {
     describe('addNoteToItem() method', () => {
         let itemId: string;
         beforeEach(async () => {
-            const games = await ItemService.createItem({
+            const games = await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games',
@@ -568,7 +568,7 @@ describe('Item service', () => {
         });
 
         it('adds a note to an existing item', async () => {
-            const updatedItem = await ItemService.addNoteToItem({
+            const updatedItem = await itemService.addNoteToItem({
                 body: 'This is the second note to go with the request',
                 authorId: userId,
                 itemId
@@ -601,7 +601,7 @@ describe('Item service', () => {
             const unkownUserId = '4a29f793-ad0f-4388-9a40-0c0423c5b78c';
 
             try {
-                await ItemService.addNoteToItem({
+                await itemService.addNoteToItem({
                     body: 'Adding a note here',
                     authorId: unkownUserId,
                     itemId
@@ -615,7 +615,7 @@ describe('Item service', () => {
             expect.assertions(1);
             const unknownItemId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
             try {
-                await ItemService.addNoteToItem({
+                await itemService.addNoteToItem({
                     body: 'Adding a note here',
                     authorId: userId,
                     itemId: unknownItemId
@@ -631,7 +631,7 @@ describe('Item service', () => {
         let noteId: string;
 
         beforeEach(async () => {
-            const games = await ItemService.createItem({
+            const games = await itemService.createItem({
                 clientId,
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games',
@@ -641,7 +641,7 @@ describe('Item service', () => {
             });
             itemId = games?.id as string;
 
-            const itemWith2Notes = await ItemService.addNoteToItem({
+            const itemWith2Notes = await itemService.addNoteToItem({
                 body: 'This is the second note to go with the request',
                 authorId: userId,
                 itemId
@@ -651,7 +651,7 @@ describe('Item service', () => {
         });
 
         it('deletes a note from the item', async () => {
-            const itemWith1Note = await ItemService.deleteNoteFromItem({ noteId, itemId });
+            const itemWith1Note = await itemService.deleteNoteFromItem({ noteId, itemId });
 
             expect(itemWith1Note).toEqual(
                 expect.objectContaining({
@@ -680,7 +680,7 @@ describe('Item service', () => {
             const unkownItemId = '4a29f793-ad0f-4388-9a40-0c0423c5b78c';
 
             try {
-                await ItemService.deleteNoteFromItem({
+                await itemService.deleteNoteFromItem({
                     noteId,
                     itemId: unkownItemId
                 });
@@ -694,7 +694,7 @@ describe('Item service', () => {
             const unkownNoteId = '4a29f793-ad0f-4388-9a40-0c0423c5b78c';
 
             try {
-                await ItemService.deleteNoteFromItem({
+                await itemService.deleteNoteFromItem({
                     noteId: unkownNoteId,
                     itemId
                 });

@@ -1,7 +1,7 @@
 import ClientRequest from '../entity/ClientRequest';
 import { ItemFields } from '../common/types/items';
 import userService from '../user/UserService';
-import ItemService from '../item/ItemService';
+import itemService from '../item/ItemService';
 import Item from '../entity/Item';
 import { getEntityManager } from '../common/entityUtils';
 
@@ -31,13 +31,13 @@ export default class ClientRequestService {
             let itemEntity;
             const createdItems: Item[] = [];
             for (const item of items) {
-                itemEntity = await ItemService.createItem(item);
+                itemEntity = await itemService.createItem(item);
                 itemEntity.clientRequest = clientRequest;
                 createdItems.push(itemEntity);
             }
             clientRequest.items = createdItems;
         } else {
-            const tempItem = await ItemService.createItem(items);
+            const tempItem = await itemService.createItem(items);
             tempItem.clientRequest = clientRequest;
             clientRequest.items = [tempItem];
         }

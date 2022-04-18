@@ -4,8 +4,8 @@ import userService from '../user/UserService';
 import NoteService from '../note/NoteService';
 import { getEntityManager } from '../common/entityUtils';
 
-export default class ItemService {
-    static async createItem(itemData: ItemFields): Promise<Item> {
+class ItemService {
+    async createItem(itemData: ItemFields): Promise<Item> {
         const em = getEntityManager();
         const {
             clientId,
@@ -47,39 +47,39 @@ export default class ItemService {
         return em.save(item);
     }
 
-    static getAllItems(query = {}): Promise<Item[]> {
+    getAllItems(query = {}): Promise<Item[]> {
         return getEntityManager().find(Item, {
             where: query,
             relations: ['submittedBy', 'notes', 'notes.submittedBy']
         });
     }
 
-    static getItemById(id: string): Promise<Item | undefined> {
+    getItemById(id: string): Promise<Item | undefined> {
         return getEntityManager().findOne(Item, {
             where: { id },
             relations: ['submittedBy', 'notes', 'notes.submittedBy']
         });
     }
 
-    static async updateItem(id: string, data: UpdatableItemFields): Promise<Item | undefined> {
+    async updateItem(id: string, data: UpdatableItemFields): Promise<Item | undefined> {
         await getEntityManager().update(Item, { id }, data);
-        return ItemService.getItemById(id);
+        return this.getItemById(id);
     }
 
-    static async deleteItem(id: string): Promise<Item | undefined> {
-        const item = await ItemService.getItemById(id);
+    async deleteItem(id: string): Promise<Item | undefined> {
+        const item = await this.getItemById(id);
         await getEntityManager().delete(Item, { id });
         return item;
     }
 
-    static async addNoteToItem(noteData: {
+    async addNoteToItem(noteData: {
         body: string;
         itemId: string;
         authorId: string;
     }): Promise<Item | undefined> {
         const { body, itemId, authorId } = noteData;
         const author = await userService.getUserById(authorId);
-        const item = await ItemService.getItemById(itemId);
+        const item = await this.getItemById(itemId);
 
         if (!author) {
             throw new Error('Invalid author');
@@ -95,15 +95,15 @@ export default class ItemService {
         item.notes = [...item.notes, note];
         await getEntityManager().save(item);
 
-        return ItemService.getItemById(itemId);
+        return this.getItemById(itemId);
     }
 
-    static async deleteNoteFromItem(noteData: {
+    async deleteNoteFromItem(noteData: {
         noteId: string;
         itemId: string;
     }): Promise<Item | undefined> {
         const { noteId, itemId } = noteData;
-        const item = await ItemService.getItemById(itemId);
+        const item = await this.getItemById(itemId);
         if (!item) {
             throw new Error('Invalid item');
         }
@@ -113,6 +113,8 @@ export default class ItemService {
         }
         item.notes = item?.notes.filter((note) => note.id !== noteId);
 
-        return ItemService.getItemById(itemId);
+        return this.getItemById(itemId);
     }
 }
+
+export default new ItemService();

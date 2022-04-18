@@ -2,7 +2,7 @@ import { createPostgresConnection, closeConnection } from '../../config/database
 import userService from '../../user/UserService';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
 import TestUtils from '../../testUtils/TestUtilities';
-import ItemService from '../../item/ItemService';
+import itemService from '../../item/ItemService';
 import NoteService from '../NoteService';
 
 describe('Note service', () => {
@@ -21,7 +21,7 @@ describe('Note service', () => {
             })
         ).id;
 
-        const games = await ItemService.createItem({
+        const games = await itemService.createItem({
             clientId: '967865',
             category: ItemCategory.ENGAGEMENT,
             name: 'games',

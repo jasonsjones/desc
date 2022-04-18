@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import ItemController from './ItemController';
-import ItemService from './ItemService';
+import itemService from './ItemService';
 import userService from '../user/UserService';
 import { isAuthenticated } from '../common/routerMiddleware';
 import NoteService from '../note/NoteService';
@@ -10,7 +10,7 @@ async function isAdminOrRequestor(req: Request, _: Response, next: NextFunction)
         const id: string = (req.user as any).id;
 
         const authUser = await userService.getUserById(id);
-        const item = await ItemService.getItemById(req.params.id);
+        const item = await itemService.getItemById(req.params.id);
 
         if (authUser?.isAdmin() || authUser?.isOwner(item?.submittedBy.id)) {
             next();
