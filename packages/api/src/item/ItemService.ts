@@ -2,11 +2,10 @@ import Item from '../entity/Item';
 import { ItemFields, UpdatableItemFields } from '../common/types/items';
 import userService from '../user/UserService';
 import NoteService from '../note/NoteService';
-import { getEntityManager } from '../common/entityUtils';
+import { getItemRepository } from '../common/entityUtils';
 
 class ItemService {
     async createItem(itemData: ItemFields): Promise<Item> {
-        const em = getEntityManager();
         const {
             clientId,
             category,
@@ -25,7 +24,7 @@ class ItemService {
             throw new Error('Invalid requestor');
         }
 
-        const item = em.create(Item, {
+        const item = getItemRepository().create({
             clientId,
             category,
             name,
@@ -44,31 +43,31 @@ class ItemService {
             item.notes = [tempNote];
         }
 
-        return em.save(item);
+        return getItemRepository().save(item);
     }
 
     getAllItems(query = {}): Promise<Item[]> {
-        return getEntityManager().find(Item, {
+        return getItemRepository().find({
             where: query,
             relations: ['submittedBy', 'notes', 'notes.submittedBy']
         });
     }
 
     getItemById(id: string): Promise<Item | undefined> {
-        return getEntityManager().findOne(Item, {
+        return getItemRepository().findOne({
             where: { id },
             relations: ['submittedBy', 'notes', 'notes.submittedBy']
         });
     }
 
     async updateItem(id: string, data: UpdatableItemFields): Promise<Item | undefined> {
-        await getEntityManager().update(Item, { id }, data);
+        await getItemRepository().update({ id }, data);
         return this.getItemById(id);
     }
 
     async deleteItem(id: string): Promise<Item | undefined> {
         const item = await this.getItemById(id);
-        await getEntityManager().delete(Item, { id });
+        await getItemRepository().delete({ id });
         return item;
     }
 
@@ -93,7 +92,7 @@ class ItemService {
         note.submittedBy = author;
         note.item = item;
         item.notes = [...item.notes, note];
-        await getEntityManager().save(item);
+        await getItemRepository().save(item);
 
         return this.getItemById(itemId);
     }
