@@ -10,7 +10,7 @@ import {
 } from '../../common/types/enums';
 import userService from '../../user/UserService';
 import TestUtils from '../../testUtils/TestUtilities';
-import NoteService from '../../note/NoteService';
+import noteService from '../../note/NoteService';
 
 describe('Item service', () => {
     let userId: string;
@@ -546,7 +546,7 @@ describe('Item service', () => {
 
             if (item) {
                 await itemService.deleteItem(item.id);
-                const notes = await NoteService.getNoteForItem(item.id);
+                const notes = await noteService.getNoteForItem(item.id);
                 expect(notes).toHaveLength(0);
             }
         });

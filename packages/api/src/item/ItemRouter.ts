@@ -3,7 +3,7 @@ import itemController from './ItemController';
 import itemService from './ItemService';
 import userService from '../user/UserService';
 import { isAuthenticated } from '../common/routerMiddleware';
-import NoteService from '../note/NoteService';
+import noteService from '../note/NoteService';
 
 async function isAdminOrRequestor(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
@@ -27,7 +27,7 @@ async function isAdminOrAuthor(req: Request, _: Response, next: NextFunction): P
         const id: string = (req.user as any).id;
 
         const authUser = await userService.getUserById(id);
-        const note = await NoteService.getNoteById(req.params.noteId);
+        const note = await noteService.getNoteById(req.params.noteId);
 
         if (authUser?.isAdmin() || authUser?.isOwner(note?.submittedBy.id)) {
             next();

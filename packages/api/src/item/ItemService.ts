@@ -1,7 +1,7 @@
 import Item from '../entity/Item';
 import { ItemFields, UpdatableItemFields } from '../common/types/items';
 import userService from '../user/UserService';
-import NoteService from '../note/NoteService';
+import noteService from '../note/NoteService';
 import { getItemRepository } from '../common/entityUtils';
 
 class ItemService {
@@ -37,7 +37,7 @@ class ItemService {
         item.submittedBy = requestor;
 
         if (note) {
-            const tempNote = NoteService.createNoteForItem({ body: note });
+            const tempNote = noteService.createNoteForItem({ body: note });
             tempNote.submittedBy = requestor;
             tempNote.item = item;
             item.notes = [tempNote];
@@ -88,7 +88,7 @@ class ItemService {
             throw new Error('Invalid item');
         }
 
-        const note = NoteService.createNoteForItem({ body });
+        const note = noteService.createNoteForItem({ body });
         note.submittedBy = author;
         note.item = item;
         item.notes = [...item.notes, note];
@@ -106,7 +106,7 @@ class ItemService {
         if (!item) {
             throw new Error('Invalid item');
         }
-        const deletedNote = await NoteService.deleteNote(noteId);
+        const deletedNote = await noteService.deleteNote(noteId);
         if (!deletedNote) {
             throw new Error('Invalid note');
         }

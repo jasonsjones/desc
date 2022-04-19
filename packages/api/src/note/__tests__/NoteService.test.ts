@@ -3,7 +3,7 @@ import userService from '../../user/UserService';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
 import TestUtils from '../../testUtils/TestUtilities';
 import itemService from '../../item/ItemService';
-import NoteService from '../NoteService';
+import noteService from '../NoteService';
 
 describe('Note service', () => {
     let userId: string;
@@ -45,7 +45,7 @@ describe('Note service', () => {
         });
 
         it('creates a new note', async () => {
-            const note = await NoteService.createNote({ body: 'This is a test', userId, itemId });
+            const note = await noteService.createNote({ body: 'This is a test', userId, itemId });
 
             expect(note).toEqual(
                 expect.objectContaining({
@@ -61,7 +61,7 @@ describe('Note service', () => {
             expect.assertions(1);
             const invalidUserId = '5a75038a-05e6-404b-8f5f-8bba3fed11f6';
             try {
-                await NoteService.createNote({
+                await noteService.createNote({
                     body: 'This should throw error',
                     userId: invalidUserId,
                     itemId
@@ -75,7 +75,7 @@ describe('Note service', () => {
             expect.assertions(1);
             const invalidItemId = 'ad259d3d-3386-4df1-904f-0218b6f6891c';
             try {
-                await NoteService.createNote({
+                await noteService.createNote({
                     body: 'This should throw error',
                     userId,
                     itemId: invalidItemId
@@ -88,7 +88,7 @@ describe('Note service', () => {
 
     describe('createNoteForItem() method', () => {
         it('creates a new note', () => {
-            const note = NoteService.createNoteForItem({ body: 'This is a test', userId, itemId });
+            const note = noteService.createNoteForItem({ body: 'This is a test', userId, itemId });
 
             expect(note).toEqual(
                 expect.objectContaining({
@@ -108,8 +108,8 @@ describe('Note service', () => {
 
     describe('getAllNotes() method', () => {
         beforeEach(async () => {
-            await NoteService.createNote({ body: 'This is the first test note', userId, itemId });
-            await NoteService.createNote({ body: 'This is the second test note', userId, itemId });
+            await noteService.createNote({ body: 'This is the first test note', userId, itemId });
+            await noteService.createNote({ body: 'This is the second test note', userId, itemId });
         });
 
         afterEach(async () => {
@@ -117,7 +117,7 @@ describe('Note service', () => {
         });
 
         it('fetches all notes', async () => {
-            const notes = await NoteService.getAllNotes();
+            const notes = await noteService.getAllNotes();
             expect(notes).toHaveLength(2);
             expect(notes).toEqual(
                 expect.arrayContaining([
@@ -135,12 +135,12 @@ describe('Note service', () => {
     describe('getNoteById() method', () => {
         let noteId: string;
         beforeEach(async () => {
-            const note = await NoteService.createNote({
+            const note = await noteService.createNote({
                 body: 'This is the first test note',
                 userId,
                 itemId
             });
-            await NoteService.createNote({ body: 'This is the second test note', userId, itemId });
+            await noteService.createNote({ body: 'This is the second test note', userId, itemId });
 
             noteId = note?.id as string;
         });
@@ -150,7 +150,7 @@ describe('Note service', () => {
         });
 
         it('fetches the item with the given id', async () => {
-            const note = await NoteService.getNoteById(noteId);
+            const note = await noteService.getNoteById(noteId);
             expect(note).toEqual(
                 expect.objectContaining({
                     id: expect.any(String),
@@ -163,19 +163,19 @@ describe('Note service', () => {
 
         it('returns undefined if the note with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-            const note = await NoteService.getNoteById(badId);
+            const note = await noteService.getNoteById(badId);
             expect(note).toBeUndefined();
         });
     });
 
     describe('getNoteForItem() method', () => {
         beforeAll(async () => {
-            await NoteService.createNote({
+            await noteService.createNote({
                 body: 'This is the first test note',
                 userId,
                 itemId
             });
-            await NoteService.createNote({ body: 'This is the second test note', userId, itemId });
+            await noteService.createNote({ body: 'This is the second test note', userId, itemId });
         });
 
         afterAll(async () => {
@@ -183,7 +183,7 @@ describe('Note service', () => {
         });
 
         it('fetches all the notes for an item', async () => {
-            const notes = await NoteService.getNoteForItem(itemId);
+            const notes = await noteService.getNoteForItem(itemId);
             expect(notes).toHaveLength(2);
             expect(notes).toEqual(
                 expect.arrayContaining([
@@ -199,7 +199,7 @@ describe('Note service', () => {
 
         it('returns empty array if the item is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-            const note = await NoteService.getNoteForItem(badId);
+            const note = await noteService.getNoteForItem(badId);
             expect(note).toHaveLength(0);
         });
     });
@@ -207,12 +207,12 @@ describe('Note service', () => {
     describe('deleteNote() method', () => {
         let noteId: string;
         beforeEach(async () => {
-            const note = await NoteService.createNote({
+            const note = await noteService.createNote({
                 body: 'This is the first test note',
                 userId,
                 itemId
             });
-            await NoteService.createNote({ body: 'This is the second test note', userId, itemId });
+            await noteService.createNote({ body: 'This is the second test note', userId, itemId });
 
             noteId = note?.id as string;
         });
@@ -222,7 +222,7 @@ describe('Note service', () => {
         });
 
         it('deletes the item with the given id', async () => {
-            const note = await NoteService.deleteNote(noteId);
+            const note = await noteService.deleteNote(noteId);
 
             expect(note).toEqual(
                 expect.objectContaining({
@@ -231,13 +231,13 @@ describe('Note service', () => {
                 })
             );
 
-            const remainingNotes = await NoteService.getAllNotes();
+            const remainingNotes = await noteService.getAllNotes();
             expect(remainingNotes).toHaveLength(1);
         });
 
         it('returns undefined if the note with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-            const note = await NoteService.deleteNote(badId);
+            const note = await noteService.deleteNote(badId);
             expect(note).toBeUndefined();
         });
     });
