@@ -10,8 +10,9 @@ interface ClientRequestData {
     requestorId: string;
     items?: ItemFields | ItemFields[];
 }
-export default class ClientRequestService {
-    static async createClientRequest(data: ClientRequestData): Promise<ClientRequest> {
+
+class ClientRequestService {
+    async createClientRequest(data: ClientRequestData): Promise<ClientRequest> {
         const em = getEntityManager();
         const { clientId, requestorId, items } = data;
         const clientRequest = new ClientRequest();
@@ -45,14 +46,16 @@ export default class ClientRequestService {
         return em.save(clientRequest);
     }
 
-    static async getAllClientRequests(): Promise<ClientRequest[]> {
+    async getAllClientRequests(): Promise<ClientRequest[]> {
         return getEntityManager().find(ClientRequest, { relations: ['submittedBy', 'items'] });
     }
 
-    static getClientRequestById(id: string): Promise<ClientRequest | undefined> {
+    getClientRequestById(id: string): Promise<ClientRequest | undefined> {
         return getEntityManager().findOne(ClientRequest, {
             where: { id },
             relations: ['submittedBy', 'items']
         });
     }
 }
+
+export default new ClientRequestService();

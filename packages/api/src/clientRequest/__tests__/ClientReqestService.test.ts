@@ -3,7 +3,7 @@ import User from '../../entity/User';
 import { ItemFields } from '../../common/types/items';
 import { ItemCategory, HouseLocation, Program } from '../../common/types/enums';
 import userService from '../../user/UserService';
-import ClientRequestService from '../ClientRequestService';
+import clientRequestService from '../ClientRequestService';
 import TestUtils from '../../testUtils/TestUtilities';
 
 describe('ClientRequest service', () => {
@@ -55,7 +55,7 @@ describe('ClientRequest service', () => {
 
     describe('createClientRequest() method', () => {
         it('creates a client request without any items', async () => {
-            const cr = await ClientRequestService.createClientRequest({
+            const cr = await clientRequestService.createClientRequest({
                 clientId,
                 requestorId: userId
             });
@@ -74,7 +74,7 @@ describe('ClientRequest service', () => {
         });
 
         it('creates a client request when passed a single item', async () => {
-            const cr = await ClientRequestService.createClientRequest({
+            const cr = await clientRequestService.createClientRequest({
                 clientId,
                 requestorId: userId,
                 items: item2
@@ -95,7 +95,7 @@ describe('ClientRequest service', () => {
         });
 
         it('creates a client request when passed an array of items', async () => {
-            const cr = await ClientRequestService.createClientRequest({
+            const cr = await clientRequestService.createClientRequest({
                 clientId,
                 requestorId: userId,
                 items: [item1, item2]
@@ -120,7 +120,7 @@ describe('ClientRequest service', () => {
             const unkownUserId = '4a29f793-ad0f-4388-9a40-0c0423c5b78c';
 
             try {
-                await ClientRequestService.createClientRequest({
+                await clientRequestService.createClientRequest({
                     clientId,
                     requestorId: unkownUserId,
                     items: item1
@@ -133,7 +133,7 @@ describe('ClientRequest service', () => {
 
     describe('getAllClientRequests() method', () => {
         beforeEach(async () => {
-            await ClientRequestService.createClientRequest({
+            await clientRequestService.createClientRequest({
                 clientId,
                 requestorId: userId,
                 items: [item1, item2]
@@ -141,7 +141,7 @@ describe('ClientRequest service', () => {
         });
 
         it('fetches all the client requests', async () => {
-            const requests = await ClientRequestService.getAllClientRequests();
+            const requests = await clientRequestService.getAllClientRequests();
 
             expect(requests).toHaveLength(1);
             expect(requests).toEqual(
@@ -163,7 +163,7 @@ describe('ClientRequest service', () => {
         let clientRequestId: string;
 
         beforeEach(async () => {
-            const cr = await ClientRequestService.createClientRequest({
+            const cr = await clientRequestService.createClientRequest({
                 clientId,
                 requestorId: userId,
                 items: [item1, item2]
@@ -173,7 +173,7 @@ describe('ClientRequest service', () => {
         });
 
         it('fetches a client request by id', async () => {
-            const cr = await ClientRequestService.getClientRequestById(clientRequestId);
+            const cr = await clientRequestService.getClientRequestById(clientRequestId);
             expect(cr).toEqual(
                 expect.objectContaining({
                     id: expect.any(String),
@@ -188,7 +188,7 @@ describe('ClientRequest service', () => {
 
         it('returns undefined if the client request with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
-            const cr = await ClientRequestService.getClientRequestById(badId);
+            const cr = await clientRequestService.getClientRequestById(badId);
             expect(cr).toBeUndefined();
         });
     });
