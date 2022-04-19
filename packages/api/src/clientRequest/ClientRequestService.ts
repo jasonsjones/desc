@@ -1,9 +1,9 @@
-import ClientRequest from '../entity/ClientRequest';
+import { getClientRequestRepository } from '../common/entityUtils';
 import { ItemFields } from '../common/types/items';
-import userService from '../user/UserService';
-import itemService from '../item/ItemService';
+import ClientRequest from '../entity/ClientRequest';
 import Item from '../entity/Item';
-import { getEntityManager } from '../common/entityUtils';
+import itemService from '../item/ItemService';
+import userService from '../user/UserService';
 
 interface ClientRequestData {
     clientId: string;
@@ -13,7 +13,6 @@ interface ClientRequestData {
 
 class ClientRequestService {
     async createClientRequest(data: ClientRequestData): Promise<ClientRequest> {
-        const em = getEntityManager();
         const { clientId, requestorId, items } = data;
         const clientRequest = new ClientRequest();
         clientRequest.clientId = clientId;
@@ -25,7 +24,7 @@ class ClientRequestService {
         clientRequest.submittedBy = requestor;
 
         if (!items) {
-            return em.save(clientRequest);
+            return getClientRequestRepository().save(clientRequest);
         }
 
         if (Array.isArray(items)) {
@@ -43,15 +42,15 @@ class ClientRequestService {
             clientRequest.items = [tempItem];
         }
 
-        return em.save(clientRequest);
+        return getClientRequestRepository().save(clientRequest);
     }
 
     async getAllClientRequests(): Promise<ClientRequest[]> {
-        return getEntityManager().find(ClientRequest, { relations: ['submittedBy', 'items'] });
+        return getClientRequestRepository().find({ relations: ['submittedBy', 'items'] });
     }
 
     getClientRequestById(id: string): Promise<ClientRequest | undefined> {
-        return getEntityManager().findOne(ClientRequest, {
+        return getClientRequestRepository().findOne({
             where: { id },
             relations: ['submittedBy', 'items']
         });

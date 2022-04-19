@@ -1,3 +1,4 @@
+import ClientRequest from 'src/entity/ClientRequest';
 import Note from 'src/entity/Note';
 import { EntityManager, Repository } from 'typeorm';
 import { getDbConnection } from '../config/database';
@@ -18,4 +19,8 @@ export function getItemRepository(): Repository<Item> {
 
 export function getNoteRepository(): Repository<Note> {
     return getDbConnection().getRepository(Note);
+}
+
+export function getClientRequestRepository(): Repository<ClientRequest> {
+    return getDbConnection().getRepository(ClientRequest);
 }
