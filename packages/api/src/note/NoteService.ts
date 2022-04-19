@@ -2,13 +2,12 @@ import Note from '../entity/Note';
 import userService from '../user/UserService';
 import itemService from '../item/ItemService';
 import { NoteFields } from '../common/types/notes';
-import { getEntityManager } from '../common/entityUtils';
+import { getNoteRepository } from '../common/entityUtils';
 
 class NoteService {
     async createNote(noteData: NoteFields): Promise<Note | undefined> {
-        const em = getEntityManager();
         const { body, userId, itemId } = noteData;
-        const note = em.create(Note, { body });
+        const note = getNoteRepository().create({ body });
 
         if (userId && itemId) {
             const user = await userService.getUserById(userId);
@@ -25,28 +24,28 @@ class NoteService {
             note.item = item;
         }
 
-        return em.save(note);
+        return getNoteRepository().save(note);
     }
 
     createNoteForItem(noteData: NoteFields): Note {
         const { body } = noteData;
-        const note = getEntityManager().create(Note, { body });
+        const note = getNoteRepository().create({ body });
         return note;
     }
 
     getAllNotes(): Promise<Note[]> {
-        return getEntityManager().find(Note, { relations: ['submittedBy', 'item'] });
+        return getNoteRepository().find({ relations: ['submittedBy', 'item'] });
     }
 
     getNoteById(id: string): Promise<Note | undefined> {
-        return getEntityManager().findOne(Note, {
+        return getNoteRepository().findOne({
             where: { id },
             relations: ['submittedBy', 'item']
         });
     }
 
     getNoteForItem(itemId: string): Promise<Note[]> {
-        return getEntityManager().find(Note, {
+        return getNoteRepository().find({
             where: { item: itemId },
             relations: ['submittedBy', 'item']
         });
@@ -54,7 +53,7 @@ class NoteService {
 
     async deleteNote(id: string): Promise<Note | undefined> {
         const note = await this.getNoteById(id);
-        await getEntityManager().delete(Note, { id });
+        await getNoteRepository().delete({ id });
         return note;
     }
 }
