@@ -1,5 +1,5 @@
 import express from 'express';
-import ClientRequestController from './ClientRequestController';
+import clientRequestController from './ClientRequestController';
 import { isAuthenticated } from '../common/routerMiddleware';
 
 class ClientRequestRouter {
@@ -13,12 +13,12 @@ class ClientRequestRouter {
     private static defineRoutes(): void {
         ClientRequestRouter.router
             .route('/')
-            .post(isAuthenticated, ClientRequestController.createClientRequest)
-            .get(isAuthenticated, ClientRequestController.getAllClientRequests);
+            .post(isAuthenticated, clientRequestController.createClientRequest)
+            .get(isAuthenticated, clientRequestController.getAllClientRequests);
 
         ClientRequestRouter.router
             .route('/:id')
-            .get(isAuthenticated, ClientRequestController.getClientRequest);
+            .get(isAuthenticated, clientRequestController.getClientRequest);
     }
 }
 

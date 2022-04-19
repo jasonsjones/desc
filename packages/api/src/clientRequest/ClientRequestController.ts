@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import clientRequestService from './ClientRequestService';
 
 class ClientRequestController {
-    static createClientRequest(req: Request, res: Response): Promise<Response> {
+    createClientRequest(req: Request, res: Response): Promise<Response> {
         const { clientId, requestorId, items } = req.body;
         return clientRequestService.createClientRequest({ clientId, requestorId, items })
             .then((cr) => {
@@ -39,7 +39,7 @@ class ClientRequestController {
             });
     }
 
-    static getAllClientRequests(_: Request, res: Response): Promise<Response> {
+    getAllClientRequests(_: Request, res: Response): Promise<Response> {
         return clientRequestService.getAllClientRequests()
             .then((requests) => {
                 return res.json({
@@ -62,7 +62,7 @@ class ClientRequestController {
             });
     }
 
-    static getClientRequest(req: Request, res: Response): Promise<Response> {
+    getClientRequest(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         return clientRequestService.getClientRequestById(id)
             .then((cr) => {
@@ -97,4 +97,4 @@ class ClientRequestController {
     }
 }
 
-export default ClientRequestController;
+export default new ClientRequestController();
