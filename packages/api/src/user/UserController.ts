@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../entity/User';
 import userService from './UserService';
-import AuthUtils from '../auth/AuthUtils';
+import authUtils from '../auth/AuthUtils';
 import Mailer from '../mailer/Mailer';
 import { UpdatableUserFields } from '../common/types/user';
 
@@ -319,7 +319,7 @@ class UserController {
             if (user) {
                 payload = {
                     user: user.toClientJSON(),
-                    accessToken: AuthUtils.createAccessToken(user)
+                    accessToken: authUtils.createAccessToken(user)
                 };
                 json = {
                     ...baseResponse,

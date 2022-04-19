@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import userService from '../user/UserService';
-import AuthUtils from '../auth/AuthUtils';
+import authUtils from '../auth/AuthUtils';
 
 export async function isAdmin(req: Request, _: Response, next: NextFunction): Promise<void> {
     if (req.user) {
@@ -30,14 +30,14 @@ export async function checkForRefreshToken(
     _: Response,
     next: NextFunction
 ): Promise<void> {
-    const { token, refreshToken } = AuthUtils.getTokens(req);
+    const { token, refreshToken } = authUtils.getTokens(req);
 
     // This is the likely scenario of a browser refresh after logging in.
     // No authenticated user or access token (token), but there is still the refresh token
     // which comes back as a cookie
     if (!req.user && !token && refreshToken) {
         try {
-            const decodedPayload: any = AuthUtils.verifyRefreshToken(refreshToken);
+            const decodedPayload: any = authUtils.verifyRefreshToken(refreshToken);
             if (decodedPayload) {
                 req.user = {
                     id: decodedPayload.sub,

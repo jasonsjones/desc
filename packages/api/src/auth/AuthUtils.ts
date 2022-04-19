@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../entity/User';
 
 class AuthUtils {
-    static getTokens = (req: Request): { token: string; refreshToken: string } => {
+    getTokens = (req: Request): { token: string; refreshToken: string } => {
         let bearerToken = null;
         if (req.headers.authorization) {
             bearerToken = req.headers.authorization.split(' ')[1];
@@ -18,7 +18,7 @@ class AuthUtils {
         };
     };
 
-    static createAccessToken = (user: User): string => {
+    createAccessToken = (user: User): string => {
         const token = jwt.sign(
             {
                 sub: user.id,
@@ -30,7 +30,7 @@ class AuthUtils {
         return token;
     };
 
-    static createRefreshToken = (user: User): string => {
+    createRefreshToken = (user: User): string => {
         const token = jwt.sign(
             {
                 sub: user.id,
@@ -43,13 +43,13 @@ class AuthUtils {
         return token;
     };
 
-    static verifyAccessToken = (token: string): string => {
+    verifyAccessToken = (token: string): string => {
         return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string) as string;
     };
 
-    static verifyRefreshToken = (token: string): string => {
+    verifyRefreshToken = (token: string): string => {
         return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET as string) as string;
     };
 }
 
-export default AuthUtils;
+export default new AuthUtils();

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import AuthUtils from './AuthUtils';
+import authUtils from './AuthUtils';
 import User from '../entity/User';
 import userService from '../user/UserService';
 
@@ -7,8 +7,8 @@ class AuthController {
     static login(req: Request, res: Response): Response {
         const user = req.user as User;
 
-        res.cookie('qid', AuthUtils.createRefreshToken(user), { httpOnly: true });
-        const accessToken = AuthUtils.createAccessToken(user);
+        res.cookie('qid', authUtils.createRefreshToken(user), { httpOnly: true });
+        const accessToken = authUtils.createAccessToken(user);
 
         return res.json({
             success: true,
@@ -38,20 +38,20 @@ class AuthController {
 
         let user: User;
         try {
-            const tokenPayload: any = AuthUtils.verifyRefreshToken(currentToken);
+            const tokenPayload: any = authUtils.verifyRefreshToken(currentToken);
             user = (await userService.getUserById(tokenPayload.sub)) as User;
             if (!user) {
                 return AuthController.sendEmptyAccessToken(res);
             }
 
             if (user && tokenPayload.version === user.refreshTokenVersion) {
-                res.cookie('qid', AuthUtils.createRefreshToken(user), { httpOnly: true });
+                res.cookie('qid', authUtils.createRefreshToken(user), { httpOnly: true });
                 return res.json({
                     success: true,
                     message: 'new access token issued',
                     payload: {
                         user: user.toClientJSON(),
-                        accessToken: AuthUtils.createAccessToken(user)
+                        accessToken: authUtils.createAccessToken(user)
                     }
                 });
             }
@@ -69,10 +69,10 @@ class AuthController {
     // Middleware methods and utilities
 
     static processToken = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
-        const { token, refreshToken } = AuthUtils.getTokens(req);
+        const { token, refreshToken } = authUtils.getTokens(req);
         if (token && refreshToken) {
             try {
-                const decoded: any = AuthUtils.verifyAccessToken(token);
+                const decoded: any = authUtils.verifyAccessToken(token);
                 if (decoded) {
                     req.user = {
                         id: decoded.sub,
