@@ -1,5 +1,5 @@
-import ClientRequest from 'src/entity/ClientRequest';
-import Note from 'src/entity/Note';
+import ClientRequest from '../entity/ClientRequest';
+import Note from '../entity/Note';
 import { EntityManager, Repository } from 'typeorm';
 import { getDbConnection } from '../config/database';
 import Item from '../entity/Item';
