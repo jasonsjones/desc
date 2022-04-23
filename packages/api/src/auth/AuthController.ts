@@ -4,7 +4,7 @@ import User from '../entity/User';
 import userService from '../user/UserService';
 
 class AuthController {
-    static login(req: Request, res: Response): Response {
+    login(req: Request, res: Response): Response {
         const user = req.user as User;
 
         res.cookie('qid', authUtils.createRefreshToken(user), { httpOnly: true });
@@ -20,7 +20,7 @@ class AuthController {
         });
     }
 
-    static logout(_: Request, res: Response): Response {
+    logout(_: Request, res: Response): Response {
         res.clearCookie('qid');
         return res.json({
             success: true,
@@ -29,11 +29,11 @@ class AuthController {
         });
     }
 
-    static async getRefreshToken(req: Request, res: Response): Promise<Response> {
+    async getRefreshToken(req: Request, res: Response): Promise<Response> {
         const currentToken = req.cookies['qid'];
 
         if (!currentToken) {
-            return AuthController.sendEmptyAccessToken(res);
+            return this.sendEmptyAccessToken(res);
         }
 
         let user: User;
@@ -41,7 +41,7 @@ class AuthController {
             const tokenPayload: any = authUtils.verifyRefreshToken(currentToken);
             user = (await userService.getUserById(tokenPayload.sub)) as User;
             if (!user) {
-                return AuthController.sendEmptyAccessToken(res);
+                return this.sendEmptyAccessToken(res);
             }
 
             if (user && tokenPayload.version === user.refreshTokenVersion) {
@@ -56,7 +56,7 @@ class AuthController {
                 });
             }
         } catch (err) {
-            return AuthController.sendEmptyAccessToken(res);
+            return this.sendEmptyAccessToken(res);
         }
 
         return res.json({
@@ -68,7 +68,7 @@ class AuthController {
 
     // Middleware methods and utilities
 
-    static processToken = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
+    processToken = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
         const { token, refreshToken } = authUtils.getTokens(req);
         if (token && refreshToken) {
             try {
@@ -92,7 +92,7 @@ class AuthController {
         next();
     };
 
-    private static sendEmptyAccessToken = (res: Response): Response => {
+    private sendEmptyAccessToken = (res: Response): Response => {
         return res.json({
             success: true,
             message: 'new access token requested.',
@@ -103,4 +103,4 @@ class AuthController {
     };
 }
 
-export default AuthController;
+export default new AuthController();

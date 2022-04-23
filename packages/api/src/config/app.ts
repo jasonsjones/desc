@@ -9,7 +9,7 @@ import { passportConfig } from './passport';
 import IndexRouter from '../index/IndexRouter';
 import AuthRouter from '../auth/AuthRouter';
 import UserRouter from '../user/UserRouter';
-import AuthController from '../auth/AuthController';
+import authController from '../auth/AuthController';
 import ItemRouter from '../item/ItemRouter';
 import ClientRequestRouter from '../clientRequest/ClientRequestRouter';
 import config from './config';
@@ -29,7 +29,7 @@ if (config.env === 'development') {
     app.use(morgan('combined'));
 }
 
-app.use(AuthController.processToken);
+app.use(authController.processToken);
 
 app.use('/', IndexRouter.getRouter());
 app.use('/api/auth', AuthRouter.getRouter(passport));
