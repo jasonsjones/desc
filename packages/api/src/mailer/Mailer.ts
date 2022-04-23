@@ -16,8 +16,8 @@ interface MailOptions {
 }
 
 class Mailer {
-    public static async sendVerificationEmail(baseUrl: string, user: User): Promise<any> {
-        const transporter = nodemailer.createTransport(Mailer.getMailOptions());
+    async sendVerificationEmail(baseUrl: string, user: User): Promise<any> {
+        const transporter = nodemailer.createTransport(this.getMailOptions());
         const verifiedTransporter =
             config.env === 'testingE2E' || config.env === 'testing'
                 ? true
@@ -34,8 +34,8 @@ class Mailer {
         }
     }
 
-    public static async sendPasswordResetEmail(baseUrl: string, user: User): Promise<any> {
-        const transporter = nodemailer.createTransport(Mailer.getMailOptions());
+    async sendPasswordResetEmail(baseUrl: string, user: User): Promise<any> {
+        const transporter = nodemailer.createTransport(this.getMailOptions());
         const verifiedTransporter =
             config.env === 'testingE2E' || config.env === 'testing'
                 ? true
@@ -52,7 +52,7 @@ class Mailer {
         }
     }
 
-    private static getMailOptions(): MailOptions {
+    private getMailOptions(): MailOptions {
         let mailOpts = {};
         switch (config.env) {
             case 'production':
@@ -79,4 +79,4 @@ class Mailer {
     }
 }
 
-export default Mailer;
+export default new Mailer();

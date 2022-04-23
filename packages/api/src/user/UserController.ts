@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import User from '../entity/User';
 import userService from './UserService';
 import authUtils from '../auth/AuthUtils';
-import Mailer from '../mailer/Mailer';
+import mailer from '../mailer/Mailer';
 import { UpdatableUserFields } from '../common/types/user';
 
 class UserController {
@@ -14,7 +14,7 @@ class UserController {
         return userService.createUser({ firstName, lastName, email, password, program })
             .then(async (user) => {
                 const baseUrl = (req.get('origin') as string) || '';
-                await Mailer.sendVerificationEmail(baseUrl, user);
+                await mailer.sendVerificationEmail(baseUrl, user);
 
                 return res.status(201).json({
                     success: true,
@@ -251,7 +251,7 @@ class UserController {
         return userService.generatePasswordResetToken(email).then(async (user) => {
             if (user) {
                 const baseUrl = (req.get('origin') as string) || '';
-                await Mailer.sendPasswordResetEmail(baseUrl, user);
+                await mailer.sendPasswordResetEmail(baseUrl, user);
 
                 return res.json({
                     success: true,
