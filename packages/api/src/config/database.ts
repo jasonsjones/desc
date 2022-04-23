@@ -1,19 +1,10 @@
 import 'reflect-metadata';
-import { Connection, createConnection, getConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import config from './config';
-
-const envDbNameMap: Map<string, string> = new Map();
-envDbNameMap.set('development', 'desc-dev');
-envDbNameMap.set('testing', 'desc-test');
-envDbNameMap.set('testingE2E', 'desc-test');
-
-const connectionName: string = envDbNameMap.get(config.env) as string;
 
 export async function createPostgresConnection(): Promise<void> {
     try {
-        if (config.env != 'production') {
-            await createConnection(connectionName);
-        }
+        await AppDataSource.initialize();
         // else connect to heroku hosted postres
         // instance assigned to env var DATABASE_URL
     } catch (e) {
@@ -22,9 +13,52 @@ export async function createPostgresConnection(): Promise<void> {
 }
 
 export function closeConnection(): Promise<void> {
-    return getConnection(connectionName).close();
+    // return getConnection(connectionName).close();
+    return AppDataSource.destroy();
 }
 
-export function getDbConnection(): Connection {
-    return getConnection(connectionName);
+export function getDbConnection(): DataSource {
+    // return getConnection(connectionName);
+    return AppDataSource;
 }
+
+const TestAppData = new DataSource({
+    type: "postgres",
+    host: "localhost",
+    port: 5432,
+    username: "postgres",
+    password: "postgres",
+    database: "desc-test",
+    synchronize: true,
+    logging: false,
+    entities: ["src/entity/**/*.ts"],
+    migrations: ["src/migration/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"]
+});
+
+const DevAppData = new DataSource({
+    type: "postgres",
+    host: "localhost",
+    port: 5432,
+    username: "postgres",
+    password: "postgres",
+    database: "desc-dev",
+    synchronize: true,
+    logging: true,
+    entities: ["src/entity/**/*.ts"],
+    migrations: ["src/migration/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"]
+});
+
+function getDataSource(): DataSource {
+    switch (config.env) {
+        case 'testing':
+            return TestAppData;
+        case 'development':
+            return DevAppData;
+        default:
+            return TestAppData;
+    }
+}
+
+export const AppDataSource = getDataSource();

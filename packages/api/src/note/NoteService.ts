@@ -1,8 +1,8 @@
-import Note from '../entity/Note';
-import userService from '../user/UserService';
-import itemService from '../item/ItemService';
-import { NoteFields } from '../common/types/notes';
 import { getNoteRepository } from '../common/entityUtils';
+import { NoteFields } from '../common/types/notes';
+import Note from '../entity/Note';
+import itemService from '../item/ItemService';
+import userService from '../user/UserService';
 
 class NoteService {
     async createNote(noteData: NoteFields): Promise<Note | undefined> {
@@ -34,24 +34,30 @@ class NoteService {
     }
 
     getAllNotes(): Promise<Note[]> {
-        return getNoteRepository().find({ relations: ['submittedBy', 'item'] });
+        return getNoteRepository().find({ relations: { submittedBy: true, item: true } });
     }
 
-    getNoteById(id: string): Promise<Note | undefined> {
+    getNoteById(id: string): Promise<Note | null> {
         return getNoteRepository().findOne({
-            where: { id },
-            relations: ['submittedBy', 'item']
+            relations: {
+                submittedBy: true,
+                item: true
+            },
+            where: { id }
         });
     }
 
     getNoteForItem(itemId: string): Promise<Note[]> {
         return getNoteRepository().find({
-            where: { item: itemId },
-            relations: ['submittedBy', 'item']
+            relations: {
+                submittedBy: true,
+                item: true
+            },
+            where: { item: { id: itemId } }
         });
     }
 
-    async deleteNote(id: string): Promise<Note | undefined> {
+    async deleteNote(id: string): Promise<Note | null> {
         const note = await this.getNoteById(id);
         await getNoteRepository().delete({ id });
         return note;

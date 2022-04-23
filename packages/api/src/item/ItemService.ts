@@ -48,24 +48,34 @@ class ItemService {
 
     getAllItems(query = {}): Promise<Item[]> {
         return getItemRepository().find({
-            where: query,
-            relations: ['submittedBy', 'notes', 'notes.submittedBy']
+            relations: {
+                submittedBy: true,
+                notes: {
+                    submittedBy: true
+                }
+            },
+            where: query
         });
     }
 
-    getItemById(id: string): Promise<Item | undefined> {
+    getItemById(id: string): Promise<Item | null> {
         return getItemRepository().findOne({
-            where: { id },
-            relations: ['submittedBy', 'notes', 'notes.submittedBy']
+            relations: {
+                submittedBy: true,
+                notes: {
+                    submittedBy: true
+                }
+            },
+            where: { id }
         });
     }
 
-    async updateItem(id: string, data: UpdatableItemFields): Promise<Item | undefined> {
+    async updateItem(id: string, data: UpdatableItemFields): Promise<Item | null> {
         await getItemRepository().update({ id }, data);
         return this.getItemById(id);
     }
 
-    async deleteItem(id: string): Promise<Item | undefined> {
+    async deleteItem(id: string): Promise<Item | null> {
         const item = await this.getItemById(id);
         await getItemRepository().delete({ id });
         return item;
@@ -75,7 +85,7 @@ class ItemService {
         body: string;
         itemId: string;
         authorId: string;
-    }): Promise<Item | undefined> {
+    }): Promise<Item | null> {
         const { body, itemId, authorId } = noteData;
         const author = await userService.getUserById(authorId);
         const item = await this.getItemById(itemId);
@@ -100,7 +110,7 @@ class ItemService {
     async deleteNoteFromItem(noteData: {
         noteId: string;
         itemId: string;
-    }): Promise<Item | undefined> {
+    }): Promise<Item | null> {
         const { noteId, itemId } = noteData;
         const item = await this.getItemById(itemId);
         if (!item) {

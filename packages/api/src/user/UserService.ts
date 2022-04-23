@@ -52,30 +52,30 @@ class UserService {
         return getUserRepository().find({});
     }
 
-    getUserById(id: string): Promise<User | undefined> {
+    getUserById(id: string): Promise<User | null> {
         return getUserRepository().findOne({ where: { id } });
     }
 
-    getUserByEmail(email: string): Promise<User | undefined> {
+    getUserByEmail(email: string): Promise<User | null> {
         return getUserRepository().findOne({ where: { email } });
     }
 
-    async updateUser(id: string, data: UpdatableUserFields): Promise<User | undefined> {
+    async updateUser(id: string, data: UpdatableUserFields): Promise<User | null> {
         await getUserRepository().update({ id }, data);
         return this.getUserById(id);
     }
 
-    async deleteUser(id: string): Promise<User | undefined> {
+    async deleteUser(id: string): Promise<User | null> {
         const user = await this.getUserById(id);
         await getUserRepository().delete({ id });
         return user;
     }
 
-    async setIsActive(id: string, isUserActive: boolean): Promise<User | undefined> {
+    async setIsActive(id: string, isUserActive: boolean): Promise<User | null> {
         return this.updateUser(id, { isActive: isUserActive });
     }
 
-    async confirmEmail(token: string): Promise<User | undefined> {
+    async confirmEmail(token: string): Promise<User | null> {
         const user = await getUserRepository().findOne({
             where: { emailVerificationToken: token }
         });
@@ -85,7 +85,7 @@ class UserService {
         });
     }
 
-    async changePassword(token: string, newPassword: string): Promise<User | undefined> {
+    async changePassword(token: string, newPassword: string): Promise<User | null> {
         const user = await getUserRepository().findOne({ where: { passwordResetToken: token } });
         if (user) {
             const now = DateUtils.getCurrentDateTime();
@@ -101,11 +101,11 @@ class UserService {
                 throw new Error('password reset token is expired');
             }
         } else {
-            return undefined;
+            return null;
         }
     }
 
-    async generatePasswordResetToken(email: string): Promise<User | undefined> {
+    async generatePasswordResetToken(email: string): Promise<User | null> {
         const user = await this.getUserByEmail(email);
         if (user) {
             const in2hrs = DateUtils.getDateMinutesFromNow(120);
