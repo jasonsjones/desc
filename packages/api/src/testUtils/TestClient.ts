@@ -79,6 +79,12 @@ class TestClient extends BaseTestClient {
             .set('Authorization', `Bearer ${this.accessToken}`);
     }
 
+    public getRefeshToken(token?: string): Test {
+        return request(this.app)
+            .get('/api/auth/refreshtoken')
+            .set('Cookie', [`qid=${token}`]);
+    }
+
     public loginUser(email: string, password: string): Test {
         return request(this.app)
             .post('/api/auth/login')

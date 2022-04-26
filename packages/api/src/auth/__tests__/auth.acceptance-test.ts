@@ -103,4 +103,20 @@ describe('Auth route acceptance tests', () => {
             expect(refreshToken).toEqual('');
         });
     });
+
+    describe('GET /api/auth/refreshToken route', () => {
+        it('sends empty access token if a refresh token is not provided', async () => {
+            const response = await client.getRefeshToken();
+
+            expect(response.body).toEqual(
+                expect.objectContaining({
+                    success: true,
+                    message: 'new access token requested.',
+                    payload: {
+                        accessToken: ''
+                    }
+                })
+            );
+        });
+    });
 });
