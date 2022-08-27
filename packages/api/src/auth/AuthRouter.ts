@@ -12,7 +12,7 @@ class AuthRouter {
     private static defineRoutes(passport: PassportStatic): void {
         AuthRouter.router
             .route('/login')
-            .post(passport.authenticate('local'), authController.login);
+            .post(passport.authenticate('local', { session: false }), authController.login);
 
         AuthRouter.router.get('/logout', authController.logout);
         AuthRouter.router.get('/refreshToken', authController.getRefreshToken.bind(authController));
