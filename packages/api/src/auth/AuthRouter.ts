@@ -15,7 +15,7 @@ class AuthRouter {
             .post(passport.authenticate('local'), authController.login);
 
         AuthRouter.router.get('/logout', authController.logout);
-        AuthRouter.router.get('/refreshToken', authController.getRefreshToken);
+        AuthRouter.router.get('/refreshToken', authController.getRefreshToken.bind(authController));
     }
 }
 
