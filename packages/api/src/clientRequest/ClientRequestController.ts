@@ -4,7 +4,8 @@ import clientRequestService from './ClientRequestService';
 class ClientRequestController {
     createClientRequest(req: Request, res: Response): Promise<Response> {
         const { clientId, requestorId, items } = req.body;
-        return clientRequestService.createClientRequest({ clientId, requestorId, items })
+        return clientRequestService
+            .createClientRequest({ clientId, requestorId, items })
             .then((cr) => {
                 // need to remove the reference to this client request in the items since it causes a circular reference
                 // and JSON does not handle it
@@ -40,7 +41,8 @@ class ClientRequestController {
     }
 
     getAllClientRequests(_: Request, res: Response): Promise<Response> {
-        return clientRequestService.getAllClientRequests()
+        return clientRequestService
+            .getAllClientRequests()
             .then((requests) => {
                 return res.json({
                     success: true,
@@ -64,7 +66,8 @@ class ClientRequestController {
 
     getClientRequest(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return clientRequestService.getClientRequestById(id)
+        return clientRequestService
+            .getClientRequestById(id)
             .then((cr) => {
                 if (cr) {
                     return res.json({

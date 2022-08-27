@@ -11,7 +11,8 @@ class UserController {
         // only includes the accepted properties
         const { firstName, lastName, email, password, program } = req.body;
 
-        return userService.createUser({ firstName, lastName, email, password, program })
+        return userService
+            .createUser({ firstName, lastName, email, password, program })
             .then(async (user) => {
                 const baseUrl = (req.get('origin') as string) || '';
                 await mailer.sendVerificationEmail(baseUrl, user);
@@ -37,7 +38,8 @@ class UserController {
     }
 
     getAllUsers(_: Request, res: Response): Promise<Response> {
-        return userService.getAllUsers()
+        return userService
+            .getAllUsers()
             .then((users) => {
                 return res.json({
                     success: true,
@@ -59,7 +61,8 @@ class UserController {
 
     getUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return userService.getUserById(id)
+        return userService
+            .getUserById(id)
             .then((user) => {
                 if (user) {
                     return res.json({
@@ -94,7 +97,8 @@ class UserController {
         // only includes the accepted properties
         const data = req.body as UpdatableUserFields;
 
-        return userService.updateUser(id, data)
+        return userService
+            .updateUser(id, data)
             .then((updatedUser) => {
                 if (updatedUser) {
                     return res.json({
@@ -124,7 +128,8 @@ class UserController {
 
     deleteUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return userService.deleteUser(id)
+        return userService
+            .deleteUser(id)
             .then((deletedUser) => {
                 if (deletedUser) {
                     return res.json({
@@ -154,7 +159,8 @@ class UserController {
 
     deactivateUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return userService.setIsActive(id, false)
+        return userService
+            .setIsActive(id, false)
             .then((deactivatedUser) => {
                 if (deactivatedUser) {
                     return res.json({
@@ -184,7 +190,8 @@ class UserController {
 
     activateUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return userService.setIsActive(id, true)
+        return userService
+            .setIsActive(id, true)
             .then((activatedUser) => {
                 if (activatedUser) {
                     return res.json({
@@ -214,7 +221,8 @@ class UserController {
 
     confirmEmail(req: Request, res: Response): Promise<Response> {
         const emailToken = req.params.token;
-        return userService.confirmEmail(emailToken)
+        return userService
+            .confirmEmail(emailToken)
             .then((user) => {
                 if (user) {
                     return res.json({
@@ -275,7 +283,8 @@ class UserController {
     changePassword(req: Request, res: Response): Promise<Response> {
         const resetToken = req.params.token;
         const { newPassword } = req.body;
-        return userService.changePassword(resetToken, newPassword)
+        return userService
+            .changePassword(resetToken, newPassword)
             .then((user) => {
                 if (user) {
                     return res.json({

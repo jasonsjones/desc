@@ -31,18 +31,19 @@ class ItemController {
             }
         }
 
-        return itemService.createItem({
-            clientId,
-            category,
-            name,
-            size,
-            priority,
-            quantity,
-            status,
-            location,
-            requestorId,
-            note
-        })
+        return itemService
+            .createItem({
+                clientId,
+                category,
+                name,
+                size,
+                priority,
+                quantity,
+                status,
+                location,
+                requestorId,
+                note
+            })
             .then((item) => {
                 // need to remove the reference to the item in the note since it causes a circular reference
                 // and JSON does not handle it
@@ -71,7 +72,8 @@ class ItemController {
     }
 
     getAllItems(req: Request, res: Response): Promise<Response> {
-        return itemService.getAllItems(req.query)
+        return itemService
+            .getAllItems(req.query)
             .then((items) => {
                 let sanitizedItems;
                 if (items) {
@@ -99,7 +101,8 @@ class ItemController {
 
     getItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return itemService.getItemById(id)
+        return itemService
+            .getItemById(id)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -130,7 +133,8 @@ class ItemController {
     updateItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
         const updateData = req.body;
-        return itemService.updateItem(id, updateData)
+        return itemService
+            .updateItem(id, updateData)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -160,7 +164,8 @@ class ItemController {
 
     deleteItem(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-        return itemService.deleteItem(id)
+        return itemService
+            .deleteItem(id)
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -191,7 +196,8 @@ class ItemController {
     addNoteToItem(req: Request, res: Response): Promise<Response> {
         const itemId = req.params.id;
         const { body, authorId } = req.body;
-        return itemService.addNoteToItem({ body, itemId, authorId })
+        return itemService
+            .addNoteToItem({ body, itemId, authorId })
             .then((item) => {
                 if (item) {
                     return res.json({
@@ -223,7 +229,8 @@ class ItemController {
         const itemId = req.params.id;
         const noteId = req.params.noteId;
 
-        return itemService.deleteNoteFromItem({ noteId, itemId })
+        return itemService
+            .deleteNoteFromItem({ noteId, itemId })
             .then((item) => {
                 if (item) {
                     return res.json({

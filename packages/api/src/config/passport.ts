@@ -19,7 +19,8 @@ export const passportConfig = (passport: PassportStatic): void => {
     });
 
     passport.deserializeUser((id: string, done: (err: any, user?: User) => void) => {
-        return userService.getUserById(id)
+        return userService
+            .getUserById(id)
             .then((user) => {
                 if (user) {
                     return done(null, user);
