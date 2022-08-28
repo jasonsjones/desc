@@ -37,10 +37,6 @@ module.exports = {
             },
             rules: {
                 '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-                '@typescript-eslint/explicit-function-return-type': [
-                    'warn',
-                    { allowExpressions: true }
-                ],
                 '@typescript-eslint/no-explicit-any': 'off',
                 '@typescript-eslint/interface-name-prefix': 'off',
                 '@typescript-eslint/explicit-member-accessibility': 'off'
