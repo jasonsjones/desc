@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { AuthTokenResponse, BaseAPIResponse, Credentials } from '../common/apiResponseTypes';
 import { BASE_URL } from './util';
 
@@ -35,6 +34,7 @@ export function fetchSessionUser(): Promise<AuthTokenResponse> {
     }).then((response) => response.json());
 }
 
+/*
 export function getValidToken(currentToken: string): Promise<string> {
     const token = jwt.decode(currentToken) as jwt.JwtPayload;
     const tokenExpires = token.exp;
@@ -50,6 +50,7 @@ export function getValidToken(currentToken: string): Promise<string> {
     }
     return Promise.resolve(currentToken);
 }
+*/
 
 export function refreshToken(): Promise<AuthTokenResponse> {
     return fetch('http://localhost:3001/api/auth/refreshtoken', {
