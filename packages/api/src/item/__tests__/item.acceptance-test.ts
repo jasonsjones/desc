@@ -427,8 +427,9 @@ describe('Item route acceptance tests', () => {
                 );
             });
 
-            it('fetches only the items from the given requestor', async () => {
+            it.only('fetches only the items from the given requestor', async () => {
                 const response = await requestor1Client.getAllItemsByRequestor(requestor2Id);
+                //console.log({ response });
 
                 expect(response.body).toEqual(
                     expect.objectContaining({

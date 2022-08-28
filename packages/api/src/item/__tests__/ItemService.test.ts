@@ -367,7 +367,7 @@ describe('Item service', () => {
             );
         });
 
-        it('throws an error if  unknown query is passed', async () => {
+        it('throws an error if unknown query is passed', async () => {
             expect.assertions(1);
             try {
                 await itemService.getAllItems({ unknownParam: 'bogusvalue' });
@@ -406,10 +406,10 @@ describe('Item service', () => {
             );
         });
 
-        it('returns undefined if the item with the given id is not found', async () => {
+        it('returns null if the item with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
             const item = await itemService.getItemById(badId);
-            expect(item).toBeUndefined();
+            expect(item).toBeNull();
         });
     });
 
@@ -490,13 +490,13 @@ describe('Item service', () => {
             );
         });
 
-        it('returns undefined if attemmpts to update item  with unknown id', async () => {
+        it('returns null if attempts to update item  with unknown id', async () => {
             const updatedItem = await itemService.updateItem(unknownId, {
                 category: ItemCategory.ENGAGEMENT,
                 name: 'games'
             });
 
-            expect(updatedItem).toBeUndefined();
+            expect(updatedItem).toBeNull();
         });
     });
 

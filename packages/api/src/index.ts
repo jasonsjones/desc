@@ -1,12 +1,12 @@
 import app from './config/app';
 import config from './config/config';
-import { createPostgresConnection } from './config/database';
+import { AppDataSource } from './config/database';
 
 process.env.TZ = 'UTC';
 
 const startApp = async (): Promise<void> => {
     try {
-        await createPostgresConnection();
+        await AppDataSource.initialize();
     } catch (e) {
         console.log(e);
     }

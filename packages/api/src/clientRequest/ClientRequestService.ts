@@ -46,13 +46,16 @@ class ClientRequestService {
     }
 
     async getAllClientRequests(): Promise<ClientRequest[]> {
-        return getClientRequestRepository().find({ relations: ['submittedBy', 'items'] });
+        return getClientRequestRepository().find({ relations: { submittedBy: true, items: true } });
     }
 
-    getClientRequestById(id: string): Promise<ClientRequest | undefined> {
+    getClientRequestById(id: string): Promise<ClientRequest | null> {
         return getClientRequestRepository().findOne({
             where: { id },
-            relations: ['submittedBy', 'items']
+            relations: {
+                submittedBy: true,
+                items: true
+            }
         });
     }
 }

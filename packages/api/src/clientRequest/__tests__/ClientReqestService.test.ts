@@ -186,10 +186,10 @@ describe('ClientRequest service', () => {
             );
         });
 
-        it('returns undefined if the client request with the given id is not found', async () => {
+        it('returns null if the client request with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
             const cr = await clientRequestService.getClientRequestById(badId);
-            expect(cr).toBeUndefined();
+            expect(cr).toBeNull();
         });
     });
 });

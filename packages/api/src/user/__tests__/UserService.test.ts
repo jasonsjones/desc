@@ -94,11 +94,11 @@ describe('User service integration tests', () => {
             await TestUtils.dropUsers();
         });
 
-        it('returns undefined if user cannot be found with given id', async () => {
+        it('returns null if user cannot be found with given id', async () => {
             const result = await userService.updateUser('4157b081-e365-4984-aeac-c31aa255a474', {
                 lastName: 'notfound'
             });
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it(`updates user's firstName`, async () => {
@@ -142,9 +142,9 @@ describe('User service integration tests', () => {
             await TestUtils.dropUsers();
         });
 
-        it('returns undefined if user cannot be found with given id', async () => {
+        it('returns null if user cannot be found with given id', async () => {
             const result = await userService.deleteUser('4157b081-e365-4984-aeac-c31aa255a474');
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it(`deletes the user with the given id`, async () => {
@@ -181,9 +181,9 @@ describe('User service integration tests', () => {
             await TestUtils.dropUsers();
         });
 
-        it('returns undefined if user cannot be found with given id', async () => {
+        it('returns null if user cannot be found with given id', async () => {
             const result = await userService.deleteUser('4157b081-e365-4984-aeac-c31aa255a474');
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it(`deactivates the user with the given id`, async () => {
@@ -224,9 +224,9 @@ describe('User service integration tests', () => {
             await TestUtils.dropUsers();
         });
 
-        it('returns undefined if user cannot be found with given token', async () => {
+        it('returns null if user cannot be found with given token', async () => {
             const result = await userService.confirmEmail('4157b081-e365-4984-aeac-c31aa255a474');
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it(`confirms the user's email address`, async () => {
@@ -256,9 +256,9 @@ describe('User service integration tests', () => {
             await TestUtils.dropUsers();
         });
 
-        it('returns undefined if user cannot be found with given email', async () => {
+        it('returns null if user cannot be found with given email', async () => {
             const result = await userService.generatePasswordResetToken('unknown-user@test.com');
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it('generates random token and effective timestamp to use for password reset', async () => {
@@ -301,13 +301,13 @@ describe('User service integration tests', () => {
             expect(result?.passwordLastChangedAt).toBeTruthy();
         });
 
-        it('returns undefined when provided an invalid reset token', async () => {
+        it('returns null when provided an invalid reset token', async () => {
             const result = await userService.changePassword(
                 '4157b081-e365-4984-aeac-c31aa255a474',
                 'secure-password'
             );
 
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
 
         it('throws an error if the reset token has expired', async () => {

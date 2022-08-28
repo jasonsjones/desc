@@ -161,10 +161,10 @@ describe('Note service', () => {
             );
         });
 
-        it('returns undefined if the note with the given id is not found', async () => {
+        it('returns null if the note with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
             const note = await noteService.getNoteById(badId);
-            expect(note).toBeUndefined();
+            expect(note).toBeNull();
         });
     });
 
@@ -235,10 +235,10 @@ describe('Note service', () => {
             expect(remainingNotes).toHaveLength(1);
         });
 
-        it('returns undefined if the note with the given id is not found', async () => {
+        it('returns null if the note with the given id is not found', async () => {
             const badId = '80453b6b-d1af-4142-903b-3ba9f92e7f39';
             const note = await noteService.deleteNote(badId);
-            expect(note).toBeUndefined();
+            expect(note).toBeNull();
         });
     });
 });

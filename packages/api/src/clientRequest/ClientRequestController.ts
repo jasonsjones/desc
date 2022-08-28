@@ -29,7 +29,7 @@ class ClientRequestController {
                 });
             })
             .catch((err) => {
-                return res.json({
+                return res.status(200).json({
                     success: false,
                     message: 'error creating client request',
                     payload: {
