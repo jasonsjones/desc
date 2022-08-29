@@ -15,7 +15,7 @@ yarn-error.log
 *.swp
 .v8flags*
 .babel.json
-.env
+.env*
 .bash_history
 .nyc_output
 .node-spawn*/
