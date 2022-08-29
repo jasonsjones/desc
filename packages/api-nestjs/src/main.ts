@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { PrismaService } from './prisma/prisma.service';
 
 const BASE_API_URL = 'api/v2';
 
@@ -21,6 +22,9 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup(`${BASE_API_URL}/doc`, app, document);
 
-    await app.listen(3001);
+    const prismaService = app.get(PrismaService);
+    await prismaService.enableShutdownHooks(app);
+
+    await app.listen(3002);
 }
 bootstrap();
