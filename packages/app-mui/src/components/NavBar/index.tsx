@@ -1,7 +1,32 @@
-import { AppBar, Button, Link, Toolbar } from '@mui/material';
-import { Link as RouterLink, NavLink } from 'react-router-dom';
+import { AppBar, Link, Toolbar } from '@mui/material';
+import { Link as RouterLink, NavLink as RouterNavLink } from 'react-router-dom';
 
-function NavBar() {
+interface NavLinkProps {
+    children: React.ReactNode;
+    to: string;
+}
+
+function NavLink({ children, to }: NavLinkProps): JSX.Element {
+    return (
+        <Link
+            to={to}
+            component={RouterNavLink}
+            color="inherit"
+            underline="none"
+            sx={{
+                py: 3,
+                px: 2,
+                '&.active, &:hover': {
+                    backgroundColor: 'primary.dark'
+                }
+            }}
+        >
+            {children}
+        </Link>
+    );
+}
+
+function NavBar(): JSX.Element {
     return (
         <AppBar position="static">
             <Toolbar>
@@ -22,9 +47,7 @@ function NavBar() {
                 >
                     DESC Portal
                 </Link>
-                <Button to="/signin" component={NavLink} color="inherit">
-                    Sign In
-                </Button>
+                <NavLink to="/signin">Sign In</NavLink>
             </Toolbar>
         </AppBar>
     );
