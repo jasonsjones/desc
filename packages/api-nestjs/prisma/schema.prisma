@@ -9,3 +9,47 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                          String     @id @default(uuid())
+  email                       String     @unique
+  firstName                   String
+  lastName                    String
+  program                     Program
+  roles                       UserRole[] @default([REQUESTOR])
+  isActive                    Boolean    @default(true)
+  emailVerificationToken      String     @default(uuid())
+  isEmailVerified             Boolean    @default(false)
+  refreshTokenVersion         Int        @default(0)
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
+  passwordResetTokenExpiresAt DateTime?
+  passwordLastChangedAt       DateTime?
+  passwordResetToken          String?
+  lastLoginAt                 DateTime?
+  password                    Password?
+}
+
+model Password {
+  hash   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+enum UserRole {
+  ADMIN
+  APPROVER
+  REQUESTOR
+  VOLUNTEER
+  UNKNOWN
+}
+
+enum Program {
+  HOUSING_FIRST
+  INTEGRATED_SERVICES
+  SURVIVAL_SERVICES
+  HEALTH_SERVICES
+  EMPLOYMENT_SERVICES
+  RESEARCH_INNOVATION
+  UNKNOWN
+}
