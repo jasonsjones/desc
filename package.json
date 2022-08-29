@@ -4,7 +4,9 @@
     "workspaces": {
         "packages": [
             "packages/api",
+            "packages/api-nestjs",
             "packages/app",
+            "packages/app-mui",
             "packages/e2e"
         ],
         "nohoist": [
