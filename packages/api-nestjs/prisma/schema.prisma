@@ -11,29 +11,71 @@ datasource db {
 }
 
 model User {
-  id                          String     @id @default(uuid())
-  email                       String     @unique
+  id                          String          @id @default(uuid())
+  email                       String          @unique
   firstName                   String
   lastName                    String
   program                     Program
-  roles                       UserRole[] @default([REQUESTOR])
-  isActive                    Boolean    @default(true)
-  emailVerificationToken      String     @default(uuid())
-  isEmailVerified             Boolean    @default(false)
-  refreshTokenVersion         Int        @default(0)
-  createdAt                   DateTime   @default(now())
-  updatedAt                   DateTime   @updatedAt
+  roles                       UserRole[]      @default([REQUESTOR])
+  isActive                    Boolean         @default(true)
+  emailVerificationToken      String          @default(uuid())
+  isEmailVerified             Boolean         @default(false)
+  refreshTokenVersion         Int             @default(0)
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @updatedAt
   passwordResetTokenExpiresAt DateTime?
   passwordLastChangedAt       DateTime?
   passwordResetToken          String?
   lastLoginAt                 DateTime?
   password                    Password?
+  requests                    ClientRequest[]
+  items                       Item[]
+  notes                       Note[]
 }
 
 model Password {
   hash   String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
+}
+
+model ClientRequest {
+  id          String   @id @default(uuid())
+  clientId    String
+  items       Item[]
+  submittedBy User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Item {
+  id          String         @id @default(uuid())
+  clientId    String
+  category    ItemCategory
+  name        String
+  priority    ItemPriority   @default(STANDARD)
+  status      ItemStatus     @default(ACTIVE)
+  location    HouseLocation
+  submittedBy User           @relation(fields: [userId], references: [id])
+  userId      String         @unique
+  request     ClientRequest? @relation(fields: [requestId], references: [id])
+  requestId   String?
+  size        String?
+  notes       Note[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Note {
+  id          String   @id @default(uuid())
+  body        String
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId      String   @unique
+  submittedBy User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum UserRole {
@@ -52,4 +94,45 @@ enum Program {
   EMPLOYMENT_SERVICES
   RESEARCH_INNOVATION
   UNKNOWN
+}
+
+enum ItemCategory {
+  CLOTHING
+  ENGAGEMENT
+  HOUSEHOLD
+  PERSONAL_HYGIENE
+  PET
+  TICKET
+  OTHER
+}
+
+enum ItemPriority {
+  URGENT
+  STANDARD
+}
+
+enum ItemStatus {
+  ACTIVE
+  APPROVED
+  DENIED
+  FULFILLED
+  WISHLIST
+  ARCHIVED
+}
+
+enum HouseLocation {
+  EASTLAKE
+  AURORA_HOUSE
+  CANADAY_HOUSE
+  CLEMENT_PLACE
+  COTTAGE_GROVE_COMMONS
+  ESTELLE
+  EVANS_HOUSE
+  INTERBAY_PLACE
+  KERNER_SCOTT_HOUSE
+  KEYS
+  LYON_BUILDING
+  MORRISON
+  RAINIER_HOUSE
+  UNION_HOTEL
 }
