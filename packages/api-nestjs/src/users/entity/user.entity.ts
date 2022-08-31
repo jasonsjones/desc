@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Program } from '@prisma/client';
 
-export class CreateUserDto {
+// This class is defined to serve as openapi documentation
+export class User {
+    @ApiProperty()
+    id: string;
+
     @ApiProperty()
     email: string;
 
@@ -10,9 +14,6 @@ export class CreateUserDto {
 
     @ApiProperty()
     lastName: string;
-
-    @ApiProperty()
-    password: string;
 
     @ApiProperty({ enum: Object.values(Program) })
     program: Program;
