@@ -16,6 +16,7 @@
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "migrate:db:test": "dotenv -e .env.test prisma migrate deploy",
+        "seed:db:test": "dotenv -e .env.test prisma db seed",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "jest --colors --runInBand",
         "test:watch": "jest --watch",
