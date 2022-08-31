@@ -22,6 +22,8 @@ const users: Prisma.UserCreateInput[] = [
 ];
 
 async function seed(): Promise<void> {
+    await prisma.user.deleteMany({});
+
     const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, 12);
 
     const ollie = await prisma.user.upsert({
