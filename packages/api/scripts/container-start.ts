@@ -15,7 +15,7 @@ function getRunningContainers() {
 }
 
 function startContainers() {
-    execSync(`docker-compose -f packages/api/docker-compose.yml up -d`, {
+    execSync(`docker-compose -f ./docker-compose.yml up -d`, {
         encoding: 'utf8',
         stdio: 'inherit'
     });
@@ -29,10 +29,11 @@ function main() {
     if (isRunning) {
         console.log(color.brightGreen('All dev containers are currently running.  🐳 \n'));
     } else {
-        console.log(color.magenta('Not all dev containers are running. Spinning up containers now...'));
+        console.log(
+            color.magenta('Not all dev containers are running. Spinning up containers now...')
+        );
         startContainers();
     }
 }
 
 main();
-

@@ -40,7 +40,7 @@ jobs:
 
             - name: Set up test database
               run: |
-                  docker exec -i $(docker container ls -aq) bash < ./packages/api/scripts/db-setup.sh
+                  docker exec -i $(docker container ls -aq) bash < ./packages/api/scripts/ghActions-db-setup.sh
 
             - name: Install node
               uses: actions/setup-node@v1

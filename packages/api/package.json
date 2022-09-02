@@ -6,6 +6,9 @@
     "scripts": {
         "build": "tsc",
         "clean": "rm -rf dist coverage",
+        "container:start": "ts-node scripts/container-start",
+        "container:stop": "ts-node scripts/container-stop",
+        "container:db:create": "ts-node scripts/container-db-create",
         "dev": "ts-node-dev --respawn src/index.ts",
         "lint": "eslint src/**/*.ts",
         "start": "node dist/src/index.js",
