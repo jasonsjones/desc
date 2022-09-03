@@ -11,15 +11,14 @@ export class AuthUtilsService {
     public static REFRESH_TOKEN_COOKIE_KEY = 'rid';
     public static AUTH_FLAG_COOKIE_KEY = 'authd';
 
-    generateAccessToken(user: Partial<User>): string {
+    generateAccessToken(user: Pick<User, 'id' | 'email'>): string {
         const payload = { sub: user.id, email: user.email };
         return this.jwtService.sign(payload, { expiresIn: '10m' });
     }
 
-    generateRefreshToken(user: Partial<User>): string {
+    generateRefreshToken(user: Pick<User, 'id' | 'email' | 'refreshTokenVersion'>): string {
         const secret = this.configService.get<string>('REFRESH_TOKEN_SECRET');
-        // TODO: add another piece of info to the payload; e.g. refreshTokenSerial no.
-        const payload = { sub: user.id, email: user.email };
+        const payload = { sub: user.id, email: user.email, ver: user.refreshTokenVersion };
         return this.jwtService.sign(payload, { secret, expiresIn: '14d' });
     }
 

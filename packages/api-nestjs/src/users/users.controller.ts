@@ -31,10 +31,11 @@ export class UsersController {
     @ApiBadRequestResponse({ description: 'The user record failed to be created.' })
     async create(@Body() dto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
         const result = await this.usersService.loginOnCreate(dto);
-        if (!result.user) {
+        const { user } = result;
+        if (!user) {
             throw new HttpException('User not created', 400);
         }
-        const refreshToken = this.authUtilsService.generateRefreshToken(result.user);
+        const refreshToken = this.authUtilsService.generateRefreshToken(user);
         this.authUtilsService.setAuthCookies(res, refreshToken);
         return result;
     }

@@ -5,6 +5,12 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { UtilsModule } from '../../utils/utils.module';
 import { AuthUtilsService } from '../auth-utils.service';
 
+const userFields = {
+    id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
+    email: 'test@example.com',
+    refreshTokenVersion: 0
+};
+
 describe('Auth Util Service', () => {
     let service: AuthUtilsService;
     let jwt: JwtService;
@@ -21,11 +27,6 @@ describe('Auth Util Service', () => {
 
     describe('generateAccessToken()', () => {
         it('generates an access token', () => {
-            const userFields = {
-                id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
-                email: 'test@example.com'
-            };
-
             const result = service.generateAccessToken(userFields);
             const parts = result.split('.');
 
@@ -36,11 +37,6 @@ describe('Auth Util Service', () => {
 
     describe('generateRefreshToken()', () => {
         it('generates a refresh token', () => {
-            const userFields = {
-                id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
-                email: 'test@example.com'
-            };
-
             const result = service.generateRefreshToken(userFields);
             const parts = result.split('.');
 
@@ -51,17 +47,13 @@ describe('Auth Util Service', () => {
 
     describe('verifyRefreshToken()', () => {
         it('verifies a refresh token', () => {
-            const userFields = {
-                id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
-                email: 'test@example.com'
-            };
-
             const token = service.generateRefreshToken(userFields);
             const decoded = service.verifyRefreshToken(token);
             expect(decoded).toEqual(
                 expect.objectContaining({
                     sub: userFields.id,
                     email: userFields.email,
+                    ver: userFields.refreshTokenVersion,
                     iat: expect.any(Number),
                     exp: expect.any(Number)
                 })
@@ -75,10 +67,6 @@ describe('Auth Util Service', () => {
                 throw new TokenExpiredError('jwt expired', twoHoursAgo);
             });
 
-            const userFields = {
-                id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
-                email: 'test@example.com'
-            };
             const token = service.generateRefreshToken(userFields);
 
             expect(() => {
@@ -91,10 +79,6 @@ describe('Auth Util Service', () => {
                 throw new JsonWebTokenError('jwt malformed');
             });
 
-            const userFields = {
-                id: '2f2a1005-6255-4483-9b5b-114b0dfa3828',
-                email: 'test@example.com'
-            };
             const token = service.generateRefreshToken(userFields);
 
             expect(() => {
