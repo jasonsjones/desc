@@ -1,9 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from './../src/app.module';
-import { UsersService } from '../src/users/users.service';
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
+import { UsersService } from '../src/users/users.service';
+import { AuthUtilsService } from '../src/utils/auth-utils.service';
+import { AppModule } from './../src/app.module';
+import { extractCookieValueFromResHeader } from './utils/auth-utils';
 
 describe('UsersController (e2e)', () => {
     let app: INestApplication;
@@ -39,10 +41,8 @@ describe('UsersController (e2e)', () => {
     });
 
     describe('/users (POST)', () => {
-        let userId: string;
-
         afterEach(async () => {
-            await usersService.remove(userId);
+            await usersService.removeByEmail(userData.email);
         });
 
         it('creates a new user', () => {
@@ -51,15 +51,31 @@ describe('UsersController (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .send(userData)
                 .expect(201)
-                .expect(({ body }) => {
-                    userId = body.id;
+                .expect(({ body, header }) => {
+                    const authFlag = extractCookieValueFromResHeader(
+                        header,
+                        AuthUtilsService.AUTH_FLAG_COOKIE_KEY
+                    );
+                    const refreshToken = extractCookieValueFromResHeader(
+                        header,
+                        AuthUtilsService.REFRESH_TOKEN_COOKIE_KEY
+                    );
+                    const rTokenParts = refreshToken.split('.');
+
+                    expect(authFlag).toBe('true');
+                    expect(rTokenParts).toHaveLength(3);
+                    expect(rTokenParts[0]).toMatch(/^eyJhbGciOi/);
+
                     expect(body).toEqual(
                         expect.objectContaining({
-                            id: expect.any(String),
-                            firstName: userData.firstName,
-                            lastName: userData.lastName,
-                            email: userData.email,
-                            program: userData.program
+                            access_token: expect.stringMatching(/^eyJhbGciOi/),
+                            user: expect.objectContaining({
+                                id: expect.any(String),
+                                firstName: userData.firstName,
+                                lastName: userData.lastName,
+                                email: userData.email,
+                                program: userData.program
+                            })
                         })
                     );
                 });
@@ -74,7 +90,7 @@ describe('UsersController (e2e)', () => {
         });
 
         afterEach(async () => {
-            await usersService.remove(userId);
+            await usersService.removeByEmail(userData.email);
         });
 
         it('fetches the user with the given id', () => {
@@ -104,7 +120,7 @@ describe('UsersController (e2e)', () => {
         });
 
         afterEach(async () => {
-            await usersService.remove(userId);
+            await usersService.removeById(userId);
         });
         it('updates the user with the given id', () => {
             return request(app.getHttpServer())
