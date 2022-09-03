@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AuthUserResponse } from '../auth/dto/auth-response.dto';
 import { AuthUtilsService } from '../utils/auth-utils.service';
-import { CreateUserResponse } from './dto/create-user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
@@ -26,7 +26,7 @@ export class UsersController {
     @Post()
     @ApiCreatedResponse({
         description: 'The user record has been successfully created.',
-        type: CreateUserResponse
+        type: AuthUserResponse
     })
     @ApiBadRequestResponse({ description: 'The user record failed to be created.' })
     async create(@Body() dto: CreateUserDto, @Res({ passthrough: true }) res: Response) {

@@ -1,8 +1,10 @@
 import { Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthUtilsService } from '../utils/auth-utils.service';
 import { AuthService } from './auth.service';
+import { AuthUserResponse } from './dto/auth-response.dto';
+import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 
 @ApiTags('Authentication')
@@ -13,6 +15,14 @@ export class AuthController {
         private readonly authUtilsService: AuthUtilsService
     ) {}
 
+    @ApiOkResponse({
+        description: 'The user successfully authenticated.',
+        type: AuthUserResponse
+    })
+    @ApiUnauthorizedResponse({
+        description: 'The user failed to authenticate.'
+    })
+    @ApiBody({ type: LoginDto })
     @UseGuards(LocalAuthGuard)
     @HttpCode(200)
     @Post('/login')
@@ -23,6 +33,10 @@ export class AuthController {
         return await this.authService.login(authUser);
     }
 
+    @ApiOkResponse({
+        description: 'The user successfully logged out.',
+        type: AuthUserResponse
+    })
     @HttpCode(200)
     @Post('/logout')
     logout(@Req() _: Request, @Res({ passthrough: true }) res: Response) {
@@ -31,12 +45,16 @@ export class AuthController {
         return this.authService.logout();
     }
 
+    @ApiOkResponse({
+        description: 'A new access token was successfully re-issued.',
+        type: AuthUserResponse
+    })
     @Get('token')
     async fetchToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const refreshToken = this.authService.extractTokenFromCookie(req.cookies);
         const result = await this.authService.fetchToken(refreshToken);
 
-        if (result.responsePayload.success && result.refreshToken) {
+        if (result.responsePayload.access_token && result.refreshToken) {
             this.authUtilsService.setAuthCookies(res, result.refreshToken);
         }
 

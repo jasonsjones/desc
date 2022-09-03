@@ -35,7 +35,6 @@ export class AuthService {
 
     logout() {
         return {
-            success: true,
             access_token: null
         };
     }
@@ -53,7 +52,6 @@ export class AuthService {
                 return {
                     refreshToken: this.authUtilsService.generateRefreshToken(user),
                     responsePayload: {
-                        success: true,
                         access_token: this.authUtilsService.generateAccessToken(user)
                     }
                 };
