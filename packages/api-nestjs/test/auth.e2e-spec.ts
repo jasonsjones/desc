@@ -94,7 +94,6 @@ describe('AuthController (e2e)', () => {
                 .expect(({ body }) => {
                     expect(body).toEqual(
                         expect.objectContaining({
-                            success: true,
                             access_token: null
                         })
                     );
@@ -137,7 +136,6 @@ describe('AuthController (e2e)', () => {
 
                     expect(body).toEqual(
                         expect.objectContaining({
-                            success: true,
                             access_token: expect.stringMatching(/^eyJhbGciOi/)
                         })
                     );
