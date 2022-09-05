@@ -34,8 +34,7 @@ export class AuthController {
     }
 
     @ApiOkResponse({
-        description: 'The user successfully logged out.',
-        type: AuthUserResponse
+        description: 'The user successfully logged out.'
     })
     @HttpCode(200)
     @Post('/logout')
