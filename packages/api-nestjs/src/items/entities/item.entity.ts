@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { HouseLocation, ItemCategory, ItemPriority, ItemStatus } from '@prisma/client';
+import { User } from '../../users/entities/user.entity';
 
-export class CreateItemDto {
+export class Item {
+    @ApiProperty()
+    id: string;
+
     @ApiProperty()
     clientId: string;
+
+    // clientRequest: ClientRequest | undefined;
 
     @ApiProperty({ enum: ItemCategory })
     category: ItemCategory;
@@ -17,6 +23,9 @@ export class CreateItemDto {
     @ApiProperty({ enum: HouseLocation })
     location: HouseLocation;
 
+    @ApiProperty({ type: User })
+    submittedBy: User;
+
     @ApiProperty()
     quantity: number;
 
@@ -29,6 +38,11 @@ export class CreateItemDto {
     @ApiProperty({ required: false, enum: ItemStatus })
     status?: ItemStatus;
 
-    @ApiProperty({ required: false })
-    note?: string;
+    // notes: Note[];
+
+    @ApiProperty()
+    createdAt: Date;
+
+    @ApiProperty()
+    updatedAt: Date;
 }
