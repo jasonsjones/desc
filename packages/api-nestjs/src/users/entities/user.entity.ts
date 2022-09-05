@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Program } from '@prisma/client';
+import { Program, UserRole } from '@prisma/client';
 
 // This class is defined to serve as openapi documentation
 export class User {
@@ -15,6 +15,15 @@ export class User {
     @ApiProperty()
     lastName: string;
 
-    @ApiProperty({ enum: Object.values(Program) })
+    @ApiProperty({ enum: Program })
     program: Program;
+
+    @ApiProperty({ enum: UserRole })
+    roles: UserRole;
+
+    @ApiProperty({ type: Date })
+    createdAt: Date;
+
+    @ApiProperty({ type: Date })
+    updatedAt: Date;
 }

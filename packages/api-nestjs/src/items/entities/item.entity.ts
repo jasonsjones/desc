@@ -40,9 +40,9 @@ export class Item {
 
     // notes: Note[];
 
-    @ApiProperty()
+    @ApiProperty({ type: Date })
     createdAt: Date;
 
-    @ApiProperty()
+    @ApiProperty({ type: Date })
     updatedAt: Date;
 }
