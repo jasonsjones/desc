@@ -61,9 +61,10 @@ CREATE TABLE "Item" (
     "clientId" TEXT NOT NULL,
     "category" "ItemCategory" NOT NULL,
     "name" TEXT NOT NULL,
+    "location" "HouseLocation" NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "priority" "ItemPriority" NOT NULL DEFAULT 'STANDARD',
     "status" "ItemStatus" NOT NULL DEFAULT 'ACTIVE',
-    "location" "HouseLocation" NOT NULL,
     "userId" TEXT NOT NULL,
     "requestId" TEXT,
     "size" TEXT,
@@ -90,18 +91,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Password_userId_key" ON "Password"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ClientRequest_userId_key" ON "ClientRequest"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Item_userId_key" ON "Item"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Note_itemId_key" ON "Note"("itemId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Note_userId_key" ON "Note"("userId");
 
 -- AddForeignKey
 ALTER TABLE "Password" ADD CONSTRAINT "Password_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
