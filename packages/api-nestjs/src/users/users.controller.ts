@@ -15,7 +15,7 @@ import { AuthUserResponse } from '../auth/dto/auth-response.dto';
 import { AuthUtilsService } from '../utils/auth-utils.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entity/user.entity';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
