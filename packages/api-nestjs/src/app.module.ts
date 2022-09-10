@@ -8,6 +8,7 @@ import { NotesModule } from './notes/notes.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { UtilsModule } from './utils/utils.module';
+import { ClientRequestModule } from './client-requests/client-requests.module';
 
 @Module({
     imports: [
@@ -17,7 +18,8 @@ import { UtilsModule } from './utils/utils.module';
         ItemsModule,
         NotesModule,
         UsersModule,
-        UtilsModule
+        UtilsModule,
+        ClientRequestModule
     ],
     controllers: [AppController],
     providers: [AppService]
