@@ -24,29 +24,25 @@ const users: Prisma.UserCreateInput[] = [
 async function seed(): Promise<void> {
     await prisma.user.deleteMany({});
 
-    const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+    const hash = await bcrypt.hash(DEFAULT_PASSWORD, 12);
 
-    const ollie = await prisma.user.upsert({
-        where: { email: users[0].email },
-        update: {},
-        create: {
+    const ollie = await prisma.user.create({
+        data: {
             ...users[0],
-            password: {
+            hashedPassword: {
                 create: {
-                    hash: hashedPassword
+                    hash
                 }
             }
         }
     });
 
-    const barry = await prisma.user.upsert({
-        where: { email: users[1].email },
-        update: {},
-        create: {
+    const barry = await prisma.user.create({
+        data: {
             ...users[1],
-            password: {
+            hashedPassword: {
                 create: {
-                    hash: hashedPassword
+                    hash
                 }
             }
         }

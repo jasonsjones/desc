@@ -23,11 +23,11 @@ model User {
   refreshTokenVersion         Int             @default(0)
   createdAt                   DateTime        @default(now())
   updatedAt                   DateTime        @updatedAt
+  hashedPassword              Password?
   passwordResetTokenExpiresAt DateTime?
   passwordLastChangedAt       DateTime?
   passwordResetToken          String?
   lastLoginAt                 DateTime?
-  password                    Password?
   requests                    ClientRequest[]
   items                       Item[]
   notes                       Note[]
