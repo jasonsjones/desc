@@ -25,7 +25,7 @@ describe('NotesController (e2e)', () => {
         program: Program.INTEGRATED_SERVICES
     };
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile();
@@ -50,9 +50,10 @@ describe('NotesController (e2e)', () => {
         itemId = item.id;
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
         await itemsService.removeById(itemId);
         await usersService.removeById(userId);
+        await app.close();
     });
 
     describe('POST /notes', () => {

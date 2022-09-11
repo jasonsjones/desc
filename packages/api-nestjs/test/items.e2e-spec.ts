@@ -22,7 +22,7 @@ describe('ItemsController (e2e)', () => {
         program: 'HOUSING_FIRST'
     };
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile();
@@ -36,8 +36,9 @@ describe('ItemsController (e2e)', () => {
         userId = user.id;
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
         await usersService.removeById(userId);
+        await app.close();
     });
 
     describe('/items (POST)', () => {

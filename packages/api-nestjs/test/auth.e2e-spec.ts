@@ -15,7 +15,7 @@ describe('AuthController (e2e)', () => {
     let usersService: UsersService;
     let authUtilsService: AuthUtilsService;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile();
@@ -25,6 +25,10 @@ describe('AuthController (e2e)', () => {
         app = moduleFixture.createNestApplication();
         app.use(cookieParser());
         await app.init();
+    });
+
+    afterAll(async () => {
+        await app.close();
     });
 
     describe('/auth/login (POST)', () => {

@@ -36,7 +36,7 @@ describe('ClientRequestsController (e2e)', () => {
         program: Program.INTEGRATED_SERVICES
     };
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile();
@@ -52,8 +52,9 @@ describe('ClientRequestsController (e2e)', () => {
         userId = user.id;
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
         await usersService.removeById(userId);
+        await app.close();
     });
 
     describe('POST /client-requests', () => {

@@ -19,7 +19,7 @@ describe('UsersController (e2e)', () => {
         program: 'HOUSING_FIRST'
     };
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile();
@@ -27,6 +27,10 @@ describe('UsersController (e2e)', () => {
         usersService = moduleFixture.get<UsersService>(UsersService);
         app = moduleFixture.createNestApplication();
         await app.init();
+    });
+
+    afterAll(async () => {
+        await app.close();
     });
 
     describe('/users (GET)', () => {
