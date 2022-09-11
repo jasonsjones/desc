@@ -1,10 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Item } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-export class CreateClientRequestDto {
-    @ApiProperty()
-    id: string;
-
+export class CreateClientRequestDto implements Prisma.ClientRequestCreateWithoutSubmittedByInput {
     @ApiProperty()
     clientId: string;
 
@@ -12,5 +9,5 @@ export class CreateClientRequestDto {
     userId: string;
 
     @ApiProperty()
-    items?: Item[];
+    items?: Prisma.ItemCreateNestedManyWithoutRequestInput;
 }

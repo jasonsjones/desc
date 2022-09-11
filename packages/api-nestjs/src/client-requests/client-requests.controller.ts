@@ -3,7 +3,7 @@ import { ClientRequestService } from './client-requests.service';
 import { CreateClientRequestDto } from './dto/create-client-request.dto';
 import { UpdateClientRequestDto } from './dto/update-client-request.dto';
 
-@Controller('client-request')
+@Controller('client-requests')
 export class ClientRequestController {
     constructor(private readonly clientRequestService: ClientRequestService) {}
 
@@ -19,16 +19,16 @@ export class ClientRequestController {
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.clientRequestService.findOne(id);
+        return this.clientRequestService.findOneById(id);
     }
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() dto: UpdateClientRequestDto) {
-        return this.clientRequestService.update(id, dto);
+        return this.clientRequestService.updateById(id, dto);
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.clientRequestService.remove(id);
+        return this.clientRequestService.removeById(id);
     }
 }

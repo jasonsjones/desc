@@ -1,26 +1,71 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientRequestDto } from './dto/create-client-request.dto';
 import { UpdateClientRequestDto } from './dto/update-client-request.dto';
 
 @Injectable()
 export class ClientRequestService {
-    create(dto: CreateClientRequestDto) {
-        return 'This action adds a new clientRequest';
+    constructor(private prisma: PrismaService) {}
+
+    async create(dto: CreateClientRequestDto) {
+        const { clientId, userId, items } = dto;
+
+        // normalize the items at runtime to make sure they will adhere to the
+        // type prisma is expecting
+        const normalizeItems = this.normalizeItemsForType(items);
+
+        const request = await this.prisma.clientRequest.create({
+            data: {
+                clientId,
+                userId,
+                items: normalizeItems
+            },
+            include: {
+                items: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        });
+
+        return request;
     }
 
-    findAll() {
-        return `This action returns all clientRequest`;
+    async findAll() {
+        return await this.prisma.clientRequest.findMany({ include: { items: true } });
     }
 
-    findOne(id: string) {
-        return `This action returns a #${id} clientRequest`;
+    async findOneById(id: string) {
+        return await this.prisma.clientRequest.findUnique({
+            where: { id },
+            include: { items: true }
+        });
     }
 
-    update(id: string, dto: UpdateClientRequestDto) {
-        return `This action updates a #${id} clientRequest`;
+    async updateById(id: string, dto: UpdateClientRequestDto) {
+        const { clientId, userId, items } = dto;
+        const normalizeItems = this.normalizeItemsForType(items);
+
+        return await this.prisma.clientRequest.update({
+            where: { id },
+            data: {
+                clientId,
+                userId,
+                items: normalizeItems
+            },
+            include: {
+                items: true
+            }
+        });
     }
 
-    remove(id: string) {
-        return `This action removes a #${id} clientRequest`;
+    async removeById(id: string) {
+        return await this.prisma.clientRequest.delete({ where: { id } });
+    }
+
+    private normalizeItemsForType(items: unknown): Prisma.ItemCreateNestedManyWithoutRequestInput {
+        return Array.isArray(items) ? { create: items } : items;
     }
 }
