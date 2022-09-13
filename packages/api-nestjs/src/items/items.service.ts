@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -12,11 +12,20 @@ export class ItemsService {
         //     throw new BadRequestException('size is required for clothing items');
         // }
 
+        const { note, ...restOfFields } = dto;
+
         const item = await this.prisma.item.create({
             data: {
-                ...dto
+                ...restOfFields,
+                notes: {
+                    create: note
+                }
+            },
+            include: {
+                notes: true
             }
         });
+
         return item;
     }
 
@@ -29,9 +38,19 @@ export class ItemsService {
     }
 
     async update(id: string, dto: UpdateItemDto) {
+        const { note, ...restOfFields } = dto;
+
         return await this.prisma.item.update({
             where: { id },
-            data: dto
+            data: {
+                ...restOfFields,
+                notes: {
+                    create: note
+                }
+            },
+            include: {
+                notes: true
+            }
         });
     }
 

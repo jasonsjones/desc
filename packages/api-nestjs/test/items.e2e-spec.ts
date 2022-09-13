@@ -41,7 +41,7 @@ describe('ItemsController (e2e)', () => {
         await app.close();
     });
 
-    describe('/items (POST)', () => {
+    describe('POST /items', () => {
         let pillowId: string;
         let pillows: CreateItemDto;
 
@@ -66,10 +66,11 @@ describe('ItemsController (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .send(pillows);
 
-            pillowId = response.body.id;
+            const { body, status } = response;
+            pillowId = body.id;
 
-            expect(response.status).toBe(201);
-            expect(response.body).toEqual(
+            expect(status).toBe(201);
+            expect(body).toEqual(
                 expect.objectContaining({
                     id: expect.any(String),
                     clientId: pillows.clientId,
@@ -79,7 +80,48 @@ describe('ItemsController (e2e)', () => {
                     quantity: pillows.quantity,
                     userId: userId,
                     status: 'ACTIVE',
-                    priority: 'STANDARD'
+                    priority: 'STANDARD',
+                    notes: []
+                })
+            );
+        });
+
+        it('creates a new houselhold item that includes a note', async () => {
+            // add a note to the pillows item.
+            const noteBody = 'This is the first note to the item';
+            pillows.note = {
+                body: noteBody,
+                userId
+            };
+
+            const response = await request(app.getHttpServer())
+                .post('/items')
+                .set('Content-Type', 'application/json')
+                .send(pillows);
+
+            const { body, status } = response;
+            pillowId = body.id;
+
+            expect(status).toBe(201);
+            expect(body.notes).toHaveLength(1);
+            expect(body).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    clientId: pillows.clientId,
+                    category: pillows.category,
+                    name: pillows.name,
+                    location: pillows.location,
+                    quantity: pillows.quantity,
+                    userId: userId,
+                    status: 'ACTIVE',
+                    priority: 'STANDARD',
+                    notes: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            body: noteBody,
+                            userId
+                        })
+                    ])
                 })
             );
         });
@@ -87,7 +129,7 @@ describe('ItemsController (e2e)', () => {
         it.todo('returns (400) Bad Request error if size is not provided with a CLOTHING item');
     });
 
-    describe('/items (GET)', () => {
+    describe('GET /items', () => {
         let pillowId: string;
         let gamesId: string;
 
@@ -143,7 +185,7 @@ describe('ItemsController (e2e)', () => {
         });
     });
 
-    describe('/items/:id (GET)', () => {
+    describe('GET /items/:id', () => {
         let gamesId: string;
 
         beforeEach(async () => {
@@ -184,7 +226,7 @@ describe('ItemsController (e2e)', () => {
         });
     });
 
-    describe('/items/:id (PATCH)', () => {
+    describe('PATCH /items/:id', () => {
         let itemId: string;
 
         beforeEach(async () => {
@@ -226,9 +268,40 @@ describe('ItemsController (e2e)', () => {
                 })
             );
         });
+
+        it('adds the first note to an existing item', async () => {
+            const noteBody = 'Adding note to the item';
+            const response = await request(app.getHttpServer())
+                .patch(`/items/${itemId}`)
+                .set('Content-Type', 'application/json')
+                .send({ note: { body: noteBody, userId } });
+
+            const { body, status } = response;
+            expect(status).toEqual(200);
+            expect(body).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    clientId: expect.any(String),
+                    category: ItemCategory.HOUSEHOLD,
+                    name: 'PILLOWS',
+                    location: HouseLocation.EASTLAKE,
+                    quantity: 2,
+                    userId: userId,
+                    status: 'ACTIVE',
+                    priority: 'STANDARD',
+                    notes: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            body: noteBody,
+                            userId
+                        })
+                    ])
+                })
+            );
+        });
     });
 
-    describe('/items/:id (DELETE)', () => {
+    describe('DELETE /items/:id', () => {
         let itemId: string;
 
         beforeEach(async () => {

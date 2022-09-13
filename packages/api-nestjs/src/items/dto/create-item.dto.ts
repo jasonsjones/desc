@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { HouseLocation, ItemCategory, ItemPriority, ItemStatus } from '@prisma/client';
+import { HouseLocation, ItemCategory, ItemPriority, ItemStatus, Prisma } from '@prisma/client';
+import { CreateNoteDto } from '../../notes/dto/create-note.dto';
 
 export class CreateItemDto {
     @ApiProperty()
@@ -30,5 +31,5 @@ export class CreateItemDto {
     status?: ItemStatus;
 
     @ApiProperty({ required: false })
-    note?: string;
+    note?: Omit<CreateNoteDto, 'itemId'>;
 }
