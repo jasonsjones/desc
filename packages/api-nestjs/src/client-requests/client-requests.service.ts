@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { CreateItemDto } from '../items/dto/create-item.dto';
+import { CreateNoteDto } from '../notes/dto/create-note.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientRequestDto } from './dto/create-client-request.dto';
 import { UpdateClientRequestDto } from './dto/update-client-request.dto';
@@ -19,7 +21,9 @@ export class ClientRequestService {
             data: {
                 clientId,
                 userId,
-                items: normalizeItems
+                items: {
+                    create: normalizeItems
+                }
             },
             include: {
                 items: {
@@ -53,7 +57,7 @@ export class ClientRequestService {
             data: {
                 clientId,
                 userId,
-                items: normalizeItems
+                items: { create: normalizeItems }
             },
             include: {
                 items: true
@@ -65,7 +69,37 @@ export class ClientRequestService {
         return await this.prisma.clientRequest.delete({ where: { id } });
     }
 
-    private normalizeItemsForType(items: unknown): Prisma.ItemCreateNestedManyWithoutRequestInput {
-        return Array.isArray(items) ? { create: items } : items;
+    private normalizeItemsForType(
+        items: CreateItemDto[]
+    ): Prisma.ItemUncheckedCreateWithoutRequestInput[] {
+        let normalizedItems: Prisma.ItemUncheckedCreateWithoutRequestInput[];
+        if (Array.isArray(items)) {
+            normalizedItems = items.map((item) => {
+                let normalizedNote: Prisma.NoteUncheckedCreateNestedManyWithoutItemInput;
+                const { note, ...restOfFields } = item;
+                if (note) {
+                    normalizedNote = this.normalizeNoteForType(note);
+                }
+                return {
+                    ...restOfFields,
+                    notes: normalizedNote
+                };
+            });
+        }
+        return normalizedItems;
+    }
+
+    private normalizeNoteForType(
+        note: Omit<CreateNoteDto, 'itemId'>
+    ): Prisma.NoteUncheckedCreateNestedManyWithoutItemInput {
+        const { body, userId } = note;
+        if (body && userId) {
+            return {
+                create: {
+                    body,
+                    userId
+                }
+            };
+        }
     }
 }

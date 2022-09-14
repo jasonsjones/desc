@@ -4,11 +4,12 @@ import { HouseLocation, ItemCategory, Program } from '@prisma/client';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { ClientRequestService } from '../src/client-requests/client-requests.service';
+import { CreateItemDto } from '../src/items/dto/create-item.dto';
 import { ItemsService } from '../src/items/items.service';
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { UsersService } from '../src/users/users.service';
 
-function generateItemforClient(clientId: string, requestorId: string) {
+function generateItemforClient(clientId: string, requestorId: string): CreateItemDto {
     return {
         clientId,
         userId: requestorId,
@@ -97,7 +98,7 @@ describe('ClientRequestsController (e2e)', () => {
 
         it('creates a new client request with items as a proper prisma type', async () => {
             const item = generateItemforClient(clientId, userId);
-            const items = { create: [item] };
+            const items = [item];
 
             const response = await request(app.getHttpServer())
                 .post('/client-requests')
@@ -201,6 +202,50 @@ describe('ClientRequestsController (e2e)', () => {
                 })
             );
         });
+
+        it('creates a new request with an array of many items with notes', async () => {
+            const item1 = generateItemforClient(clientId, userId);
+            const item2 = generateItemforClient(clientId, userId);
+            item1.note = {
+                body: 'A note for item 1',
+                userId
+            };
+            item2.note = {
+                body: 'A note for item 2',
+                userId
+            };
+            const items = [item1, item2];
+            const response = await request(app.getHttpServer())
+                .post('/client-requests')
+                .set('Content-Type', 'application/json')
+                .send({
+                    clientId,
+                    userId,
+                    items
+                });
+
+            const { body } = response;
+
+            clientReqId = body.id;
+            itemId = body.items[0].id;
+            itemId2 = body.items[1].id;
+
+            expect(body.items).toHaveLength(2);
+            expect(body).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    clientId,
+                    userId,
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String),
+                    items: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: expect.any(String)
+                        })
+                    ])
+                })
+            );
+        });
     });
 
     describe('GET /client-requests', () => {
@@ -238,7 +283,7 @@ describe('ClientRequestsController (e2e)', () => {
 
         it('returns all the client requests (with items)', async () => {
             const item = generateItemforClient(clientId, userId);
-            const items = { create: [item] };
+            const items = [item];
 
             const clientReq = await clientReqService.create({
                 clientId,
@@ -308,7 +353,7 @@ describe('ClientRequestsController (e2e)', () => {
 
         it('returns a single client request (with items) with the given id', async () => {
             const item = generateItemforClient(clientId, userId);
-            const items = { create: [item] };
+            const items = [item];
 
             const clientReq = await clientReqService.create({
                 clientId,
@@ -367,7 +412,7 @@ describe('ClientRequestsController (e2e)', () => {
 
             clientReqId = clientReq.id;
             const item = generateItemforClient(clientId, userId);
-            const items = { create: [item] };
+            const items = [item];
 
             const response = await request(app.getHttpServer())
                 .patch(`/client-requests/${clientReqId}`)
@@ -375,6 +420,7 @@ describe('ClientRequestsController (e2e)', () => {
                 .send({ items });
 
             const { body } = response;
+
             itemId = body.items[0].id;
 
             expect(body).toEqual(
@@ -397,7 +443,7 @@ describe('ClientRequestsController (e2e)', () => {
 
         it('adds an additional item to an client request', async () => {
             const item = generateItemforClient(clientId, userId);
-            const items = { create: [item] };
+            const items = [item];
 
             const clientReq = await clientReqService.create({
                 clientId,
@@ -406,7 +452,7 @@ describe('ClientRequestsController (e2e)', () => {
             });
 
             clientReqId = clientReq.id;
-            const moreItems = { create: [generateItemforClient(clientId, userId)] };
+            const moreItems = [generateItemforClient(clientId, userId)];
             const response = await request(app.getHttpServer())
                 .patch(`/client-requests/${clientReqId}`)
                 .set('Content-Type', 'application/json')
