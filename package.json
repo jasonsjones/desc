@@ -6,8 +6,8 @@
             "packages/api",
             "packages/api-v2",
             "packages/app",
-            "packages/app-mui",
-            "packages/e2e"
+            "packages/e2e",
+            "packages/web"
         ],
         "nohoist": [
             "**/typeorm/**",
@@ -19,8 +19,8 @@
         "clean": "lerna clean",
         "container:start": "lerna run container:start --stream",
         "container:stop": "lerna run container:stop --stream",
-        "dev": "lerna run dev --stream --scope @desc/api --scope @desc/app --scope @desc/app-mui",
-        "dev:v2": "lerna run dev --stream --scope @desc/api-v2 --scope @desc/app-mui",
+        "dev": "lerna run dev --stream --scope @desc/api --scope @desc/app --scope @desc/web",
+        "dev:v2": "lerna run dev --stream --scope @desc/api-v2 --scope @desc/web",
         "dev:api": "lerna run dev --stream --scope @desc/api",
         "dev:app": "lerna run start --stream --scope @desc/app",
         "lint:all": "lerna run lint --stream --scope @desc/api --scope @desc/app",
