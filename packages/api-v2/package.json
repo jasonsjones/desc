@@ -1,5 +1,5 @@
 {
-    "name": "@desc/api-nestjs",
+    "name": "@desc/api-v2",
     "version": "0.0.1",
     "description": "Nestjs RESTful json API for the DESC project",
     "author": "Jason Jones",
