@@ -26,10 +26,19 @@ export class AuthService {
 
     async login(user: Pick<User, 'id' | 'email'> & Partial<User>) {
         const access_token = this.authUtilsService.generateAccessToken(user);
+        const { id, firstName, lastName, email, program, roles } = user;
+        const sanitizedUserInfo = {
+            id,
+            firstName,
+            lastName,
+            email,
+            program,
+            roles
+        };
 
         return {
             access_token,
-            user
+            user: sanitizedUserInfo
         };
     }
 
