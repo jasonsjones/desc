@@ -29,7 +29,7 @@ function NavLink({ children, to }: NavLinkProps): JSX.Element {
 function NavBar(): JSX.Element {
     return (
         <AppBar position="static">
-            <Toolbar>
+            <Toolbar disableGutters={true} sx={{ px: 12 }}>
                 <img
                     className=""
                     src="https://www.desc.org/wp-content/themes/desc/img/logo-desc.png"
