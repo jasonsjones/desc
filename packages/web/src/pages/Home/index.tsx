@@ -1,10 +1,14 @@
-import { Typography } from "@mui/material";
+import { Box, Container, Typography } from '@mui/material';
 
 function Home() {
     return (
-        <Typography variant="h3" component="h1">
-            Welcome to the DESC Portal!!
-        </Typography>
+        <Container maxWidth="lg">
+            <Box sx={{ mt: 4 }}>
+                <Typography variant="h3" component="h1">
+                    Welcome to the DESC Portal!!
+                </Typography>
+            </Box>
+        </Container>
     );
 }
 
