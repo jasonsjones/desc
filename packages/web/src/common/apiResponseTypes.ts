@@ -20,7 +20,7 @@ export interface BaseAPIResponse {
 }
 
 export interface AuthTokenResponse {
-    message?: string;
-    access_token?: string | null;
+    access_token: string | null;
     user?: User | null;
+    message?: string;
 }
