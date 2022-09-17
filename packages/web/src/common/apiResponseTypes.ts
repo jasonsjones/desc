@@ -19,9 +19,8 @@ export interface BaseAPIResponse {
     message: string;
 }
 
-export interface AuthTokenResponse extends BaseAPIResponse {
-    payload?: {
-        user: User;
-        accessToken: string;
-    };
+export interface AuthTokenResponse {
+    message?: string;
+    access_token?: string | null;
+    user?: User | null;
 }

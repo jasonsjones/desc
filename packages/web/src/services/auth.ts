@@ -2,7 +2,7 @@ import { AuthTokenResponse, BaseAPIResponse, Credentials } from '../common/apiRe
 import { BASE_URL } from './util';
 
 export function login(creds: Credentials): Promise<AuthTokenResponse> {
-    return fetch(`${BASE_URL}/api/auth/login`, {
+    return fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -13,7 +13,7 @@ export function login(creds: Credentials): Promise<AuthTokenResponse> {
         }
         if (response.status === 401) {
             return {
-                success: false,
+                access_token: null,
                 message: 'unauthorized'
             };
         }
@@ -21,14 +21,14 @@ export function login(creds: Credentials): Promise<AuthTokenResponse> {
 }
 
 export function logout(): Promise<BaseAPIResponse> {
-    return fetch(`${BASE_URL}/api/auth/logout`, {
+    return fetch(`${BASE_URL}/auth/logout`, {
         method: 'GET',
         credentials: 'include'
     }).then((response) => response.json());
 }
 
 export function fetchSessionUser(): Promise<AuthTokenResponse> {
-    return fetch(`${BASE_URL}/api/users/me`, {
+    return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         credentials: 'include'
     }).then((response) => response.json());

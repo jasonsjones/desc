@@ -1,7 +1,8 @@
+import { Email, Lock } from '@mui/icons-material';
+import { Alert, Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
-import { Email, Lock } from '@mui/icons-material';
+import { AuthTokenResponse } from '../../common/apiResponseTypes';
 import { useAuthContext } from '../../contexts/AuthContext';
 import useLogin from '../../hooks/useLogin';
 
@@ -15,13 +16,13 @@ function SignInForm() {
         errorMsg: ''
     });
 
-    const { mutate: doLogin, isLoading } = useLogin((data) => {
-        if (data.success && data.payload) {
-            const { user, accessToken: token } = data.payload;
+    const handleSuccess = (data: AuthTokenResponse) => {
+        if (data?.access_token && data?.user) {
+            const { user, access_token: token } = data;
             authCtx.login(user, token);
             navigate('/');
         } else {
-            if (data.message === 'unauthorized') {
+            if (!data?.access_token && data?.message === 'unauthorized') {
                 setValues({
                     email: '',
                     password: '',
@@ -29,7 +30,9 @@ function SignInForm() {
                 });
             }
         }
-    });
+    };
+
+    const { mutate: doLogin, isLoading } = useLogin(handleSuccess);
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         setValues({
@@ -75,6 +78,7 @@ function SignInForm() {
                         variant="standard"
                         fullWidth={true}
                         onChange={handleChange}
+                        value={form.email}
                     />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBlockStart: '1.5rem' }}>
@@ -86,8 +90,16 @@ function SignInForm() {
                         fullWidth={true}
                         variant="standard"
                         onChange={handleChange}
+                        value={form.password}
                     />
                 </Box>
+                {form.errorMsg ? (
+                    <Box mt={4}>
+                        <Alert severity="error" variant="outlined">
+                            {form.errorMsg}
+                        </Alert>
+                    </Box>
+                ) : null}
                 <Box
                     marginTop={4}
                     sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}
