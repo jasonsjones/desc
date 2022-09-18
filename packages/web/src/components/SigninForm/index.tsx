@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AuthTokenResponse } from '../../common/apiResponseTypes';
 import { useAuthContext } from '../../contexts/AuthContext';
-import useLogin from '../../hooks/useLogin';
+import { useLogin } from '../../hooks';
 
 function SignInForm() {
     const authCtx = useAuthContext();

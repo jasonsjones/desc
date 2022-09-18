@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthTokenResponse, User } from '../common/apiResponseTypes';
-import useRefreshAccessToken from '../hooks/useRefreshAccessToken';
+import { useFetchToken } from '../hooks';
 
 type AuthProviderProps = {
     children?: React.ReactNode;
@@ -39,7 +39,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         }
     };
 
-    const { isLoading: isFetchingToken } = useRefreshAccessToken(12, handleSuccess);
+    const { isLoading: isFetchingToken } = useFetchToken(12, handleSuccess);
 
     const login = (user: User, token: string) => {
         setContextUser(user);
