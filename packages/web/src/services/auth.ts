@@ -1,4 +1,4 @@
-import { AuthTokenResponse, BaseAPIResponse, Credentials } from '../common/apiResponseTypes';
+import { AuthTokenResponse, Credentials } from '../common/apiResponseTypes';
 import { BASE_URL } from './util';
 
 export function login(creds: Credentials): Promise<AuthTokenResponse> {
@@ -20,7 +20,7 @@ export function login(creds: Credentials): Promise<AuthTokenResponse> {
     });
 }
 
-export function logout(): Promise<BaseAPIResponse> {
+export function logout(): Promise<{ access_token: null }> {
     return fetch(`${BASE_URL}/auth/logout`, {
         method: 'GET',
         credentials: 'include'
