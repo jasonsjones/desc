@@ -53,7 +53,7 @@ export function getValidToken(currentToken: string): Promise<string> {
 */
 
 export function refreshToken(): Promise<AuthTokenResponse> {
-    return fetch('http://localhost:3001/api/auth/refreshtoken', {
+    return fetch(`${BASE_URL}/auth/token`, {
         credentials: 'include'
     }).then((res) => res.json());
 }
