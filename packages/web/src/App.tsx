@@ -1,23 +1,21 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import Home from './pages/Home';
 import MainLayout from './layouts/MainLayout';
 import Signin from './pages/Signin';
-
-const queryClient = new QueryClient();
+import AppProviders from './AppProviders';
 
 function App() {
     return (
         <div className="app">
             <BrowserRouter>
-                <QueryClientProvider client={queryClient}>
+                <AppProviders>
                     <Routes>
                         <Route path="/" element={<MainLayout />}>
                             <Route index element={<Home />} />
                             <Route path="signin" element={<Signin />} />
                         </Route>
                     </Routes>
-                </QueryClientProvider>
+                </AppProviders>
             </BrowserRouter>
         </div>
     );
