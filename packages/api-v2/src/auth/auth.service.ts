@@ -5,6 +5,11 @@ import { IncomingHttpHeaders } from 'http';
 import { UsersService } from '../users/users.service';
 import { AuthUtilsService } from '../utils/auth-utils.service';
 
+type UserLoginType = Pick<User, 'id' | 'email'> & Partial<User>;
+type UserInfoType = Required<
+    Pick<UserLoginType, 'id' | 'email' | 'firstName' | 'lastName' | 'program' | 'roles'>
+>;
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -24,21 +29,11 @@ export class AuthService {
         return null;
     }
 
-    async login(user: Pick<User, 'id' | 'email'> & Partial<User>) {
+    async login(user: UserLoginType) {
         const access_token = this.authUtilsService.generateAccessToken(user);
-        const { id, firstName, lastName, email, program, roles } = user;
-        const sanitizedUserInfo = {
-            id,
-            firstName,
-            lastName,
-            email,
-            program,
-            roles
-        };
-
         return {
             access_token,
-            user: sanitizedUserInfo
+            user: this.sanitizeUserInfo(user as UserInfoType)
         };
     }
 
@@ -61,7 +56,8 @@ export class AuthService {
                 return {
                     refreshToken: this.authUtilsService.generateRefreshToken(user),
                     responsePayload: {
-                        access_token: this.authUtilsService.generateAccessToken(user)
+                        access_token: this.authUtilsService.generateAccessToken(user),
+                        user: this.sanitizeUserInfo(user)
                     }
                 };
             }
@@ -86,5 +82,17 @@ export class AuthService {
         if (cookies) {
             return cookies['rid'];
         }
+    }
+
+    sanitizeUserInfo(user: UserInfoType) {
+        const { id, firstName, lastName, email, program, roles } = user;
+        return {
+            id,
+            firstName,
+            lastName,
+            email,
+            program,
+            roles
+        };
     }
 }

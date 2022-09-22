@@ -140,7 +140,14 @@ describe('AuthController (e2e)', () => {
 
                     expect(body).toEqual(
                         expect.objectContaining({
-                            access_token: expect.stringMatching(/^eyJhbGciOi/)
+                            access_token: expect.stringMatching(/^eyJhbGciOi/),
+                            user: expect.objectContaining({
+                                id: expect.any(String),
+                                firstName: testUser.firstName,
+                                lastName: testUserData.lastName,
+                                email: testUserData.email,
+                                program: testUserData.program
+                            })
                         })
                     );
                 });
@@ -158,6 +165,7 @@ describe('AuthController (e2e)', () => {
 
                     expect(refreshToken).toBeUndefined();
                     expect(body.access_token).toBeUndefined();
+                    expect(body.user).toBeUndefined();
                 });
         });
 
@@ -177,6 +185,7 @@ describe('AuthController (e2e)', () => {
 
                     expect(refreshToken).toBeUndefined();
                     expect(body.access_token).toBeUndefined();
+                    expect(body.user).toBeUndefined();
                     expect(body.message).toMatch(/refresh token not valid/i);
                 });
         });
@@ -201,6 +210,7 @@ describe('AuthController (e2e)', () => {
 
                     expect(refreshToken).toBeUndefined();
                     expect(body.access_token).toBeUndefined();
+                    expect(body.user).toBeUndefined();
                     expect(body.message).toBe('jwt expired');
                 });
         });
@@ -223,6 +233,7 @@ describe('AuthController (e2e)', () => {
 
                     expect(refreshToken).toBeUndefined();
                     expect(body.access_token).toBeUndefined();
+                    expect(body.user).toBeUndefined();
                     expect(body.message).toBe('jwt malformed');
                 });
         });
