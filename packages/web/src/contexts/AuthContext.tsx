@@ -37,6 +37,10 @@ function AuthProvider({ children }: AuthProviderProps) {
             const { access_token: token } = data;
             setToken(token);
         }
+
+        if (data?.user) {
+            setContextUser(data.user);
+        }
     };
 
     const { isLoading: isFetchingToken } = useFetchToken(12, handleSuccess);

@@ -1,13 +1,17 @@
 import { Box, Grid, List, Typography } from '@mui/material';
+import { useAuthContext } from '../../contexts/AuthContext';
 import home from './coming_home.svg';
 import WelcomeListItem from './WelcomeListItem';
 
 function Welcome() {
+    const { contextUser } = useAuthContext();
     return (
         <>
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h2" component="h1" fontWeight="regular">
-                    Welcome to the DESC Portal!
+                    {contextUser
+                        ? `Welcome to the DESC Portal, ${contextUser.firstName}!`
+                        : `Welcome to the DESC Portal!`}
                 </Typography>
             </Box>
             <Grid container mt={2} spacing={6}>

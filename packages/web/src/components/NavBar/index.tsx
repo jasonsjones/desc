@@ -1,5 +1,7 @@
-import { AppBar, Link, Toolbar } from '@mui/material';
+import { AppBar, Button, Link, Toolbar } from '@mui/material';
 import { Link as RouterLink, NavLink as RouterNavLink } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { useLogout } from '../../hooks';
 
 interface NavLinkProps {
     children: React.ReactNode;
@@ -27,6 +29,8 @@ function NavLink({ children, to }: NavLinkProps): JSX.Element {
 }
 
 function NavBar(): JSX.Element {
+    const { token } = useAuthContext();
+    const { mutate: doLogout } = useLogout();
     return (
         <AppBar position="static">
             <Toolbar disableGutters={true} sx={{ px: 12 }}>
@@ -47,7 +51,27 @@ function NavBar(): JSX.Element {
                 >
                     DESC Portal
                 </Link>
-                <NavLink to="/signin">Sign In</NavLink>
+                {!token ? <NavLink to="/signin">Sign In</NavLink> : null}
+                {token ? (
+                    <Button
+                        variant="outlined"
+                        disableRipple
+                        sx={{
+                            py: 3,
+                            color: 'common.white',
+                            textTransform: 'capitalize',
+                            fontSize: '1rem',
+                            fontWeight: 400,
+                            letterSpacing: 'normal',
+                            '&.active, &:hover': {
+                                backgroundColor: 'primary.dark'
+                            }
+                        }}
+                        onClick={() => doLogout()}
+                    >
+                        Logout
+                    </Button>
+                ) : null}
             </Toolbar>
         </AppBar>
     );
