@@ -1,13 +1,14 @@
-import { Box, Container } from '@mui/material';
+import { Container } from '@mui/material';
 import SignInForm from '../../components/SigninForm';
+import SingleColumnLayout from '../../layouts/SingleColumnLayout';
 
 function Signin() {
     return (
-        <Container maxWidth="md">
-            <Box marginTop={4}>
+        <SingleColumnLayout>
+            <Container maxWidth="md">
                 <SignInForm />
-            </Box>
-        </Container>
+            </Container>
+        </SingleColumnLayout>
     );
 }
 
