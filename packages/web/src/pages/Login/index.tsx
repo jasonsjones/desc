@@ -1,15 +1,15 @@
 import { Container } from '@mui/material';
-import SignInForm from '../../components/SigninForm';
+import LoginForm from '../../components/LoginForm';
 import SingleColumnLayout from '../../layouts/SingleColumnLayout';
 
-function Signin() {
+function Login() {
     return (
         <SingleColumnLayout>
             <Container maxWidth="md">
-                <SignInForm />
+                <LoginForm />
             </Container>
         </SingleColumnLayout>
     );
 }
 
-export default Signin;
+export default Login;

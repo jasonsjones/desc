@@ -6,7 +6,7 @@ import { AuthTokenResponse } from '../../common/apiResponseTypes';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useLogin } from '../../hooks';
 
-function SignInForm() {
+function LoginForm() {
     const authCtx = useAuthContext();
     const navigate = useNavigate();
 
@@ -64,7 +64,7 @@ function SignInForm() {
     return (
         <Paper elevation={2} sx={{ paddingBlockStart: '2.5rem' }}>
             <Typography variant="h4" component="h2" align="center">
-                Sign in to Account
+                Login to Account
             </Typography>
             <form
                 onSubmit={handleSubmit}
@@ -108,7 +108,7 @@ function SignInForm() {
                         Cancel
                     </Button>
                     <Button variant="contained" type="submit">
-                        {`${!isLoading ? 'Sign In' : 'Signing In...'}`}
+                        {`${!isLoading ? 'Log In' : 'Logging In...'}`}
                     </Button>
                 </Box>
                 <Box marginLeft={4}>
@@ -121,4 +121,4 @@ function SignInForm() {
     );
 }
 
-export default SignInForm;
+export default LoginForm;

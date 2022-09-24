@@ -51,7 +51,7 @@ function NavBar(): JSX.Element {
                 >
                     DESC Portal
                 </Link>
-                {!token ? <NavLink to="/signin">Sign In</NavLink> : null}
+                {!token ? <NavLink to="/login">Log In</NavLink> : null}
                 {token ? (
                     <Button
                         variant="outlined"
@@ -69,7 +69,7 @@ function NavBar(): JSX.Element {
                         }}
                         onClick={() => doLogout()}
                     >
-                        Logout
+                        Log Out
                     </Button>
                 ) : null}
             </Toolbar>
