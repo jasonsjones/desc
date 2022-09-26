@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import MainLayout from './layouts/MainLayout';
 import Login from './pages/Login';
 import AppProviders from './AppProviders';
+import Register from './pages/Register';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                         <Route path="/" element={<MainLayout />}>
                             <Route index element={<Home />} />
                             <Route path="login" element={<Login />} />
+                            <Route path="register" element={<Register />} />
                         </Route>
                     </Routes>
                 </AppProviders>

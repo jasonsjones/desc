@@ -51,7 +51,12 @@ function NavBar(): JSX.Element {
                 >
                     DESC Portal
                 </Link>
-                {!token ? <NavLink to="/login">Log In</NavLink> : null}
+                {!token ? (
+                    <>
+                        <NavLink to="/login">Log In</NavLink>
+                        <NavLink to="/register">Register</NavLink>
+                    </>
+                ) : null}
                 {token ? (
                     <Button
                         variant="outlined"
