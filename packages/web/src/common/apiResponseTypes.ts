@@ -17,3 +17,5 @@ export interface AuthTokenResponse {
     user?: User | null;
     message?: string;
 }
+
+export type RegisterUserResponse = Pick<AuthTokenResponse, 'access_token' | 'user'>;

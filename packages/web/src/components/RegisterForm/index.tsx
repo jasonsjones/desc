@@ -14,47 +14,109 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRegisterUser } from '../../hooks';
+
+const programData = [
+    {
+        value: 'HOUSING_FIRST',
+        displayValue: 'Housing First'
+    },
+    {
+        value: 'INTEGRATED_SERVICES',
+        displayValue: 'Integrated Services'
+    },
+    {
+        value: 'SURVIVAL_SERVICES',
+        displayValue: 'Survival Services'
+    },
+    {
+        value: 'HEALTH_SERVICES',
+        displayValue: 'Health Services'
+    },
+    {
+        value: 'EMPLOYMENT_SERVICES',
+        displayValue: 'Employment Services'
+    },
+    {
+        value: 'RESEARCH_INNOVATION',
+        displayValue: 'Research & Innovation'
+    }
+];
+
+const defaultFormState = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    program: '',
+    password: '',
+    confirmPassword: ''
+};
 
 function RegisterForm() {
     const navigate = useNavigate();
 
-    const [form, setValues] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        program: '',
-        password: '',
-        confirmPassword: '',
-        errorMsg: ''
-    });
+    const [form, setForm] = useState(defaultFormState);
+
+    const [passwordsNoMatch, setPasswordsNoMatch] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleRegisterSuccess = () => {
+        setForm(defaultFormState);
+        setError(null);
+        navigate('/');
+    };
+
+    const handleRegisterError = () => {
+        setError('Oops, something went wrong.  Please try again.');
+    };
+
+    const { mutate: doRegister, isLoading } = useRegisterUser(
+        handleRegisterSuccess,
+        handleRegisterError
+    );
+
+    useEffect(() => {
+        if (form.confirmPassword.length > 0 && form.password !== form.confirmPassword) {
+            setPasswordsNoMatch('Passwords do NOT match');
+        }
+        if (form.confirmPassword.length > 0 && form.password === form.confirmPassword) {
+            setPasswordsNoMatch(null);
+        }
+    }, [form]);
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        setValues({
+        setForm({
             ...form,
-            errorMsg: '',
             [event.target.id]: event.target.value
         });
     };
 
     const handleSelectChange = (event: SelectChangeEvent) => {
-        setValues({
+        setForm({
             ...form,
-            errorMsg: '',
             program: event.target.value
         });
     };
 
     const isFormValid = (): boolean => {
         // TODO: update logic to verify form data
-        return form.email.length > 0 && form.password.length > 0;
+        return (
+            form.firstName.length > 0 &&
+            form.lastName.length > 0 &&
+            form.email.length > 0 &&
+            form.password.length > 0 &&
+            form.program.length > 0 &&
+            form.password === form.confirmPassword
+        );
     };
 
     const handleSubmit: React.FormEventHandler = (event) => {
         event.preventDefault();
         if (isFormValid()) {
-            // TODO: submit form data (useRegisterUser hook, mabye?)
+            const { confirmPassword, ...registerData } = form;
+            doRegister(registerData);
         }
     };
 
@@ -82,6 +144,7 @@ function RegisterForm() {
                                 fullWidth={true}
                                 onChange={handleChange}
                                 value={form.firstName}
+                                required
                             />
                         </Stack>
                     </Grid>
@@ -101,6 +164,7 @@ function RegisterForm() {
                                 fullWidth={true}
                                 onChange={handleChange}
                                 value={form.lastName}
+                                required
                             />
                         </Stack>
                     </Grid>
@@ -114,11 +178,12 @@ function RegisterForm() {
                         fullWidth={true}
                         onChange={handleChange}
                         value={form.email}
+                        required
                     />
                 </Stack>
                 <Stack mt={4} direction="row" alignItems="flex-end">
                     <Domain sx={{ color: 'action.active', mr: 1 }} />
-                    <FormControl variant="standard" fullWidth>
+                    <FormControl required variant="standard" fullWidth>
                         <InputLabel id="program-label">Program</InputLabel>
                         <Select
                             labelId="program-label"
@@ -127,17 +192,11 @@ function RegisterForm() {
                             onChange={handleSelectChange}
                             label="Program"
                         >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            <MenuItem value="housing first">Housing First</MenuItem>
-                            <MenuItem value="integrated services">Integrated Services</MenuItem>
-                            <MenuItem value="survival services">Survival Services</MenuItem>
-                            <MenuItem value="health services">Health Services</MenuItem>
-                            <MenuItem value="employment services">Employment Services</MenuItem>
-                            <MenuItem value="research innovation">
-                                Research &amp; Innovation
-                            </MenuItem>
+                            {programData.map((program, idx) => (
+                                <MenuItem key={idx} value={program.value}>
+                                    {program.displayValue}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Stack>
@@ -151,6 +210,7 @@ function RegisterForm() {
                         variant="standard"
                         onChange={handleChange}
                         value={form.password}
+                        required
                     />
                 </Stack>
                 <Stack mt={4} direction="row" alignItems="flex-end">
@@ -163,12 +223,13 @@ function RegisterForm() {
                         variant="standard"
                         onChange={handleChange}
                         value={form.confirmPassword}
+                        helperText={passwordsNoMatch}
                     />
                 </Stack>
-                {form.errorMsg ? (
+                {error ? (
                     <Box mt={4}>
                         <Alert severity="error" variant="outlined">
-                            {form.errorMsg}
+                            {error}
                         </Alert>
                     </Box>
                 ) : null}
@@ -177,7 +238,7 @@ function RegisterForm() {
                         Cancel
                     </Button>
                     <Button variant="contained" type="submit">
-                        Register
+                        {isLoading ? 'Registering' : 'Register'}
                     </Button>
                 </Stack>
             </form>
