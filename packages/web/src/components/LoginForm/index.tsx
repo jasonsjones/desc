@@ -1,41 +1,34 @@
 import { Email, Lock } from '@mui/icons-material';
-import { Alert, Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Link, Paper, Stack, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { AuthTokenResponse } from '../../common/apiResponseTypes';
-import { useAuthContext } from '../../contexts/AuthContext';
 import { useLogin } from '../../hooks';
 
 function LoginForm() {
-    const authCtx = useAuthContext();
     const navigate = useNavigate();
 
-    const [form, setValues] = useState({
+    const [form, setForm] = useState({
         email: '',
         password: '',
         errorMsg: ''
     });
 
-    const handleSuccess = (data: AuthTokenResponse) => {
-        if (data?.access_token && data?.user) {
-            const { user, access_token: token } = data;
-            authCtx.login(user, token);
-            navigate('/');
-        } else {
-            if (!data?.access_token && data?.message === 'unauthorized') {
-                setValues({
-                    email: '',
-                    password: '',
-                    errorMsg: 'Unathorized user. Please try again'
-                });
-            }
-        }
+    const handleLoginError = () => {
+        setForm({
+            email: '',
+            password: '',
+            errorMsg: 'Unathorized user. Please try again'
+        });
     };
 
-    const { mutate: doLogin, isLoading } = useLogin(handleSuccess);
+    const handleLoginSuccess = () => {
+        navigate('/');
+    };
+
+    const { mutate: login, isLoading } = useLogin(handleLoginSuccess, handleLoginError);
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        setValues({
+        setForm({
             ...form,
             errorMsg: '',
             [event.target.id]: event.target.value
@@ -53,7 +46,7 @@ function LoginForm() {
                 email: form.email,
                 password: form.password
             };
-            doLogin(creds);
+            login(creds);
         }
     };
 
@@ -70,7 +63,7 @@ function LoginForm() {
                 onSubmit={handleSubmit}
                 style={{ padding: '2rem', maxWidth: '670px', margin: '0 auto' }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                <Stack direction="row" alignItems="flex-end">
                     <Email sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
                     <TextField
                         id="email"
@@ -80,8 +73,8 @@ function LoginForm() {
                         onChange={handleChange}
                         value={form.email}
                     />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBlockStart: '1.5rem' }}>
+                </Stack>
+                <Stack mt={4} direction="row" alignItems="flex-end">
                     <Lock sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
                     <TextField
                         id="password"
@@ -92,7 +85,7 @@ function LoginForm() {
                         onChange={handleChange}
                         value={form.password}
                     />
-                </Box>
+                </Stack>
                 {form.errorMsg ? (
                     <Box mt={4}>
                         <Alert severity="error" variant="outlined">
@@ -100,17 +93,14 @@ function LoginForm() {
                         </Alert>
                     </Box>
                 ) : null}
-                <Box
-                    marginTop={4}
-                    sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}
-                >
+                <Stack mt={4} spacing={2} direction="row" justifyContent="flex-end">
                     <Button variant="outlined" onClick={handleCancel}>
                         Cancel
                     </Button>
                     <Button variant="contained" type="submit">
                         {`${!isLoading ? 'Log In' : 'Logging In...'}`}
                     </Button>
-                </Box>
+                </Stack>
                 <Box marginLeft={4}>
                     <Link to="/" component={RouterLink} underline="none">
                         Forgot Password?
