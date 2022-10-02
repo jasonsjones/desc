@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { Program } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthUtilsService } from '../utils/auth-utils.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ProgramDisplayDto } from './dto/program-display.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -72,5 +74,34 @@ export class UsersService {
 
     async removeByEmail(email: string) {
         return await this.prisma.user.delete({ where: { email } });
+    }
+
+    getPrograms(): ProgramDisplayDto[] {
+        return [
+            {
+                value: Program.HOUSING_FIRST,
+                displayValue: 'Housing First'
+            },
+            {
+                value: Program.INTEGRATED_SERVICES,
+                displayValue: 'Integrated Services'
+            },
+            {
+                value: Program.SURVIVAL_SERVICES,
+                displayValue: 'Survival Services'
+            },
+            {
+                value: Program.HEALTH_SERVICES,
+                displayValue: 'Health Services'
+            },
+            {
+                value: Program.EMPLOYMENT_SERVICES,
+                displayValue: 'Employment Services'
+            },
+            {
+                value: Program.RESEARCH_INNOVATION,
+                displayValue: 'Research & Innovation'
+            }
+        ];
     }
 }

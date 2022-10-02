@@ -14,6 +14,7 @@ import { Response } from 'express';
 import { AuthUserResponse } from '../auth/dto/auth-response.dto';
 import { AuthUtilsService } from '../utils/auth-utils.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ProgramDisplayDto } from './dto/program-display.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -44,6 +45,12 @@ export class UsersController {
     @ApiOkResponse({ description: 'All users have been successfully fetched.', type: User })
     findAll() {
         return this.usersService.findAll();
+    }
+
+    @Get('programs')
+    @ApiOkResponse({ description: 'List of available user programs', type: [ProgramDisplayDto] })
+    getPrograms() {
+        return this.usersService.getPrograms();
     }
 
     @Get(':id')
