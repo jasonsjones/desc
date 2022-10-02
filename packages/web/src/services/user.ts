@@ -16,3 +16,17 @@ export async function register(userData: RegisterUserData) {
 
     return await res.json();
 }
+
+export async function fetchPrograms() {
+    const res = await fetch(`${BASE_URL}/users/programs`, {
+        method: 'GET',
+        credentials: 'include'
+    });
+
+    if (!res.ok) {
+        const cause = await res.json();
+        throw new Error(res.statusText, { cause });
+    }
+
+    return await res.json();
+}

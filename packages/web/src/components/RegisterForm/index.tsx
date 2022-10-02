@@ -16,34 +16,12 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRegisterUser } from '../../hooks';
+import { useRegisterUser, useUserPrograms } from '../../hooks';
 
-const programData = [
-    {
-        value: 'HOUSING_FIRST',
-        displayValue: 'Housing First'
-    },
-    {
-        value: 'INTEGRATED_SERVICES',
-        displayValue: 'Integrated Services'
-    },
-    {
-        value: 'SURVIVAL_SERVICES',
-        displayValue: 'Survival Services'
-    },
-    {
-        value: 'HEALTH_SERVICES',
-        displayValue: 'Health Services'
-    },
-    {
-        value: 'EMPLOYMENT_SERVICES',
-        displayValue: 'Employment Services'
-    },
-    {
-        value: 'RESEARCH_INNOVATION',
-        displayValue: 'Research & Innovation'
-    }
-];
+interface MenuItemData {
+    value: string;
+    displayValue: string;
+}
 
 const defaultFormState = {
     firstName: '',
@@ -56,6 +34,8 @@ const defaultFormState = {
 
 function RegisterForm() {
     const navigate = useNavigate();
+
+    const { data: programData } = useUserPrograms();
 
     const [form, setForm] = useState(defaultFormState);
 
@@ -192,7 +172,7 @@ function RegisterForm() {
                             onChange={handleSelectChange}
                             label="Program"
                         >
-                            {programData.map((program, idx) => (
+                            {(programData || []).map((program: MenuItemData, idx: number) => (
                                 <MenuItem key={idx} value={program.value}>
                                     {program.displayValue}
                                 </MenuItem>
